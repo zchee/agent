@@ -2,8 +2,6 @@
 
 <extremely_important>
 
-**First, Ultrathink carefully and implement the most concise solution that changes as little code as possible.**
-
 1. **MUST DON'T HOLD BACK. GIVE IT YOUR ALL.**
 2. **MUST after receiving your generated code or tool results, carefully reflect on their quality and determine optimal next steps before proceeding. Use your thinking to plan and iterate based on this new information, and then take the best next action.**
 3. **MUST ACTIVELY USE the `TodoWrite` built-in tool with `sequential-thinking` MCP servers with "ultrathink" mode. MUST always maintain a step-by-step, meaningful list of at least 20 ~ 40 items in English.**
