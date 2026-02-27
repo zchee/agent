@@ -1,0 +1,127 @@
+{
+  "$schema": "https://raw.githubusercontent.com/google-gemini/gemini-cli/refs/heads/main/schemas/settings.schema.json",
+  "mcpServers": {
+    "sequential-thinking": {
+      "command": "sequential-thinking"
+    },
+    "filesystem": {
+      "command": "rust-mcp-filesystem",
+      "args": [
+        "--allow-write",
+        "/Users/zchee/go/src",
+        "/Users/zchee/src"
+      ]
+    },
+    "gopls": {
+      "command": "gopls",
+      "args": [
+        "mcp"
+      ]
+    },
+    "pencil": {
+      "command": "/Users/zchee/.vscode-insiders/extensions/highagency.pencildev-0.6.28/out/mcp-server-darwin-arm64",
+      "args": [
+        "--app",
+        "visual_studio_code_-_insiders"
+      ],
+      "env": {}
+    }
+  },
+  "general": {
+    "preferredEditor": "neovim",
+    "vimMode": false,
+    "checkpointing": {
+      "enabled": true
+    },
+    "retryFetchErrors": true,
+    "sessionRetention": {
+      "enabled": true,
+      "maxAge": "30d",
+      "warningAcknowledged": true
+    },
+    "enableAutoUpdate": false,
+    "enableAutoUpdateNotification": false,
+    "defaultApprovalMode": "default",
+    "devtools": true,
+    "enableNotifications": true
+  },
+  "output": {
+    "format": "text"
+  },
+  "ui": {
+    "theme": "GitHub",
+    "hideWindowTitle": false,
+    "showStatusInTitle": true,
+    "hideTips": false,
+    "hideBanner": true,
+    "hideContextSummary": false,
+    "footer": {
+      "hideCWD": false,
+      "hideSandboxStatus": false,
+      "hideModelInfo": false,
+      "hideContextPercentage": false
+    },
+    "hideFooter": false,
+    "showMemoryUsage": true,
+    "showLineNumbers": true,
+    "showCitations": true,
+    "showModelInfoInChat": true,
+    "useAlternateBuffer": true,
+    "incrementalRendering": true,
+    "inlineThinkingMode": "full"
+  },
+  "ide": {
+    "enabled": true
+  },
+  "privacy": {
+    "usageStatisticsEnabled": false
+  },
+  "context": {
+    "fileName": [
+      "AGENTS.md",
+      "GEMINI.md"
+    ],
+    "loadMemoryFromIncludeDirectories": true,
+    "fileFiltering": {
+      "respectGitIgnore": false,
+      "respectGeminiIgnore": true,
+      "enableRecursiveFileSearch": true,
+      "enableFuzzySearch": true
+    }
+  },
+  "tools": {
+    "shell": {
+      "enableInteractiveShell": true,
+      "pager": "cat",
+      "showColor": true,
+      "inactivityTimeout": 300
+    }
+  },
+  "useWriteTodos": true,
+  "advanced": {
+    "autoConfigureMemory": true,
+    "excludedEnvVars": [
+      "DEBUG",
+      "DEBUG_MODE"
+    ]
+  },
+  "experimental": {
+    "enableAgents": true,
+    "extensionReloading": true,
+    "jitContext": true,
+    "useOSC52Copy": true,
+    "useOSC52Paste": true,
+    "plan": true,
+    "modelSteering": true,
+    "extensionRegistry": true
+  },
+  "security": {
+    "enablePermanentToolApproval": true,
+    "auth": {
+      "selectedType": "oauth-personal"
+    }
+  },
+  "model": {
+    "name": "gemini-3.1-pro-preview"
+  }
+}
