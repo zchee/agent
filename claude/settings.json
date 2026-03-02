@@ -4,7 +4,8 @@
   "includeCoAuthoredBy": true,
   "permissions": {
     "allow": [
-      "TodoWrite"
+      "TodoWrite",
+      "mcp__pencil"
     ],
     "deny": [
       "Read(third_party)",
@@ -60,7 +61,7 @@
   "spinnerTipsEnabled": true,
   "alwaysThinkingEnabled": true,
   "fastMode": true,
-  "teammateMode": "tmux",
   "autoUpdatesChannel": "latest",
-  "skipDangerousModePermissionPrompt": true
+  "skipDangerousModePermissionPrompt": true,
+  "teammateMode": "tmux"
 }
