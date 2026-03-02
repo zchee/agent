@@ -19,7 +19,7 @@
       ]
     },
     "pencil": {
-      "command": "/Users/zchee/.vscode-insiders/extensions/highagency.pencildev-0.6.28/out/mcp-server-darwin-arm64",
+      "command": "/Users/zchee/.vscode-insiders/extensions/highagency.pencildev-0.6.29/out/mcp-server-darwin-arm64",
       "args": [
         "--app",
         "visual_studio_code_-_insiders"
@@ -106,6 +106,9 @@
     ]
   },
   "experimental": {
+    "directWebFetch": true,
+    "extensionConfig": true,
+    "extensionManagement": true,
     "enableAgents": true,
     "extensionReloading": true,
     "jitContext": true,
@@ -118,7 +121,7 @@
   "security": {
     "enablePermanentToolApproval": true,
     "auth": {
-      "selectedType": "oauth-personal"
+      "selectedType": "vertex-ai"
     }
   },
   "model": {
