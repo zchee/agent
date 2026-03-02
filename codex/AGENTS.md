@@ -110,6 +110,7 @@ If any score is below 0.9, refine the solution before finalizing.
 
 ## MCP SERVERS
 
+- Always use the `memory` tool for persistent context and recall.
 - Use `gemini-google-search` for web search instead of built-in web search tools.
 - Use `context7` when detailed library/API documentation is needed.
 
