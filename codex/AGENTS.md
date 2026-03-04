@@ -120,7 +120,7 @@ If any score is below 0.9, refine the solution before finalizing.
 
 ## EXECPLAN
 
-For complex features or significant refactors, use an ExecPlan from design through implementation (see `./instructions/ExecPlan.md`).
+For complex features or significant refactors, use an ExecPlan from design through implementation (see `~/.config/codex/instructions/ExecPlan.md`).
 
 ## ERROR HANDLING
 
