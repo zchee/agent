@@ -54,14 +54,19 @@
     "padding": 1
   },
   "enabledPlugins": {
-    "gopls-lsp@claude-plugins-official": true
+    "gopls-lsp@claude-plugins-official": true,
+    "skill-creator@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "clangd-lsp@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true,
+    "rust-analyzer-lsp@claude-plugins-official": true
   },
-  "forceLoginMethod": "console",
+  "forceLoginMethod": "claudeai",
   "outputStyle": "default",
   "spinnerTipsEnabled": true,
   "alwaysThinkingEnabled": true,
-  "fastMode": true,
   "autoUpdatesChannel": "latest",
   "skipDangerousModePermissionPrompt": true,
-  "teammateMode": "tmux"
+  "teammateMode": "in-process",
+  "fastMode": true
 }
