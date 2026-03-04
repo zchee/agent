@@ -5,3 +5,6 @@
 
 # Claude
 claude/plugins/marketplaces/
+
+# Codex
+codex/skills/dist
