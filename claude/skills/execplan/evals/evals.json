@@ -1,0 +1,53 @@
+{
+  "skill_name": "execplan",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need to add gRPC health checking to our Go service. Right now it's just HTTP endpoints but we need proper gRPC health checks for k8s readiness probes, plus graceful shutdown that drains connections. The service is in cmd/server/ and uses google.golang.org/grpc already.",
+      "expected_output": "Claude should create an ExecPlan at .agents/plans/ with all mandatory sections. The plan should be self-contained and novice-accessible.",
+      "files": [],
+      "assertions": [
+        {"id": "plan-created", "text": "An ExecPlan document was created as a markdown file"},
+        {"id": "has-purpose-section", "text": "The plan contains a Purpose or Big Picture section"},
+        {"id": "has-progress-section", "text": "The plan contains a Progress section with checkboxes"},
+        {"id": "has-context-section", "text": "The plan contains a Context and Orientation section"},
+        {"id": "has-concrete-steps", "text": "The plan contains a Concrete Steps section with commands"},
+        {"id": "has-validation-section", "text": "The plan contains a Validation and Acceptance section"},
+        {"id": "has-living-doc-sections", "text": "The plan has Surprises & Discoveries, Decision Log, and Outcomes & Retrospective"},
+        {"id": "mentions-grpc-health", "text": "The plan specifically addresses gRPC health checking"},
+        {"id": "mentions-graceful-shutdown", "text": "The plan addresses graceful shutdown"},
+        {"id": "self-contained", "text": "The plan embeds all needed knowledge, no external references"}
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "refactor the auth middleware to support both JWT and API key auth. currently it only does JWT via the middleware in pkg/auth/jwt.go. API keys should be checked against a postgres table. need to update all the routes in cmd/api/routes.go too",
+      "expected_output": "Claude should create an ExecPlan covering auth abstraction, database schema, migration, and route updates.",
+      "files": [],
+      "assertions": [
+        {"id": "plan-created", "text": "An ExecPlan document was created as a markdown file"},
+        {"id": "has-purpose-section", "text": "The plan contains a Purpose or Big Picture section"},
+        {"id": "has-progress-section", "text": "The plan contains a Progress section with checkboxes"},
+        {"id": "has-context-section", "text": "The plan contains a Context and Orientation section"},
+        {"id": "has-concrete-steps", "text": "The plan contains a Concrete Steps section with commands"},
+        {"id": "has-validation-section", "text": "The plan contains a Validation and Acceptance section"},
+        {"id": "has-living-doc-sections", "text": "The plan has Surprises & Discoveries, Decision Log, and Outcomes & Retrospective"},
+        {"id": "covers-jwt-and-apikey", "text": "The plan addresses both JWT and API key auth"},
+        {"id": "covers-database", "text": "The plan mentions postgres/database for API keys"},
+        {"id": "covers-route-updates", "text": "The plan addresses updating routes"},
+        {"id": "self-contained", "text": "The plan embeds all needed knowledge, no external references"}
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "fix the typo in the README where it says 'recieve' instead of 'receive'",
+      "expected_output": "Claude should NOT create an ExecPlan. It should directly address the typo fix.",
+      "files": [],
+      "assertions": [
+        {"id": "no-execplan-created", "text": "No ExecPlan was created — treated as a trivial fix"},
+        {"id": "addresses-typo", "text": "The response directly addresses the typo fix"},
+        {"id": "no-overkill", "text": "No ExecPlan sections like Decision Log or Surprises & Discoveries"}
+      ]
+    }
+  ]
+}
