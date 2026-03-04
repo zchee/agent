@@ -1,5 +1,5 @@
-##:schema https://raw.githubusercontent.com/zchee/schema/refs/heads/main/codex.schema.json
-#:schema /Users/zchee/src/github.com/zchee/schema/codex.config.schema.json
+#:schema https://raw.githubusercontent.com/zchee/schema/refs/heads/main/codex.schema.json
+##:schema /Users/zchee/src/github.com/zchee/schema/codex.config.schema.json
 
 model = "gpt-5.3-codex"
 review_model = "gpt-5.3-codex"
@@ -12,16 +12,17 @@ hide_agent_reasoning = false # default
 show_raw_agent_reasoning = true
 model_reasoning_effort = "xhigh"
 model_reasoning_summary = "detailed"
+plan_mode_reasoning_effort = "xhigh"
 model_verbosity = "high"
 model_supports_reasoning_summaries = true
 check_for_update_on_startup = false
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
-personality = "none"
 # forced_login_method = "chatgpt"
 web_search = "live"
 project_root_markers = [".git"]
 suppress_unstable_features_warning = true
+service_tier = "fast"
 
 # instructions = ""
 
@@ -46,16 +47,17 @@ experimental_use_profile = false
 [tui]
 notifications = true
 animations = true
-alternate_screen = "always"
-status_line = ["model-with-reasoning", "context-remaining", "current-dir"]
+# alternate_screen = "always"
+# status_line = ["model-with-reasoning", "context-remaining", "current-dir"]
 
 [tools]
 view_image = true
 
 [agents]
 max_threads = 16
-max_depth = 8
+max_depth = 2
 job_max_runtime_seconds = 1
+
 # [agents.researcher]
 # description = "Research-focused role."
 # config_file = "./agents/researcher.toml"
@@ -68,8 +70,8 @@ max_unused_days = 21
 max_rollout_age_days = 42
 max_rollouts_per_startup = 9
 min_rollout_idle_hours = 24
-phase_1_model = "gpt-5.3-codex-spark"
-phase_2_model = "gpt-5.3-codex"
+extract_model = "gpt-5.3-codex-spark"
+consolidation_model = "gpt-5.3-codex"
 
 # [skills]
 
@@ -82,27 +84,32 @@ js_repl_tools_only = true
 search_tool = true
 codex_git_commit = false
 runtime_metrics = true
+memories = true
 sqlite = true
-# memory_tool = true
 child_agents_md = true
+image_detail_original = true
 apply_patch_freeform = true
 request_permissions = true
 remote_models = true
 enable_request_compression = true
 multi_agent = true
+plugins = true
+apps_mcp_gateway = true
 apps = true
 skill_mcp_dependency_install = true
 skill_env_var_dependency_prompt = true
 steer = true
 default_mode_request_user_input = true
-# collaboration_modes = true
 personality = true
+artifact = true
+fast_mode = true
 voice_transcription = true
+realtime_conversation = true
 prevent_idle_sleep = true
 responses_websockets = true
 responses_websockets_v2 = true
 
-[ghost_snapshot] 
+[ghost_snapshot]
 disable_warnings = true
 
 [analytics]
@@ -126,34 +133,25 @@ env_key = "XAI_API_KEY"
 
 [profiles.xai]
 model_provider = "xai"
-model = "grok-4-1-fast-reasoning" # model = "grok-code-fast-1"
-
-# TODO(zchee): not working yet.
-# [model_providers.gemini]
-# name = "Gemini"
-# base_url = "http://localhost:5555/v1"
-#
-# [profiles.gemini]
-# model_provider = "gemini"
-# model = "gemini-3-pro-preview"
+model = "grok-4-1-fast-reasoning"
 
 [model_providers.openrouter]
 name = "OpenRouter"
 base_url = "https://openrouter.ai/api/v1"
 env_key = "OPENROUTER_API_KEY"
 
-[profiles.gpt-5-pro]
+[profiles.gemini]
 model_provider = "openrouter"
-model = "openai/gpt-5-pro"
+model = "google/gemini-3.1-pro-preview-customtools"
 
 [profiles.claude]
 model_provider = "openrouter"
-model = "anthropic/claude-sonnet-4.5"
+model = "anthropic/claude-opus-4.6"
 
 # MCP
 
 [mcp_servers.alphaxiv]
-enabled = true
+enabled = false
 url = "https://api.alphaxiv.org/mcp/v1"
 
 [mcp_servers.aws-knowledge]
@@ -180,7 +178,7 @@ args = ["--allow-write", "/Users/zchee", "/opt/local"]
 enabled = true
 command = "npx"
 args = ["-y", "mcp-gemini-google-search@latest"]
-env_vars = ["GOOGLE_API_KEY", "GEMINI_MODEL"]
+env_vars = ["GOOGLE_API_KEY"]
 env = { "GEMINI_API_KEY" = "GOOGLE_API_KEY" }
 
 # TODO(zchee): investigate exec_policy
@@ -231,10 +229,10 @@ enabled = false
 command = "mcp-language-server"
 args = ["--workspace", ".", "--lsp", "basedpyright-langserver", "--", "--stdio"]
 
-[mcp_servers.ts_ls]
+[mcp_servers.tsgo]
 enabled = false
 command = "mcp-language-server"
-args = ["--workspace", ".", "--lsp", "typescript-language-server", "--", "--stdio"]
+args = ["--workspace", ".", "--lsp", "tsgo", "--", "--lsp", "-stdio"]
 
 [mcp_servers.lua_ls]
 enabled = false
