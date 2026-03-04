@@ -4,6 +4,7 @@
 #  please do not open a pull request to add something created by your editor or tools
 
 # Claude
+claude/plugins/cache/
 claude/plugins/marketplaces/
 
 # Codex
