@@ -1,0 +1,4 @@
+interface:
+  display_name: "ExecPlan"
+  short_description: "Create and maintain ExecPlan docs"
+  default_prompt: "Use $execplan only for explicit ExecPlan requests (for example, /execplan) and produce a self-contained plan with milestones, progress tracking, validation commands, decision log entries, and recovery guidance."
