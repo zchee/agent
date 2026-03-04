@@ -4,7 +4,7 @@ This document describes the requirements for an execution plan ("ExecPlan"), a d
 
 ## How to use ExecPlans and PLANS.md
 
-When authoring an executable specification (ExecPlan), follow .agent/PLANS.md _to the letter_. If it is not in your context, refresh your memory by reading the entire .agent/PLANS.md file. Be thorough in reading (and re-reading) source material to produce an accurate specification. When creating a spec, start from the skeleton and flesh it out as you do your research.
+When authoring an executable specification (ExecPlan), follow `.agents/plans/<descriptive-name>.md` _to the letter_. If it is not in your context, refresh your memory by reading the entire `.agents/plans/<descriptive-name>.md` file. Be thorough in reading (and re-reading) source material to produce an accurate specification. When creating a spec, start from the skeleton and flesh it out as you do your research.
 
 When implementing an executable specification (ExecPlan), do not prompt the user for "next steps"; simply proceed to the next milestone. Keep all sections up to date, add or split entries in the list at every stopping point to affirmatively state the progress made and next steps. Resolve ambiguities autonomously, and commit frequently.
 
@@ -77,7 +77,7 @@ Prefer additive code changes followed by subtractions that keep tests passing. P
 
 This ExecPlan is a living document. The sections `Progress`, `Surprises & Discoveries`, `Decision Log`, and `Outcomes & Retrospective` must be kept up to date as work proceeds.
 
-If .agent/PLANS.md file is checked into the repo, reference the path to that file here from the repository root and note that this document must be maintained in accordance with .agent/PLANS.md.
+If `.agents/plans/<descriptive-name>.md` file is checked into the repo, reference the path to that file here from the repository root and note that this document must be maintained in accordance with `.agents/plans/<descriptive-name>.md`.
 
 ## Purpose / Big Picture
 
