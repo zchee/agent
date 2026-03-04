@@ -21,10 +21,10 @@ Requirements:
 - **MUST USE `ExecPlan`**
   - **MUST BE implemented all tasks continuously without stopping.**
 - Always use the $LSP MCP server for code navigation, symbol references, and static analysis when investigating performance issues and candidate changes.
-- Treat `./.agent/PLANS.md` as the **long-term plan and memory** for this performance work:
-  - MUST save and restore from .agent/PLANS.md
-  - **Before** drafting or updating the implementation plan, read `./.agent/PLANS.md` and restore your understanding of prior decisions, current $SCOPE, and $FOCUS.
-  - **After** making significant design decisions or changes to the implementation plan, update `./.agent/PLANS.md` with:
+- Treat `.agents/plans/<descriptive-name>.md` as the **long-term plan and memory** for this performance work:
+  - MUST save and restore from `.agents/plans/<descriptive-name>.md`
+  - **Before** drafting or updating the implementation plan, read `.agents/plans/<descriptive-name>.md` and restore your understanding of prior decisions, current $SCOPE, and $FOCUS.
+  - **After** making significant design decisions or changes to the implementation plan, update `.agents/plans/<descriptive-name>.md` with:
     - the current values of $SCOPE and $FOCUS (or that they were inferred),
     - key findings and trade-offs,
     - selected strategies and their expected impact,
@@ -35,7 +35,7 @@ When you respond:
 2. Summarize the current performance context for $SCOPE (or the overall system if not set).
 3. Propose concrete performance improvement strategies, explicitly calling out how each relates to $FOCUS when it is provided.
 4. Outline a step-by-step implementation plan that a human or agent could follow.
-5. Describe how you updated `./.agent/PLANS.md` so that future runs can resume from the latest plan.
+5. Describe how you updated `.agents/plans/<descriptive-name>.md` so that future runs can resume from the latest plan.
 
 For the Go language:
 * Take a benchmark using `sync; /usr/local/sbin/purge; go test -v -run='^$' -timeout (N) -count (N) -benchtime (N)x -benchmem -bench={TARGET_BENCHMARK_NAME} ./...`
