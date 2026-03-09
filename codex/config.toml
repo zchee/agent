@@ -1,9 +1,9 @@
-#:schema https://raw.githubusercontent.com/zchee/schema/refs/heads/main/codex.schema.json
-##:schema /Users/zchee/src/github.com/zchee/schema/codex.config.schema.json
+#:schema https://raw.githubusercontent.com/openai/codex/refs/heads/main/codex-rs/core/config.schema.json
 
-model = "gpt-5.3-codex"
-review_model = "gpt-5.3-codex"
-model_context_window = 272000 # default: 272000
+model = "gpt-5.4"
+review_model = "gpt-5.4"
+model_context_window = 2000000
+model_auto_compact_token_limit = 1900000
 project_doc_max_bytes = 46080 # default: 32768
 project_doc_fallback_filenames = ["AGENTS.md", "CLAUDE.md", "GEMINI.md"]
 js_repl_node_path = "/opt/homebrew/bin/node"
@@ -23,6 +23,12 @@ web_search = "live"
 project_root_markers = [".git"]
 suppress_unstable_features_warning = true
 service_tier = "fast"
+
+[projects."/Users/zchee"]
+trust_level = "trusted"
+
+[projects."/Users/zchee/go/src/github.com/gaudiy/spanner-changestream-service"]
+trust_level = "trusted"
 
 # instructions = ""
 
@@ -47,31 +53,30 @@ experimental_use_profile = false
 [tui]
 notifications = true
 animations = true
-# alternate_screen = "always"
-# status_line = ["model-with-reasoning", "context-remaining", "current-dir"]
+alternate_screen = "always"
+status_line = ["model-with-reasoning", "context-remaining", "context-used", "current-dir", "git-branch", "five-hour-limit", "weekly-limit", "context-window-size", "used-tokens", "total-input-tokens", "total-output-tokens", "session-id"]
 
 [tools]
 view_image = true
 
 [agents]
-max_threads = 16
-max_depth = 2
-job_max_runtime_seconds = 1
+max_threads = 6
+max_depth = 3
+# job_max_runtime_seconds = 1
 
-# [agents.researcher]
-# description = "Research-focused role."
-# config_file = "./agents/researcher.toml"
+[agents.go_planner]
+description = "Go architecture and planning specialist."
+config_file = "~/.config/codex/agents/go-planner.toml"
 
 [memories]
 generate_memories = true
 use_memories = true
-max_raw_memories_for_global = 1024
 max_unused_days = 21
 max_rollout_age_days = 42
 max_rollouts_per_startup = 9
 min_rollout_idle_hours = 24
 extract_model = "gpt-5.3-codex-spark"
-consolidation_model = "gpt-5.3-codex"
+consolidation_model = "gpt-5.4"
 
 # [skills]
 
@@ -80,25 +85,23 @@ undo = true
 unified_exec = true
 shell_zsh_fork = true
 js_repl = true
-js_repl_tools_only = true
-search_tool = true
-codex_git_commit = false
+js_repl_tools_only = false
+codex_git_commit = true
 runtime_metrics = true
-memories = true
 sqlite = true
+memories = true
 child_agents_md = true
 image_detail_original = true
 apply_patch_freeform = true
 request_permissions = true
-remote_models = true
 enable_request_compression = true
 multi_agent = true
-plugins = true
-apps_mcp_gateway = true
 apps = true
+plugins = true
+image_generation = false
+apps_mcp_gateway = true
 skill_mcp_dependency_install = true
 skill_env_var_dependency_prompt = true
-steer = true
 default_mode_request_user_input = true
 personality = true
 artifact = true
@@ -139,6 +142,10 @@ model = "grok-4-1-fast-reasoning"
 name = "OpenRouter"
 base_url = "https://openrouter.ai/api/v1"
 env_key = "OPENROUTER_API_KEY"
+
+[profiles.openai]
+model_provider = "openrouter"
+model = "openai/gpt-5.4-pro"
 
 [profiles.gemini]
 model_provider = "openrouter"
@@ -196,6 +203,11 @@ env_http_headers = { "CONTEXT7_API_KEY" = "CONTEXT7_API_KEY" }
 [mcp_servers.sequential-thinking]
 enabled = true
 command = "mcp-sequential-thinking"
+
+[mcp_servers.stitch]
+enabled = false
+command = "npx"
+args = ["-y", "@_davideast/stitch-mcp", "proxy"]
 
 # https://developers.google.com/knowledge/mcp
 [mcp_servers.google-developer-knowledge-dev]
