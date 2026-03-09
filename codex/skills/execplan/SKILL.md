@@ -3,7 +3,7 @@ name: execplan
 description: Create and maintain repository-local ExecPlan documents for complex features and long-horizon tasks. Trigger only when the user explicitly invokes /execplan, asks to create or revise an ExecPlan, asks for a PLANS.md-compliant execution plan, or requests a design-to-implementation plan that must include milestones, progress tracking, validation commands, decision logs, and recovery guidance.
 ---
 
-# ExecPlan
+# execplan
 
 Use this skill to produce or update a living ExecPlan document that a stateless contributor can execute end-to-end.
 
