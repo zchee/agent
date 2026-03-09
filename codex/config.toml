@@ -30,6 +30,9 @@ trust_level = "trusted"
 [projects."/Users/zchee/go/src/github.com/gaudiy/spanner-changestream-service"]
 trust_level = "trusted"
 
+[projects."/Users/zchee/go/src/github.com/gaudiy/gaudiy-go-kit"]
+trust_level = "trusted"
+
 # instructions = ""
 
 # Stop being nice, and it's the best thing
@@ -94,6 +97,7 @@ child_agents_md = true
 image_detail_original = true
 apply_patch_freeform = true
 request_permissions = true
+request_permissions_tool = true
 enable_request_compression = true
 multi_agent = true
 apps = true
@@ -103,6 +107,8 @@ apps_mcp_gateway = true
 skill_mcp_dependency_install = true
 skill_env_var_dependency_prompt = true
 default_mode_request_user_input = true
+guardian_approval = true
+tool_call_mcp_elicitation = true
 personality = true
 artifact = true
 fast_mode = true
