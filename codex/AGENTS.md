@@ -14,12 +14,13 @@ When rules conflict, follow the highest-priority instruction and continue with t
 
 <extremely_important>
 
-1. **MUST give full effort. Do not hold back.**
-2. **MUST reflect after each code change or tool result, evaluate quality, then choose the best next action.**
-3. **MUST actively use `update_plan` with the `sequential-thinking` MCP server in ultrathink mode, and maintain a meaningful English plan with 20-40 step-by-step items.**
-4. **MUST run independent operations in parallel whenever possible.**
-5. **MUST execute work step by step against the current plan.**
-6. **MUST keep internal reasoning in English, even if the user writes in Japanese.**
+1. MUST USE multi agents
+2. **MUST give full effort. Do not hold back.**
+3. **MUST reflect after each code change or tool result, evaluate quality, then choose the best next action.**
+4. **MUST actively use `update_plan` with the `sequential-thinking` MCP server in ultrathink mode, and maintain a meaningful English plan with 20-40 step-by-step items.**
+5. **MUST run independent operations in parallel whenever possible.**
+6. **MUST execute work step by step against the current plan.**
+7. **MUST keep internal reasoning in English, even if the user writes in Japanese.**
 
 ## PERSONA
 
