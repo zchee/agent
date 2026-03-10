@@ -56,14 +56,13 @@
   "enabledPlugins": {
     "skill-creator@claude-plugins-official": true,
     "rust-analyzer-lsp@claude-plugins-official": true,
-    "modern-go-guidelines@goland-claude-marketplace": true,
-    "typescript-lsp@claude-plugins-official": true
+    "modern-go-guidelines@goland-claude-marketplace": true
   },
   "forceLoginMethod": "claudeai",
   "outputStyle": "default",
   "spinnerTipsEnabled": true,
   "alwaysThinkingEnabled": true,
-  "fastMode": true,
+  "fastMode": false,
   "autoUpdatesChannel": "latest",
   "skipDangerousModePermissionPrompt": true,
   "teammateMode": "in-process",
