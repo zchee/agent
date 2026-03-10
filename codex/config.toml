@@ -2,15 +2,15 @@
 
 model = "gpt-5.4"
 review_model = "gpt-5.4"
-model_context_window = 2000000
-model_auto_compact_token_limit = 1900000
+model_context_window = 1000000
+model_auto_compact_token_limit = 900000
 project_doc_max_bytes = 46080 # default: 32768
 project_doc_fallback_filenames = ["AGENTS.md", "CLAUDE.md", "GEMINI.md"]
 js_repl_node_path = "/opt/homebrew/bin/node"
 zsh_path = "/opt/homebrew/bin/zsh"
 hide_agent_reasoning = false # default
 show_raw_agent_reasoning = true
-model_reasoning_effort = "xhigh"
+model_reasoning_effort = "medium"
 model_reasoning_summary = "detailed"
 plan_mode_reasoning_effort = "xhigh"
 model_verbosity = "high"
@@ -31,6 +31,15 @@ trust_level = "trusted"
 trust_level = "trusted"
 
 [projects."/Users/zchee/go/src/github.com/gaudiy/gaudiy-go-kit"]
+trust_level = "trusted"
+
+[projects."/Users/zchee/go/src/google.golang.org/adk"]
+trust_level = "trusted"
+
+[projects."/Users/zchee/src/github.com/openai/symphony"]
+trust_level = "trusted"
+
+[projects."/Users/zchee/go/src/github.com/gaudiy/gaudiy-monorepo"]
 trust_level = "trusted"
 
 # instructions = ""
@@ -57,7 +66,7 @@ experimental_use_profile = false
 notifications = true
 animations = true
 alternate_screen = "always"
-status_line = ["model-with-reasoning", "context-remaining", "context-used", "current-dir", "git-branch", "five-hour-limit", "weekly-limit", "context-window-size", "used-tokens", "total-input-tokens", "total-output-tokens", "session-id"]
+status_line = ["model-with-reasoning", "fast-mode", "context-remaining", "context-used", "current-dir", "git-branch", "five-hour-limit", "weekly-limit", "context-window-size", "used-tokens", "total-input-tokens", "total-output-tokens", "session-id"]
 
 [tools]
 view_image = true
@@ -89,6 +98,7 @@ unified_exec = true
 shell_zsh_fork = true
 js_repl = true
 js_repl_tools_only = false
+code_mode = true
 codex_git_commit = true
 runtime_metrics = true
 sqlite = true
@@ -97,6 +107,7 @@ child_agents_md = true
 image_detail_original = true
 apply_patch_freeform = true
 request_permissions = true
+codex_hooks = true
 request_permissions_tool = true
 enable_request_compression = true
 multi_agent = true
