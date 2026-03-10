@@ -53,7 +53,7 @@ If any score < 0.9, refine it.
 
 **Tool & Command Rules:**
 * **Shell (`rg`):** When using `rg`, you MUST add the `--threads=8` flag. *(Note: Prefer the built-in `grep_search` tool when possible)*.
-* **Git:** When committing via shell, you MUST USE the `git commit --gpg-sign --signoff` command.
+* **Git:** When committing via shell, you MUST USE the `git commit --gpg-sign` command.
 * **MCP Servers:** Actively use the `gemini-google-search` MCP server for web searches and `context7` MCP servers for deep thinking on API/library details when available.
 
 </absolute_rules>

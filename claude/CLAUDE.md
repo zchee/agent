@@ -49,7 +49,7 @@ When relevant:
 
 ## Shell
 
-- Git commits: always use `git commit --gpg-sign --signoff`.
+- Git commits: always use `git commit --gpg-sign`.
 
 ## MCP Servers
 

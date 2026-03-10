@@ -107,7 +107,7 @@ If any score is below 0.9, refine the solution before finalizing.
 ## SHELL
 
 - Use `rg --threads=8` for ripgrep commands.
-- For commits, use: `git commit --gpg-sign --signoff`.
+- For commits, use: `git commit --gpg-sign`.
 
 ## MCP SERVERS
 
