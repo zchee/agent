@@ -64,6 +64,19 @@
         "x-goog-user-project": "gaudiy-develop-tokyo"
       }
     },
+    "gcp-gke": {
+      "httpUrl": "https://container.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "gaudiy-develop-tokyo"
+      }
+    },
     "gcp-resource-manager": {
       "httpUrl": "https://cloudresourcemanager.googleapis.com/mcp",
       "authProviderType": "google_credentials",
@@ -138,6 +151,9 @@
   "output": {
     "format": "text"
   },
+  "hooksConfig": {
+    "enabled": true
+  },
   "ui": {
     "theme": "GitHub",
     "hideWindowTitle": false,
@@ -157,15 +173,18 @@
         "model-name",
         "context-used",
         "quota",
-        "memory-usage"
+        "memory-usage",
+        "code-changes",
+        "token-count",
+        "session-id"
       ]
     },
     "hideFooter": false,
     "showMemoryUsage": true,
-    "showLineNumbers": true,
+    "showLineNumbers": false,
     "showCitations": true,
     "showModelInfoInChat": true,
-    "useAlternateBuffer": true,
+    "useAlternateBuffer": false,
     "incrementalRendering": true,
     "inlineThinkingMode": "full"
   },
@@ -179,6 +198,9 @@
     "fileName": [
       "AGENTS.md",
       "GEMINI.md"
+    ],
+    "includeDirectories": [
+      "~/.gemini/extensions/ralph"
     ],
     "loadMemoryFromIncludeDirectories": true,
     "fileFiltering": {
