@@ -10,7 +10,7 @@ js_repl_node_path = "/opt/homebrew/bin/node"
 zsh_path = "/opt/homebrew/bin/zsh"
 hide_agent_reasoning = false # default
 show_raw_agent_reasoning = true
-model_reasoning_effort = "medium"
+model_reasoning_effort = "xhigh"
 model_reasoning_summary = "detailed"
 plan_mode_reasoning_effort = "xhigh"
 model_verbosity = "high"
@@ -23,24 +23,6 @@ web_search = "live"
 project_root_markers = [".git"]
 suppress_unstable_features_warning = true
 service_tier = "fast"
-
-[projects."/Users/zchee"]
-trust_level = "trusted"
-
-[projects."/Users/zchee/go/src/github.com/gaudiy/spanner-changestream-service"]
-trust_level = "trusted"
-
-[projects."/Users/zchee/go/src/github.com/gaudiy/gaudiy-go-kit"]
-trust_level = "trusted"
-
-[projects."/Users/zchee/go/src/google.golang.org/adk"]
-trust_level = "trusted"
-
-[projects."/Users/zchee/src/github.com/openai/symphony"]
-trust_level = "trusted"
-
-[projects."/Users/zchee/go/src/github.com/gaudiy/gaudiy-monorepo"]
-trust_level = "trusted"
 
 # instructions = ""
 
@@ -76,9 +58,9 @@ max_threads = 6
 max_depth = 3
 # job_max_runtime_seconds = 1
 
-[agents.go_planner]
-description = "Go architecture and planning specialist."
-config_file = "~/.config/codex/agents/go-planner.toml"
+# [agents.go_planner]
+# description = "Go architecture and planning specialist."
+# config_file = "~/.config/codex/agents/go-planner.toml"
 
 [memories]
 generate_memories = true
@@ -111,6 +93,7 @@ codex_hooks = true
 request_permissions_tool = true
 enable_request_compression = true
 multi_agent = true
+spawn_csv = true
 apps = true
 plugins = true
 image_generation = false
