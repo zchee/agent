@@ -12,6 +12,97 @@
         "/Users/zchee/src"
       ]
     },
+    "gcp-developer-knowledge": {
+      "httpUrl": "https://developerknowledge.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "gaudiy-develop-tokyo"
+      }
+    },
+    "gcp-cloud-run": {
+      "httpUrl": "https://run.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "gaudiy-develop-tokyo"
+      }
+    },
+    "gcp-cloud-logging": {
+      "httpUrl": "https://logging.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "gaudiy-develop-tokyo"
+      }
+    },
+    "gcp-cloud-monitoring": {
+      "httpUrl": "https://monitoring.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "gaudiy-develop-tokyo"
+      }
+    },
+    "gcp-resource-manager": {
+      "httpUrl": "https://cloudresourcemanager.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "gaudiy-develop-tokyo"
+      }
+    },
+    "gcp-spanner": {
+      "httpUrl": "https://spanner.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "gaudiy-develop-tokyo"
+      }
+    },
+    "gcp-vertexai-search": {
+      "httpUrl": "https://discoveryengine.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "gaudiy-develop-tokyo"
+      }
+    },
     "gopls": {
       "command": "gopls",
       "args": [
@@ -19,7 +110,7 @@
       ]
     },
     "pencil": {
-      "command": "/Users/zchee/.vscode-insiders/extensions/highagency.pencildev-0.6.29/out/mcp-server-darwin-arm64",
+      "command": "/Users/zchee/.vscode-insiders/extensions/highagency.pencildev-0.6.30/out/mcp-server-darwin-arm64",
       "args": [
         "--app",
         "visual_studio_code_-_insiders"
@@ -36,8 +127,7 @@
     "retryFetchErrors": true,
     "sessionRetention": {
       "enabled": true,
-      "maxAge": "30d",
-      "warningAcknowledged": true
+      "maxAge": "30d"
     },
     "enableAutoUpdate": false,
     "enableAutoUpdateNotification": false,
@@ -59,7 +149,16 @@
       "hideCWD": false,
       "hideSandboxStatus": false,
       "hideModelInfo": false,
-      "hideContextPercentage": false
+      "hideContextPercentage": false,
+      "items": [
+        "workspace",
+        "git-branch",
+        "sandbox",
+        "model-name",
+        "context-used",
+        "quota",
+        "memory-usage"
+      ]
     },
     "hideFooter": false,
     "showMemoryUsage": true,
@@ -116,7 +215,8 @@
     "useOSC52Paste": true,
     "plan": true,
     "modelSteering": true,
-    "extensionRegistry": true
+    "extensionRegistry": true,
+    "taskTracker": true
   },
   "security": {
     "enablePermanentToolApproval": true,
