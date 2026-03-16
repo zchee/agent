@@ -8,7 +8,7 @@ project_doc_max_bytes = 46080 # default: 32768
 project_doc_fallback_filenames = ["AGENTS.md", "CLAUDE.md", "GEMINI.md"]
 js_repl_node_path = "/opt/homebrew/bin/node"
 zsh_path = "/opt/homebrew/bin/zsh"
-hide_agent_reasoning = false # default
+hide_agent_reasoning = false
 show_raw_agent_reasoning = true
 model_reasoning_effort = "xhigh"
 model_reasoning_summary = "detailed"
@@ -19,12 +19,16 @@ check_for_update_on_startup = false
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
 # forced_login_method = "chatgpt"
+cli_auth_credentials_store = "file"
+mcp_oauth_credentials_store = "file"
 web_search = "live"
 project_root_markers = [".git"]
 suppress_unstable_features_warning = true
 service_tier = "fast"
+approvals_reviewer = "guardian_subagent"
 
-# instructions = ""
+[realtime]
+version = "v2"
 
 # Stop being nice, and it's the best thing
 # - https://www.reddit.com/r/PromptEngineering/comments/1okppqe/comment/nme6p95
@@ -48,7 +52,21 @@ experimental_use_profile = false
 notifications = true
 animations = true
 alternate_screen = "always"
-status_line = ["model-with-reasoning", "fast-mode", "context-remaining", "context-used", "current-dir", "git-branch", "five-hour-limit", "weekly-limit", "context-window-size", "used-tokens", "total-input-tokens", "total-output-tokens", "session-id"]
+status_line = [
+  "model-with-reasoning",
+  "fast-mode",
+  "context-remaining",
+  "context-used",
+  "current-dir",
+  "git-branch",
+  "five-hour-limit",
+  "weekly-limit",
+  "context-window-size",
+  "used-tokens",
+  "total-input-tokens",
+  "total-output-tokens",
+  "session-id",
+]
 
 [tools]
 view_image = true
@@ -56,11 +74,6 @@ view_image = true
 [agents]
 max_threads = 6
 max_depth = 3
-# job_max_runtime_seconds = 1
-
-# [agents.go_planner]
-# description = "Go architecture and planning specialist."
-# config_file = "~/.config/codex/agents/go-planner.toml"
 
 [memories]
 generate_memories = true
@@ -81,23 +94,23 @@ shell_zsh_fork = true
 js_repl = true
 js_repl_tools_only = false
 code_mode = true
-codex_git_commit = true
+codex_git_commit = false
 runtime_metrics = true
 sqlite = true
 memories = true
 child_agents_md = true
 image_detail_original = true
 apply_patch_freeform = true
-request_permissions = true
+exec_permission_approvals = true
 codex_hooks = true
 request_permissions_tool = true
 enable_request_compression = true
 multi_agent = true
-spawn_csv = true
+enable_fanout = true
 apps = true
+tool_suggest = true
 plugins = true
 image_generation = false
-apps_mcp_gateway = true
 skill_mcp_dependency_install = true
 skill_env_var_dependency_prompt = true
 default_mode_request_user_input = true
@@ -105,7 +118,6 @@ guardian_approval = true
 tool_call_mcp_elicitation = true
 personality = true
 artifact = true
-fast_mode = true
 voice_transcription = true
 realtime_conversation = true
 prevent_idle_sleep = true
@@ -155,114 +167,132 @@ model = "google/gemini-3.1-pro-preview-customtools"
 model_provider = "openrouter"
 model = "anthropic/claude-opus-4.6"
 
-# MCP
-
 [mcp_servers.alphaxiv]
-enabled = false
 url = "https://api.alphaxiv.org/mcp/v1"
 
 [mcp_servers.aws-knowledge]
-enabled = false
 url = "https://knowledge-mcp.global.api.aws"
 
 [mcp_servers.aws-documentation]
-enabled = false
 command = "uvx"
 args = ["awslabs.aws-documentation-mcp-server@latest"]
 
-# https://github.com/zchee/mcp-servers/tree/main/apple-docs
 [mcp_servers.apple-docs]
-enabled = false
 command = "uv"
 args = ["run", "--directory=/Users/zchee/go/src/github.com/zchee/mcp-servers/apple-docs", "apple-docs"]
 
 [mcp_servers.filesystem]
-enabled = true
 command = "rust-mcp-filesystem"
 args = ["--allow-write", "/Users/zchee", "/opt/local"]
 
 [mcp_servers.gemini-google-search]
-enabled = true
-command = "npx"
-args = ["-y", "mcp-gemini-google-search@latest"]
-env_vars = ["GOOGLE_API_KEY"]
-env = { "GEMINI_API_KEY" = "GOOGLE_API_KEY" }
-
-# TODO(zchee): investigate exec_policy
-# [mcp_servers.execshell]
-# enabled = true
-# command = "node"
-# args = ["/opt/local/var/bun/install/global/node_modules/@openai/codex-shell-tool-mcp/bin/mcp-server.js"]
+command = "mcp-gemini-google-search"
+# command = "npx"
+# args = ["-y", "mcp-gemini-google-search@latest"]
+[mcp_servers.gemini-google-search.env]
+GEMINI_PROVIDER = "vertex"
+VERTEX_PROJECT_ID = "gaudiy-ai"
+VERTEX_LOCATION = "global"
+GEMINI_MODEL = "gemini-3.1-pro-preview"
 
 [mcp_servers.context7]
-enabled = true
 url = "https://mcp.context7.com/mcp"
-env_http_headers = { "CONTEXT7_API_KEY" = "CONTEXT7_API_KEY" }
 
-# https://github.com/zchee/mcp-sequential-thinking
+[mcp_servers.context7.env_http_headers]
+CONTEXT7_API_KEY = "CONTEXT7_API_KEY"
+
 [mcp_servers.sequential-thinking]
-enabled = true
 command = "mcp-sequential-thinking"
 
 [mcp_servers.stitch]
-enabled = false
 command = "npx"
 args = ["-y", "@_davideast/stitch-mcp", "proxy"]
-
-# https://developers.google.com/knowledge/mcp
-[mcp_servers.google-developer-knowledge-dev]
 enabled = false
-url = "https://developerknowledge.googleapis.com/mcp"
-env_http_headers = { "X-Goog-Api-Key" = "GAUDIY_GCP_DEVELOPERKNOWLEDGE_API_KEY_DEV" }
 
-[mcp_servers.google-developer-knowledge-test]
-enabled = false
-url = "https://developerknowledge.googleapis.com/mcp"
-env_http_headers = { "X-Goog-Api-Key" = "GAUDIY_GCP_DEVELOPERKNOWLEDGE_API_KEY_TEST" }
+[mcp_servers.gcp-cloud-run]
+command = "npx"
+args = ["-y", "@google-cloud/cloud-run-mcp@latest"]
+startup_timeout_sec = 20.0
 
-[mcp_servers.google-developer-knowledge-prod]
-enabled = false
-url = "https://developerknowledge.googleapis.com/mcp"
-env_http_headers = { "X-Goog-Api-Key" = "GAUDIY_GCP_DEVELOPERKNOWLEDGE_API_KEY_PROD" }
+[mcp_servers.gcp-cloud-run.env]
+GOOGLE_APPLICATION_CREDENTIALS = "/Users/zchee/.config/gcloud/application_default-credentials.json"
 
-## LSP
+[mcp_servers.google-developer-knowledge]
+url = "https://developerknowledge.googleapis.com/mcp"
+[mcp_servers.google-developer-knowledge.env_http_headers]
+X-Goog-Api-Key = "GAUDIY_GCP_DEVELOPERKNOWLEDGE_API_KEY"
+
+[mcp_servers.datadog]
+url = "https://mcp.us5.datadoghq.com/api/unstable/mcp-server/mcp"
+
 [mcp_servers.bash-language-server]
-enabled = false
 command = "mcp-language-server"
-args = ["--workspace", ".", "--lsp", "bash-language-server", "--", "start"]
+args = [
+  "--workspace",
+  ".",
+  "--lsp",
+  "bash-language-server",
+  "--",
+  "start",
+]
 
 [mcp_servers.gopls]
-enabled = true
 command = "gopls"
 args = ["mcp"]
+startup_timeout_sec = 20.0
 
 [mcp_servers.basedpyright]
-enabled = false
 command = "mcp-language-server"
-args = ["--workspace", ".", "--lsp", "basedpyright-langserver", "--", "--stdio"]
+args = [
+  "--workspace",
+  ".",
+  "--lsp",
+  "basedpyright-langserver",
+  "--",
+  "--stdio",
+]
 
-[mcp_servers.tsgo]
-enabled = false
+[mcp_servers.ts_ls]
 command = "mcp-language-server"
-args = ["--workspace", ".", "--lsp", "tsgo", "--", "--lsp", "-stdio"]
+args = [
+  "--workspace",
+  ".",
+  "--lsp",
+  "typescript-language-server",
+  "--",
+  "--stdio",
+]
 
 [mcp_servers.lua_ls]
-enabled = false
 command = "mcp-language-server"
-args = ["--workspace", ".", "--lsp", "lua-language-server"]
+args = [
+  "--workspace",
+  ".",
+  "--lsp",
+  "lua-language-server",
+]
 
 [mcp_servers.neocmakelsp]
-enabled = false
 command = "mcp-language-server"
-args = ["--workspace", ".", "--lsp", "neocmakelsp", "--", "stdio"]
+args = [
+  "--workspace",
+  ".",
+  "--lsp",
+  "neocmakelsp",
+  "--",
+  "stdio",
+]
 
 [mcp_servers.zls]
-enabled = false
 command = "mcp-language-server"
-args = ["--workspace", ".", "--lsp", "zls"]
+args = [
+  "--workspace",
+  ".",
+  "--lsp",
+  "zls",
+]
 
 [mcp_servers.clangd]
-enabled = false
 command = "mcp-language-server"
 args = [
   "--workspace",
