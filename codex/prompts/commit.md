@@ -1,4 +1,4 @@
 ---
 description: git commit in multiple
 ---
-Please commit current changes with a meaningful message. Commit related changes in multiple commits. $ARGUMENTS
+Please commit current changes with a meaningful message. Commit related changes in multiple commits.
