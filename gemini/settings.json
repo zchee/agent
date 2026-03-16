@@ -148,18 +148,12 @@
     "devtools": true,
     "enableNotifications": true
   },
-  "output": {
-    "format": "text"
-  },
-  "hooksConfig": {
-    "enabled": true
-  },
   "ui": {
     "theme": "GitHub",
     "hideWindowTitle": false,
     "showStatusInTitle": true,
     "hideTips": false,
-    "hideBanner": true,
+    "hideBanner": false,
     "hideContextSummary": false,
     "footer": {
       "hideCWD": false,
@@ -188,11 +182,8 @@
     "incrementalRendering": true,
     "inlineThinkingMode": "full"
   },
-  "ide": {
-    "enabled": true
-  },
-  "privacy": {
-    "usageStatisticsEnabled": false
+  "hooksConfig": {
+    "enabled": false
   },
   "context": {
     "fileName": [
@@ -218,6 +209,13 @@
       "inactivityTimeout": 300
     }
   },
+  "telemetry": {
+    "enabled": true,
+    "target": "local",
+    "otlpEndpoint": "https://ai-tool-otlp-collector.musubi-me.app/v1/otlp/$MUSUBI_API_KEY",
+    "otlpProtocol": "http",
+    "logPrompts": false
+  },
   "useWriteTodos": true,
   "advanced": {
     "autoConfigureMemory": true,
@@ -240,13 +238,12 @@
     "extensionRegistry": true,
     "taskTracker": true
   },
+  "model": {
+    "name": "gemini-3.1-pro-preview"
+  },
   "security": {
-    "enablePermanentToolApproval": true,
     "auth": {
       "selectedType": "vertex-ai"
     }
-  },
-  "model": {
-    "name": "gemini-3.1-pro-preview"
   }
 }
