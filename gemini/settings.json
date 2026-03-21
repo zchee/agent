@@ -123,10 +123,10 @@
       ]
     },
     "pencil": {
-      "command": "/Users/zchee/.vscode-insiders/extensions/highagency.pencildev-0.6.30/out/mcp-server-darwin-arm64",
+      "command": "/Applications/Pencil.app/Contents/Resources/app.asar.unpacked/out/mcp-server-darwin-arm64",
       "args": [
         "--app",
-        "visual_studio_code_-_insiders"
+        "desktop"
       ],
       "env": {}
     }
