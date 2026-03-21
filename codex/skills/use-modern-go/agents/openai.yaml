@@ -1,0 +1,4 @@
+interface:
+  display_name: "Modern Go"
+  short_description: "Apply version-aware modern Go idioms"
+  default_prompt: "Use $use-modern-go to detect the target module Go version, then apply the newest safe Go idioms and standard-library features supported by that version without introducing newer-version requirements."
