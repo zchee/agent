@@ -4,7 +4,7 @@ model = "gpt-5.4"
 review_model = "gpt-5.4"
 model_context_window = 1000000
 model_auto_compact_token_limit = 900000
-project_doc_max_bytes = 46080 # default: 32768
+project_doc_max_bytes = 46080
 project_doc_fallback_filenames = ["AGENTS.md", "CLAUDE.md", "GEMINI.md"]
 js_repl_node_path = "/opt/homebrew/bin/node"
 zsh_path = "/opt/homebrew/bin/zsh"
@@ -18,7 +18,6 @@ model_supports_reasoning_summaries = true
 check_for_update_on_startup = false
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
-# forced_login_method = "chatgpt"
 cli_auth_credentials_store = "file"
 mcp_oauth_credentials_store = "file"
 web_search = "live"
@@ -30,22 +29,8 @@ approvals_reviewer = "guardian_subagent"
 [realtime]
 version = "v2"
 
-# Stop being nice, and it's the best thing
-# - https://www.reddit.com/r/PromptEngineering/comments/1okppqe/comment/nme6p95
-# developer_instructions = """From now on, act as my high-level strategic collaborator — not a cheerleader, not a tyrant. Challenge my assumptions and thinking when needed, but always ground your feedback in real-world context, logic, and practicality. Speak with clarity and candor, but with emotional intelligence — direct, not harsh.
-#
-# When you disagree, explain why and offer a better-reasoned alternative or a sharper question that moves us forward.
-#
-# Focus on synthesis and impact — help me see the forest and the path through it. Every response should balance: • Truth — objective analysis without sugar-coating. • Nuance — awareness of constraints, trade-offs, and context. • Action — a prioritized next step or strategic recommendation.
-#
-# Treat me as an equal partner in the process. The goal is not to win arguments but to produce clarity, traction, and progress."""
-
-# [audio] 
-# microphone = ""
-# speaker = ""
-
 [shell_environment_policy]
-inherit = "all" # inherit can be "all" (default), "core", or "none"
+inherit = "all"
 experimental_use_profile = false
 
 [tui]
@@ -85,8 +70,6 @@ min_rollout_idle_hours = 24
 extract_model = "gpt-5.3-codex-spark"
 consolidation_model = "gpt-5.4"
 
-# [skills]
-
 [features]
 undo = true
 unified_exec = true
@@ -94,7 +77,7 @@ shell_zsh_fork = true
 js_repl = true
 js_repl_tools_only = false
 code_mode = true
-codex_git_commit = false
+codex_git_commit = true
 runtime_metrics = true
 sqlite = true
 memories = true
@@ -106,6 +89,7 @@ codex_hooks = true
 request_permissions_tool = true
 enable_request_compression = true
 multi_agent = true
+multi_agent_v2 = true
 enable_fanout = true
 apps = true
 tool_suggest = true
@@ -120,9 +104,8 @@ personality = true
 artifact = true
 voice_transcription = true
 realtime_conversation = true
+tui_app_server = false
 prevent_idle_sleep = true
-responses_websockets = true
-responses_websockets_v2 = true
 
 [ghost_snapshot]
 disable_warnings = true
@@ -135,25 +118,25 @@ enabled = false
 
 [notice]
 hide_full_access_warning = true
+hide_gpt-5.1-codex-max_migration_prompt = true
 hide_gpt5_1_migration_prompt = true
 hide_rate_limit_model_nudge = false
 hide_world_writable_warning = false
-
-# Model providers / Profiles
+model_migrations = { "gpt-5.3-codex" = "gpt-5.4" }
 
 [model_providers.xai]
 name = "xAI"
 base_url = "https://api.x.ai/v1"
 env_key = "XAI_API_KEY"
 
-[profiles.xai]
-model_provider = "xai"
-model = "grok-4-1-fast-reasoning"
-
 [model_providers.openrouter]
 name = "OpenRouter"
 base_url = "https://openrouter.ai/api/v1"
 env_key = "OPENROUTER_API_KEY"
+
+[profiles.xai]
+model_provider = "xai"
+model = "grok-4.20-multi-agent-beta-latest"
 
 [profiles.openai]
 model_provider = "openrouter"
@@ -168,18 +151,28 @@ model_provider = "openrouter"
 model = "anthropic/claude-opus-4.6"
 
 [mcp_servers.alphaxiv]
+enabled = false
 url = "https://api.alphaxiv.org/mcp/v1"
 
 [mcp_servers.aws-knowledge]
+enabled = false
 url = "https://knowledge-mcp.global.api.aws"
 
 [mcp_servers.aws-documentation]
+enabled = false
 command = "uvx"
-args = ["awslabs.aws-documentation-mcp-server@latest"]
+args = [
+  "awslabs.aws-documentation-mcp-server@latest",
+]
 
 [mcp_servers.apple-docs]
+enabled = false
 command = "uv"
-args = ["run", "--directory=/Users/zchee/go/src/github.com/zchee/mcp-servers/apple-docs", "apple-docs"]
+args = [
+  "run",
+  "--directory=/Users/zchee/go/src/github.com/zchee/mcp-servers/apple-docs",
+  "apple-docs",
+]
 
 [mcp_servers.filesystem]
 command = "rust-mcp-filesystem"
@@ -187,8 +180,7 @@ args = ["--allow-write", "/Users/zchee", "/opt/local"]
 
 [mcp_servers.gemini-google-search]
 command = "mcp-gemini-google-search"
-# command = "npx"
-# args = ["-y", "mcp-gemini-google-search@latest"]
+
 [mcp_servers.gemini-google-search.env]
 GEMINI_PROVIDER = "vertex"
 VERTEX_PROJECT_ID = "gaudiy-ai"
@@ -204,28 +196,31 @@ CONTEXT7_API_KEY = "CONTEXT7_API_KEY"
 [mcp_servers.sequential-thinking]
 command = "mcp-sequential-thinking"
 
-[mcp_servers.stitch]
-command = "npx"
-args = ["-y", "@_davideast/stitch-mcp", "proxy"]
-enabled = false
-
-[mcp_servers.gcp-cloud-run]
-command = "npx"
-args = ["-y", "@google-cloud/cloud-run-mcp@latest"]
-startup_timeout_sec = 20.0
-
-[mcp_servers.gcp-cloud-run.env]
-GOOGLE_APPLICATION_CREDENTIALS = "/Users/zchee/.config/gcloud/application_default-credentials.json"
-
 [mcp_servers.google-developer-knowledge]
 url = "https://developerknowledge.googleapis.com/mcp"
+
 [mcp_servers.google-developer-knowledge.env_http_headers]
-X-Goog-Api-Key = "GAUDIY_GCP_DEVELOPERKNOWLEDGE_API_KEY"
+X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVERS_API_KEY"
+
+[mcp_servers.gcp-stitch]
+enabled = false
+url = "https://stitch.googleapis.com/mcp"
+bearer_token_env_var = "GAUDIY_GOOGLE_CLOUD_MCP_SERVERS_SNITCH_API_KEY"
+
+[mcp_servers.gcp-stitch.http_headers]
+X-Goog-User-Project = "gaudiy-ai"
+
+[mcp_servers.gcp-cloud-run]
+enabled = false
+url = "https://run.googleapis.com/mcp"
+bearer_token_env_var = "GAUDIY_GOOGLE_CLOUD_MCP_SERVERS_API_KEY"
 
 [mcp_servers.datadog]
+enabled = false
 url = "https://mcp.us5.datadoghq.com/api/unstable/mcp-server/mcp"
 
 [mcp_servers.bash-language-server]
+enabled = false
 command = "mcp-language-server"
 args = [
   "--workspace",
@@ -237,11 +232,13 @@ args = [
 ]
 
 [mcp_servers.gopls]
+enabled = true
+startup_timeout_sec = 20
 command = "gopls"
 args = ["mcp"]
-startup_timeout_sec = 20.0
 
 [mcp_servers.basedpyright]
+enabled = true
 command = "mcp-language-server"
 args = [
   "--workspace",
@@ -253,6 +250,8 @@ args = [
 ]
 
 [mcp_servers.ts_ls]
+enabled = true
+startup_timeout_sec = 20
 command = "mcp-language-server"
 args = [
   "--workspace",
@@ -264,6 +263,7 @@ args = [
 ]
 
 [mcp_servers.lua_ls]
+enabled = false
 command = "mcp-language-server"
 args = [
   "--workspace",
@@ -272,18 +272,20 @@ args = [
   "lua-language-server",
 ]
 
-[mcp_servers.neocmakelsp]
+[mcp_servers.protols]
+enabled = true
 command = "mcp-language-server"
 args = [
   "--workspace",
   ".",
   "--lsp",
-  "neocmakelsp",
+  "protols",
   "--",
-  "stdio",
+  "--include-paths=/Users/zchee/src/github.com/googleapis/googleapis,/Users/zchee/src/github.com/bufbuild/protovalidate/proto/protovalidate",
 ]
 
 [mcp_servers.zls]
+enabled = false
 command = "mcp-language-server"
 args = [
   "--workspace",
@@ -293,6 +295,7 @@ args = [
 ]
 
 [mcp_servers.clangd]
+enabled = false
 command = "mcp-language-server"
 args = [
   "--workspace",
@@ -324,4 +327,12 @@ args = [
   "--pch-storage=memory",
   "--use-dirty-headers",
   "--input-style=standard",
+]
+
+[mcp_servers.pencil]
+enabled = true
+command = "/Applications/Pencil.app/Contents/Resources/app.asar.unpacked/out/mcp-server-darwin-arm64"
+args = [
+  "--app",
+  "desktop",
 ]
