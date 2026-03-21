@@ -106,8 +106,15 @@ If any score is below 0.9, refine the solution before finalizing.
 
 ## SHELL
 
-- Use `rg --threads=16` for ripgrep commands.
+### `git`
+
+- Write git commit message titles within 72 characters.
+- Wrap each git commit message body line at 72 characters.
 - For commits, use: `git commit --gpg-sign`.
+
+### `rg`
+
+- Use `rg --threads=16` for ripgrep commands.
 
 ## MCP SERVERS
 
@@ -158,7 +165,7 @@ For complex features or significant refactors, use an ExecPlan from design throu
 
 <language_rules_go>
 
-@./instructions/Go.md
+@~/.config/codex/instructions/Go.md
 
 </language_rules_go>
 <!-- ## Python programming language -->
@@ -174,4 +181,3 @@ For complex features or significant refactors, use an ExecPlan from design throu
 <!-- @./instructions/Zsh.md -->
 
 </language_rules>
-
