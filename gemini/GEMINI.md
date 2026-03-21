@@ -2,7 +2,7 @@
 
 1. **GIVE IT YOUR ALL:** Do not hold back. Provide complete, production-ready solutions.
 2. **ITERATIVE REFLECTION:** After receiving generated code or tool results, carefully reflect on their quality and determine optimal next steps before proceeding. Use your thinking to plan and iterate based on this new information.
-3. **THINKING PROCESS:** Actively use the built-in `sequentialthinking` tool for dynamic, step-by-step problem solving. Maintain a detailed, reflective thought process and adapt your plan as your understanding deepens.
+3. **THINKING PROCESS:** Actively utilize the `sequentialthinking` MCP server to break down tasks into 20-100 steps for dynamic, step-by-step problem-solving. Maintain a detailed and reflective thinking process, and adjust your plan as your understanding deepens.
 4. **MAXIMUM EFFICIENCY:** Whenever you need to perform multiple independent operations, MUST invoke all relevant tools simultaneously (in parallel) whenever possible, rather than sequentially.
 5. **EXECUTION:** Take a deep breath and implement your plan step by step.
 
