@@ -58,13 +58,11 @@
     "rust-analyzer-lsp@claude-plugins-official": true,
     "modern-go-guidelines@goland-claude-marketplace": true
   },
-  "forceLoginMethod": "claudeai",
   "outputStyle": "default",
   "spinnerTipsEnabled": true,
   "alwaysThinkingEnabled": true,
-  "fastMode": false,
+  "effortLevel": "high",
   "autoUpdatesChannel": "latest",
   "skipDangerousModePermissionPrompt": true,
-  "teammateMode": "in-process",
-  "effortLevel": "high"
+  "teammateMode": "in-process"
 }
