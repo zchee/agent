@@ -1,0 +1,4 @@
+interface:
+  display_name: "Perf Plan"
+  short_description: "Plan and execute major perf work"
+  default_prompt: "Use $perf-plan to resolve scope and focus, investigate bottlenecks with the relevant LSP, and maintain an ExecPlan for performance work."

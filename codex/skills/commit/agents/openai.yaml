@@ -1,0 +1,4 @@
+interface:
+  display_name: "Commit"
+  short_description: "Split changes into clean commits"
+  default_prompt: "Use $commit to inspect the current git worktree, group related changes, and create clean commit(s) with meaningful messages."

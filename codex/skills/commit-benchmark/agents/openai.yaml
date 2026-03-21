@@ -1,0 +1,4 @@
+interface:
+  display_name: "Commit + Benchmarks"
+  short_description: "Commit changes with benchmark evidence"
+  default_prompt: "Use $commit-benchmark to split related changes into commit(s), gather comparable benchmark evidence, and include the raw comparison in the relevant commit message."

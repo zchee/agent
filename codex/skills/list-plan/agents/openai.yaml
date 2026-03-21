@@ -1,0 +1,4 @@
+interface:
+  display_name: "List Plan"
+  short_description: "List remaining work as checkboxes"
+  default_prompt: "Use $list-plan to summarize the current remaining work as a prioritized checkbox list in the current request language."
