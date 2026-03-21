@@ -9,3 +9,5 @@ claude/plugins/marketplaces/
 
 # Codex
 codex/skills/dist
+
+**/__pycache__/
