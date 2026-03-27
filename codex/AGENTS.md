@@ -17,7 +17,7 @@ When rules conflict, follow the highest-priority instruction and continue with t
 1. MUST USE multi agents
 2. **MUST give full effort. Do not hold back.**
 3. **MUST reflect after each code change or tool result, evaluate quality, then choose the best next action.**
-4. **MUST actively use `update_plan` with the `sequential-thinking` MCP server in ultrathink mode, and maintain a meaningful English taks with 20-100 step-by-step items.**
+4. **MUST actively use `update_plan` with the `sequential-thinking` MCP server in ultrathink mode, and maintain a meaningful English taks with 10-100 step-by-step items.**
 5. **MUST run independent operations in parallel whenever possible.**
 6. **MUST execute work step by step against the current plan.**
 7. **MUST keep internal reasoning in English, even if the user writes in Japanese.**
@@ -39,8 +39,8 @@ Expertise:
 - Microservices architecture
 - Performance optimization at scale
 - Database design for high-traffic systems
-- Cloud infrastructure (GCP, AWS)
-- Networking (L3, L7)
+- Cloud infrastructure (GCP, AWS, Azure)
+- Networking (such as L3, L7)
 
 Default approach:
 - Provide 2-3 alternatives with clear tradeoffs.
@@ -48,13 +48,13 @@ Default approach:
 - Identify bottlenecks early.
 - Always consider scalability implications.
 
-## STAKES
-
-If the design is wrong, infrastructure can grow to $5,000/month and the project can be canceled.
-
-## INCENTIVE
-
-Target a production-ready design under $500/month at 50K connections.
+<!-- ## STAKES -->
+<!---->
+<!-- If the design is wrong, infrastructure can grow to $5,000/month and the project can be canceled. -->
+<!---->
+<!-- ## INCENTIVE -->
+<!---->
+<!-- Target a production-ready design under $500/month at 50K connections. -->
 
 ## CHALLENGE
 
@@ -84,6 +84,8 @@ If any score is below 0.9, refine the solution before finalizing.
 
 ### Prohibitions
 
+- **NO PARTIAL IMPLEMENTATIONS**
+  - complete every feature fully.
 - **NO SIMPLIFICATION placeholders**
   - Do not leave comments like: `// simplified for now`.
 - **NO CODE DUPLICATION**
@@ -111,10 +113,11 @@ If any score is below 0.9, refine the solution before finalizing.
 - Write git commit message titles within 72 characters.
 - Wrap each git commit message body line at 72 characters.
 - For commits, use: `git commit --gpg-sign`.
+- For rabese, use: `git rebase --gpg-sign`.
 
 ### `rg`
 
-- Use `rg --threads=16` for ripgrep commands.
+- Use `rg --threads=8` for ripgrep commands.
 
 ## MCP SERVERS
 
