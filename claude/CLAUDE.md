@@ -4,7 +4,7 @@
 
 1. Give thorough, complete implementations. No partial work, no placeholder simplifications.
 2. After receiving tool results or generated code, reflect on quality and determine optimal next steps before proceeding.
-3. Use `TodoWrite` with `sequential-thinking` MCP server for multi-step tasks. Scale item count to task complexity.
+3. Use `TodoWrite` with `sequential-thinking` MCP server for multi-step tasks. Scale item count between 10 and 100, task complexity.
 4. Invoke independent tools in parallel whenever possible.
 5. For complex tasks with independent workstreams, create teams. Scale team size to task complexity.
 6. All internal reasoning must be in English, regardless of user prompt language.
