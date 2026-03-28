@@ -36,6 +36,11 @@ Use this skill to modernize Go code without overshooting the Go version declared
 
 ## Version Selection Notes
 
+```bash
+grep -rh "^go " --include="go.mod" . 2>/dev/null | cut -d' ' -f2 | sort | uniq -c | sort -nr | head -1 | xargs | cut -d' ' -f2 | grep . || echo unknown
+
+```
+
 - Treat the `go` directive as the compatibility floor.
 - Treat `toolchain` as a local tooling hint, not automatic permission to use language features newer than the `go` directive.
 - If repository docs or CI enforce an older minimum version than the local toolchain, honor the older minimum.
