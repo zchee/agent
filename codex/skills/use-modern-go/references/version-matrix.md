@@ -137,6 +137,7 @@ for k := range maps.Keys(m) {
 ### Testing
 
 - Prefer `t.Context()` over creating a fresh background context in tests.
+- If the repository already enables `GOEXPERIMENT=synctest`, prefer `testing/synctest` for concurrent or asynchronous tests in Go 1.24 as well. Use the experimental `synctest.Run` plus `synctest.Wait` API shape, and do not introduce that experiment unless the repository already opted in or the user explicitly asked to raise the requirement.
 
 ```go
 func TestFoo(t *testing.T) {
@@ -181,7 +182,17 @@ for part := range strings.SplitSeq(s, ",") {
 
 ## Go 1.25+
 
+- Prefer `testing/synctest` for concurrent or asynchronous tests instead of real-time sleeps, ad hoc polling, or fragile synchronization.
 - Prefer `wg.Go(fn)` over `wg.Add(1)` plus a goroutine wrapper when using `sync.WaitGroup`.
+
+```go
+func TestAsync(t *testing.T) {
+	synctest.Test(t, func(t *testing.T) {
+		go doAsyncWork()
+		synctest.Wait()
+	})
+}
+```
 
 ```go
 var wg sync.WaitGroup
