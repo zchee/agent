@@ -1,11 +1,9 @@
-#:schema https://raw.githubusercontent.com/openai/codex/refs/heads/main/codex-rs/core/config.schema.json
-
 model = "gpt-5.4"
 review_model = "gpt-5.4"
 model_context_window = 1000000
 model_auto_compact_token_limit = 900000
 project_doc_max_bytes = 46080
-project_doc_fallback_filenames = ["AGENTS.md", "CLAUDE.md", "GEMINI.md"]
+project_doc_fallback_filenames = [ "AGENTS.md", "CLAUDE.md", "GEMINI.md" ]
 js_repl_node_path = "/opt/homebrew/bin/node"
 zsh_path = "/opt/homebrew/bin/zsh"
 hide_agent_reasoning = false
@@ -16,14 +14,14 @@ plan_mode_reasoning_effort = "xhigh"
 model_verbosity = "high"
 model_supports_reasoning_summaries = true
 check_for_update_on_startup = false
-approval_policy = "never"
-sandbox_mode = "danger-full-access"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
 cli_auth_credentials_store = "file"
 mcp_oauth_credentials_store = "file"
 web_search = "live"
-project_root_markers = [".git"]
+project_root_markers = [ ".git" ]
 suppress_unstable_features_warning = true
-service_tier = "fast"
+# service_tier = "fast"
 approvals_reviewer = "guardian_subagent"
 
 [realtime]
@@ -37,21 +35,7 @@ experimental_use_profile = false
 notifications = true
 animations = true
 alternate_screen = "always"
-status_line = [
-  "model-with-reasoning",
-  "fast-mode",
-  "context-remaining",
-  "context-used",
-  "current-dir",
-  "git-branch",
-  "five-hour-limit",
-  "weekly-limit",
-  "context-window-size",
-  "used-tokens",
-  "total-input-tokens",
-  "total-output-tokens",
-  "session-id",
-]
+status_line = [ "model-with-reasoning", "context-remaining", "context-used", "current-dir", "git-branch", "five-hour-limit", "weekly-limit", "context-window-size", "used-tokens", "total-input-tokens", "total-output-tokens", "session-id" ]
 
 [tools]
 view_image = true
@@ -87,24 +71,20 @@ apply_patch_freeform = true
 exec_permission_approvals = true
 codex_hooks = true
 request_permissions_tool = true
-enable_request_compression = true
-multi_agent = true
 multi_agent_v2 = true
 enable_fanout = true
 apps = true
+tool_search = true
 tool_suggest = true
 plugins = true
 image_generation = false
-skill_mcp_dependency_install = true
 skill_env_var_dependency_prompt = true
 default_mode_request_user_input = true
 guardian_approval = true
-tool_call_mcp_elicitation = true
-personality = true
-artifact = true
+# artifact = true
 voice_transcription = true
 realtime_conversation = true
-tui_app_server = false
+tui_app_server = true
 prevent_idle_sleep = true
 
 [ghost_snapshot]
@@ -118,25 +98,34 @@ enabled = false
 
 [notice]
 hide_full_access_warning = true
-hide_gpt-5.1-codex-max_migration_prompt = true
 hide_gpt5_1_migration_prompt = true
 hide_rate_limit_model_nudge = false
 hide_world_writable_warning = false
-model_migrations = { "gpt-5.3-codex" = "gpt-5.4" }
+
+[notice.hide_gpt-5]
+1-codex-max_migration_prompt = true
+
+[notice.model_migrations]
+"gpt-5.3-codex" = "gpt-5.4"
 
 [model_providers.xai]
 name = "xAI"
 base_url = "https://api.x.ai/v1"
 env_key = "XAI_API_KEY"
 
+[profiles.xai]
+model_provider = "xai"
+model = "grok-4.20-multi-agent-beta-latest"
+
 [model_providers.openrouter]
 name = "OpenRouter"
 base_url = "https://openrouter.ai/api/v1"
 env_key = "OPENROUTER_API_KEY"
+wire_api = "responses"
 
-[profiles.xai]
-model_provider = "xai"
-model = "grok-4.20-multi-agent-beta-latest"
+[profiles.openrouter]
+model_provider = "openrouter"
+model = "minimax/minimax-m2.7"
 
 [profiles.openai]
 model_provider = "openrouter"
@@ -161,22 +150,21 @@ url = "https://knowledge-mcp.global.api.aws"
 [mcp_servers.aws-documentation]
 enabled = false
 command = "uvx"
-args = [
-  "awslabs.aws-documentation-mcp-server@latest",
-]
+args = [ "awslabs.aws-documentation-mcp-server@latest" ]
 
 [mcp_servers.apple-docs]
 enabled = false
 command = "uv"
-args = [
-  "run",
-  "--directory=/Users/zchee/go/src/github.com/zchee/mcp-servers/apple-docs",
-  "apple-docs",
-]
+args = [ "run", "--directory=/Users/zchee/go/src/github.com/zchee/mcp-servers/apple-docs", "apple-docs" ]
 
 [mcp_servers.filesystem]
+command = "npx"
+args = [ "-y", "@modelcontextprotocol/server-filesystem@latest", "/Users/zchee/go", "/Users/zchee/src", "/opt/local" ]
+
+[mcp_servers.rust-mcp-filesystem]
+enabled = false
 command = "rust-mcp-filesystem"
-args = ["--allow-write", "/Users/zchee", "/opt/local"]
+args = [ "--allow-write", "/Users/zchee/go", "/Users/zchee/src", "/opt/local" ]
 
 [mcp_servers.gemini-google-search]
 command = "mcp-gemini-google-search"
@@ -185,30 +173,24 @@ command = "mcp-gemini-google-search"
 GEMINI_PROVIDER = "vertex"
 VERTEX_PROJECT_ID = "gaudiy-ai"
 VERTEX_LOCATION = "global"
-GEMINI_MODEL = "gemini-3.1-pro-preview"
+GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
 
 [mcp_servers.context7]
 url = "https://mcp.context7.com/mcp"
-
-[mcp_servers.context7.env_http_headers]
-CONTEXT7_API_KEY = "CONTEXT7_API_KEY"
+env_http_headers = { CONTEXT7_API_KEY = "CONTEXT7_API_KEY" }
 
 [mcp_servers.sequential-thinking]
 command = "mcp-sequential-thinking"
 
 [mcp_servers.google-developer-knowledge]
 url = "https://developerknowledge.googleapis.com/mcp"
-
-[mcp_servers.google-developer-knowledge.env_http_headers]
-X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVERS_API_KEY"
+env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVERS_API_KEY" }
 
 [mcp_servers.gcp-stitch]
 enabled = false
 url = "https://stitch.googleapis.com/mcp"
 bearer_token_env_var = "GAUDIY_GOOGLE_CLOUD_MCP_SERVERS_SNITCH_API_KEY"
-
-[mcp_servers.gcp-stitch.http_headers]
-X-Goog-User-Project = "gaudiy-ai"
+http_headers = { X-Goog-User-Project = "gaudiy-ai" }
 
 [mcp_servers.gcp-cloud-run]
 enabled = false
@@ -219,120 +201,55 @@ bearer_token_env_var = "GAUDIY_GOOGLE_CLOUD_MCP_SERVERS_API_KEY"
 enabled = false
 url = "https://mcp.us5.datadoghq.com/api/unstable/mcp-server/mcp"
 
+[mcp_servers.pencil]
+enabled = false
+command = "/Users/zchee/.vscode-insiders/extensions/highagency.pencildev-0.6.35/out/mcp-server-darwin-arm64"
+args = [ "--app", "desktop" ]
+
 [mcp_servers.bash-language-server]
 enabled = false
 command = "mcp-language-server"
-args = [
-  "--workspace",
-  ".",
-  "--lsp",
-  "bash-language-server",
-  "--",
-  "start",
-]
+args = [ "--workspace", ".", "--lsp", "bash-language-server", "--", "start" ]
+startup_timeout_sec = 20
 
 [mcp_servers.gopls]
-enabled = true
-startup_timeout_sec = 20
+enabled = false
 command = "gopls"
-args = ["mcp"]
+args = [ "mcp" ]
+startup_timeout_sec = 20
 
 [mcp_servers.basedpyright]
-enabled = true
+enabled = false
 command = "mcp-language-server"
-args = [
-  "--workspace",
-  ".",
-  "--lsp",
-  "basedpyright-langserver",
-  "--",
-  "--stdio",
-]
+args = [ "--workspace", ".", "--lsp", "basedpyright-langserver", "--", "--stdio" ]
+startup_timeout_sec = 20
 
 [mcp_servers.ts_ls]
-enabled = true
-startup_timeout_sec = 20
+enabled = false
 command = "mcp-language-server"
-args = [
-  "--workspace",
-  ".",
-  "--lsp",
-  "typescript-language-server",
-  "--",
-  "--stdio",
-]
+args = [ "--workspace", ".", "--lsp", "typescript-language-server", "--", "--stdio" ]
+startup_timeout_sec = 20
 
 [mcp_servers.lua_ls]
 enabled = false
 command = "mcp-language-server"
-args = [
-  "--workspace",
-  ".",
-  "--lsp",
-  "lua-language-server",
-]
+args = [ "--workspace", ".", "--lsp", "lua-language-server" ]
+startup_timeout_sec = 20
 
 [mcp_servers.protols]
-enabled = true
+enabled = false
 command = "mcp-language-server"
-args = [
-  "--workspace",
-  ".",
-  "--lsp",
-  "protols",
-  "--",
-  "--include-paths=/Users/zchee/src/github.com/googleapis/googleapis,/Users/zchee/src/github.com/bufbuild/protovalidate/proto/protovalidate",
-]
+args = [ "--workspace", ".", "--lsp", "protols", "--", "--include-paths=/Users/zchee/src/github.com/googleapis/googleapis,/Users/zchee/src/github.com/bufbuild/protovalidate/proto/protovalidate" ]
+startup_timeout_sec = 20
 
 [mcp_servers.zls]
 enabled = false
 command = "mcp-language-server"
-args = [
-  "--workspace",
-  ".",
-  "--lsp",
-  "zls",
-]
+args = [ "--workspace", ".", "--lsp", "zls" ]
+startup_timeout_sec = 20
 
 [mcp_servers.clangd]
 enabled = false
 command = "mcp-language-server"
-args = [
-  "--workspace",
-  ".",
-  "--lsp",
-  "/opt/llvm/clangd/bin/clangd",
-  "--",
-  "--background-index",
-  "--background-index-priority=normal",
-  "--all-scopes-completion",
-  "--background-index",
-  "--background-index-priority=normal",
-  "--clang-tidy",
-  "--completion-parse=auto",
-  "--completion-style=detailed",
-  "--experimental-modules-support",
-  "--function-arg-placeholders=1",
-  "--header-insertion=iwyu",
-  "--header-insertion-decorators",
-  "--import-insertions",
-  "--include-ineligible-results",
-  "--limit-references=0",
-  "--limit-results=0",
-  "--ranking-model=heuristics",
-  "--rename-file-limit=1000",
-  "--enable-config",
-  "-j=16",
-  "--parse-forwarding-functions",
-  "--pch-storage=memory",
-  "--use-dirty-headers",
-  "--input-style=standard",
-]
-
-[mcp_servers.pencil]
-enabled = true
-command = "/Applications/Pencil.app/Contents/Resources/app.asar.unpacked/out/mcp-server-darwin-arm64"
-args = [
-  "--app",
-  "desktop",
-]
+args = [ "--workspace", ".", "--lsp", "/opt/llvm/clangd/bin/clangd", "--", "--background-index", "--background-index-priority=normal", "--all-scopes-completion", "--background-index", "--background-index-priority=normal", "--clang-tidy", "--completion-parse=auto", "--completion-style=detailed", "--experimental-modules-support", "--function-arg-placeholders=1", "--header-insertion=iwyu", "--header-insertion-decorators", "--import-insertions", "--include-ineligible-results", "--limit-references=0", "--limit-results=0", "--ranking-model=heuristics", "--rename-file-limit=1000", "--enable-config", "-j=16", "--parse-forwarding-functions", "--pch-storage=memory", "--use-dirty-headers", "--input-style=standard" ]
+startup_timeout_sec = 20
