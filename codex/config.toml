@@ -242,6 +242,12 @@ command = "mcp-language-server"
 args = [ "--workspace", ".", "--lsp", "protols", "--", "--include-paths=/Users/zchee/src/github.com/googleapis/googleapis,/Users/zchee/src/github.com/bufbuild/protovalidate/proto/protovalidate" ]
 startup_timeout_sec = 20
 
+[mcp_servers.terraform]
+enabled = false
+command = "mcp-language-server"
+args = [ "--workspace", ".", "--lsp", "terraform-ls", "--", "serve", "-req-concurrency=16" ]
+startup_timeout_sec = 20
+
 [mcp_servers.zls]
 enabled = false
 command = "mcp-language-server"
