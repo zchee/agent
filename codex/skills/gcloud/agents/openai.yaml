@@ -1,0 +1,4 @@
+interface:
+  display_name: "Google Cloud CLI"
+  short_description: "Use Google Cloud CLI safely and efficiently"
+  default_prompt: "Use $gcloud to inspect the active Google Cloud configuration, clarify any missing project or location values, prefer more specific native tools when available, and use gcloud for the requested resource task."
