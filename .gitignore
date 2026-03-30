@@ -6,6 +6,7 @@
 # Claude
 claude/plugins/cache/
 claude/plugins/marketplaces/
+claude/plugins/claude-hud/transcript-cache/
 
 # Codex
 codex/skills/dist
