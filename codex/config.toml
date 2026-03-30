@@ -21,8 +21,8 @@ mcp_oauth_credentials_store = "file"
 web_search = "live"
 project_root_markers = [ ".git" ]
 suppress_unstable_features_warning = true
-# service_tier = "fast"
 approvals_reviewer = "guardian_subagent"
+service_tier = "fast"
 
 [realtime]
 version = "v2"
@@ -73,18 +73,11 @@ codex_hooks = true
 request_permissions_tool = true
 multi_agent_v2 = true
 enable_fanout = true
-apps = true
 tool_search = true
-tool_suggest = true
-plugins = true
-image_generation = false
-skill_env_var_dependency_prompt = true
 default_mode_request_user_input = true
 guardian_approval = true
-# artifact = true
-voice_transcription = true
+artifact = true
 realtime_conversation = true
-tui_app_server = true
 prevent_idle_sleep = true
 
 [ghost_snapshot]
@@ -194,8 +187,8 @@ http_headers = { X-Goog-User-Project = "gaudiy-ai" }
 
 [mcp_servers.gcp-cloud-run]
 enabled = false
-url = "https://run.googleapis.com/mcp"
-bearer_token_env_var = "GAUDIY_GOOGLE_CLOUD_MCP_SERVERS_API_KEY"
+command = "npx"
+args = [ "-y", "@google-cloud/cloud-run-mcp" ]
 
 [mcp_servers.datadog]
 enabled = false
