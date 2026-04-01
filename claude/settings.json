@@ -22,21 +22,6 @@
   "model": "opus[1m]",
   "enableAllProjectMcpServers": true,
   "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Edit|Write|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "jq -r '.tool_input.file_path | select(endswith(\".go\"))' | xargs -r -I {} sh -c 'gofmt -s -w \"$1\"' _ {}"
-          },
-          {
-            "type": "command",
-            "command": "jq -r '.tool_input.file_path | select(endswith(\".tf\"))' | xargs -r -I {} sh -c 'terraform fmt \"$1\"' _ {}"
-          }
-        ]
-      }
-    ],
     "Notification": [
       {
         "hooks": [
@@ -50,7 +35,7 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "bash -c 'plugin_dir=$(ls -d \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}\"/plugins/cache/claude-hud/claude-hud/*/ 2>/dev/null | awk -F/ '\"'\"'{ print $(NF-1) \"\\t\" $(0) }'\"'\"' | sort -t. -k1,1n -k2,2n -k3,3n -k4,4n | tail -1 | cut -f2-); exec \"/opt/homebrew/bin/bun\" --env-file /dev/null \"${plugin_dir}src/index.ts\"'"
+    "command": "node $HOME/.claude/hud/omc-hud.mjs"
   },
   "enabledPlugins": {
     "skill-creator@claude-plugins-official": true,
@@ -83,5 +68,6 @@
   "effortLevel": "high",
   "autoUpdatesChannel": "latest",
   "skipDangerousModePermissionPrompt": true,
+  "alwaysThinkingEnabled": true,
   "teammateMode": "in-process"
 }
