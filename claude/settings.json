@@ -65,9 +65,10 @@
   },
   "outputStyle": "default",
   "spinnerTipsEnabled": true,
+  "alwaysThinkingEnabled": true,
   "effortLevel": "high",
   "autoUpdatesChannel": "latest",
   "skipDangerousModePermissionPrompt": true,
-  "alwaysThinkingEnabled": true,
-  "teammateMode": "in-process"
+  "teammateMode": "tmux",
+  "fastMode": true
 }
