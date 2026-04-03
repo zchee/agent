@@ -1,9 +1,11 @@
 {
   "cli_version": "dev",
   "checkpoint_id": "152b487769e4",
+  "session_id": "019d52cd-be7f-73a3-8561-380e64a09c4b",
   "strategy": "manual-commit",
+  "created_at": "2026-04-03T10:49:10.289811Z",
   "branch": "main",
-  "checkpoints_count": 5,
+  "checkpoints_count": 1,
   "files_touched": [
     "codex/agents/analyst.toml",
     "codex/agents/architect.toml",
@@ -71,43 +73,29 @@
     "codex/skills/web-clone/SKILL.md",
     "codex/skills/worker/SKILL.md"
   ],
-  "sessions": [
-    {
-      "metadata": "/15/2b487769e4/0/metadata.json",
-      "transcript": "/15/2b487769e4/0/full.jsonl",
-      "content_hash": "/15/2b487769e4/0/content_hash.txt",
-      "prompt": "/15/2b487769e4/0/prompt.txt"
-    },
-    {
-      "metadata": "/15/2b487769e4/1/metadata.json",
-      "transcript": "/15/2b487769e4/1/full.jsonl",
-      "content_hash": "/15/2b487769e4/1/content_hash.txt",
-      "prompt": "/15/2b487769e4/1/prompt.txt"
-    },
-    {
-      "metadata": "/15/2b487769e4/2/metadata.json",
-      "transcript": "/15/2b487769e4/2/full.jsonl",
-      "content_hash": "/15/2b487769e4/2/content_hash.txt",
-      "prompt": "/15/2b487769e4/2/prompt.txt"
-    },
-    {
-      "metadata": "/15/2b487769e4/3/metadata.json",
-      "transcript": "/15/2b487769e4/3/full.jsonl",
-      "content_hash": "/15/2b487769e4/3/content_hash.txt",
-      "prompt": "/15/2b487769e4/3/prompt.txt"
-    },
-    {
-      "metadata": "/15/2b487769e4/4/metadata.json",
-      "transcript": "/15/2b487769e4/4/full.jsonl",
-      "content_hash": "/15/2b487769e4/4/content_hash.txt",
-      "prompt": "/15/2b487769e4/4/prompt.txt"
-    }
-  ],
+  "agent": "Codex",
+  "model": "gpt-5.4-mini",
+  "turn_id": "87736bb0cbbc",
   "token_usage": {
-    "input_tokens": 3433206,
+    "input_tokens": 35793,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 2978688,
-    "output_tokens": 37426,
-    "api_call_count": 40
+    "cache_read_tokens": 23424,
+    "output_tokens": 1002,
+    "api_call_count": 1
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-04-03T10:49:10.04355Z",
+    "agent_lines": 10895,
+    "agent_removed": 91,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 50,
+    "total_committed": 10895,
+    "total_lines_changed": 11036,
+    "agent_percentage": 99.54693729612178,
+    "metric_version": 2
   }
 }
