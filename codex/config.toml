@@ -1,3 +1,8 @@
+# oh-my-codex top-level settings (must be before any [table])
+notify = ["node", "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/notify-hook.js"]
+model_reasoning_effort = "high"
+developer_instructions = "You have oh-my-codex installed. AGENTS.md is your orchestration brain and the main orchestration surface. Use skill/keyword routing like $name plus spawned role-specialized subagents for specialized work. Codex native subagents are available via .codex/agents and may be used for independent parallel subtasks within a single session or team pane. Skills are loaded from installed SKILL.md files under .codex/skills, not from native agent TOMLs. Use workflow skills via $name when explicitly invoked or clearly routed by AGENTS.md. Treat installed prompts as narrower internal execution surfaces under AGENTS.md authority, even when user-facing docs prefer $name keywords."
+
 model = "gpt-5.4"
 review_model = "gpt-5.4"
 model_context_window = 1000000
@@ -8,7 +13,6 @@ js_repl_node_path = "/opt/homebrew/bin/node"
 zsh_path = "/opt/homebrew/bin/zsh"
 hide_agent_reasoning = false
 show_raw_agent_reasoning = true
-model_reasoning_effort = "xhigh"
 model_reasoning_summary = "detailed"
 plan_mode_reasoning_effort = "xhigh"
 model_verbosity = "high"
@@ -51,8 +55,6 @@ max_unused_days = 21
 max_rollout_age_days = 42
 max_rollouts_per_startup = 9
 min_rollout_idle_hours = 24
-extract_model = "gpt-5.3-codex-spark"
-consolidation_model = "gpt-5.4"
 
 [features]
 undo = true
@@ -63,6 +65,7 @@ js_repl_tools_only = false
 code_mode = true
 codex_git_commit = true
 runtime_metrics = true
+general_analytics = true
 sqlite = true
 memories = true
 child_agents_md = true
@@ -80,6 +83,7 @@ artifact = true
 realtime_conversation = true
 prevent_idle_sleep = true
 
+multi_agent = true
 [ghost_snapshot]
 disable_warnings = true
 
@@ -152,7 +156,7 @@ args = [ "run", "--directory=/Users/zchee/go/src/github.com/zchee/mcp-servers/ap
 
 [mcp_servers.filesystem]
 command = "npx"
-args = [ "-y", "@modelcontextprotocol/server-filesystem@latest", "/Users/zchee/go", "/Users/zchee/src", "/opt/local" ]
+args = [ "-y", "@modelcontextprotocol/server-filesystem@latest", "/Users/zchee/go", "/Users/zchee/src", "/opt" ]
 
 [mcp_servers.rust-mcp-filesystem]
 enabled = false
@@ -223,6 +227,12 @@ command = "mcp-language-server"
 args = [ "--workspace", ".", "--lsp", "typescript-language-server", "--", "--stdio" ]
 startup_timeout_sec = 20
 
+[mcp_servers.lldb]
+enabled = false
+command = "mcp-language-server"
+args = [ "--workspace", ".", "--lsp", "/opt/homebrew/opt/llvm/bin/lldb-mcp" ]
+startup_timeout_sec = 20
+
 [mcp_servers.lua_ls]
 enabled = false
 command = "mcp-language-server"
@@ -252,3 +262,48 @@ enabled = false
 command = "mcp-language-server"
 args = [ "--workspace", ".", "--lsp", "/opt/llvm/clangd/bin/clangd", "--", "--background-index", "--background-index-priority=normal", "--all-scopes-completion", "--background-index", "--background-index-priority=normal", "--clang-tidy", "--completion-parse=auto", "--completion-style=detailed", "--experimental-modules-support", "--function-arg-placeholders=1", "--header-insertion=iwyu", "--header-insertion-decorators", "--import-insertions", "--include-ineligible-results", "--limit-references=0", "--limit-results=0", "--ranking-model=heuristics", "--rename-file-limit=1000", "--enable-config", "-j=16", "--parse-forwarding-functions", "--pch-storage=memory", "--use-dirty-headers", "--input-style=standard" ]
 startup_timeout_sec = 20
+
+[env]
+USE_OMX_EXPLORE_CMD = "1"
+
+# ============================================================
+# oh-my-codex (OMX) Configuration
+# Managed by omx setup - manual edits preserved on next setup
+# ============================================================
+
+# OMX State Management MCP Server
+[mcp_servers.omx_state]
+command = "node"
+args = ["/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/state-server.js"]
+enabled = true
+startup_timeout_sec = 5
+
+# OMX Project Memory MCP Server
+[mcp_servers.omx_memory]
+command = "node"
+args = ["/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/memory-server.js"]
+enabled = true
+startup_timeout_sec = 5
+
+# OMX Code Intelligence MCP Server (LSP diagnostics, AST search)
+[mcp_servers.omx_code_intel]
+command = "node"
+args = ["/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/code-intel-server.js"]
+enabled = true
+startup_timeout_sec = 10
+
+# OMX Trace MCP Server (agent flow timeline & statistics)
+[mcp_servers.omx_trace]
+command = "node"
+args = ["/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/trace-server.js"]
+enabled = true
+startup_timeout_sec = 5
+
+# OMX Team MCP Server (team job lifecycle: start, status, wait, cleanup)
+[mcp_servers.omx_team_run]
+command = "node"
+args = ["/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/team-server.js"]
+enabled = true
+startup_timeout_sec = 5
+# ============================================================
+# End oh-my-codex
