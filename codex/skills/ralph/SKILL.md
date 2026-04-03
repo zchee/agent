@@ -1,124 +1,264 @@
 ---
 name: ralph
-description: Run Ralph-style bounded autonomous refinement for coding and repository tasks. Use when the user explicitly asks for Ralph, a Ralph loop, repeated self-correction, or wants Codex to keep iterating on one fixed objective until validation passes, a `--completion-promise` token is emitted, the user cancels, or a `--max-iterations` limit is reached.
+description: Self-referential loop until task completion with architect verification
 ---
 
-# Ralph
+[RALPH + ULTRAWORK - ITERATION {{ITERATION}}/{{MAX}}]
 
-Use this skill to translate Ralph into a Codex-native inner loop. Preserve Ralph's core discipline:
+Your previous attempt did not output the completion promise. Continue working on the task.
 
-- keep one fixed objective,
-- prefer current workspace state over prior chat reasoning,
-- validate after every change,
-- stop only on a real exit boundary.
+<Purpose>
+Ralph is a persistence loop that keeps working on a task until it is fully complete and architect-verified. It wraps ultrawork's parallel execution with session persistence, automatic retry on failure, and mandatory verification before completion.
+</Purpose>
 
-## Upstream Mapping
+<Use_When>
+- Task requires guaranteed completion with verification (not just "do your best")
+- User says "ralph", "don't stop", "must complete", "finish this", or "keep going until done"
+- Work may span multiple iterations and needs persistence across retries
+- Task benefits from parallel execution with architect sign-off at the end
+</Use_When>
 
-The source Ralph implementation relies on cross-turn machinery that Codex does not have in a normal skill:
+<Do_Not_Use_When>
+- User wants a full autonomous pipeline from idea to code -- use `autopilot` instead
+- User wants to explore or plan before committing -- use `plan` skill instead
+- User wants a quick one-shot fix -- delegate directly to an executor agent
+- User wants manual control over completion -- use `ultrawork` directly
+</Do_Not_Use_When>
 
-- `setup.sh` writes `.codex/ralph/state.json` with the original prompt, iteration count, and optional completion promise.
-- An `AfterAgent` hook replays the original prompt, increments the iteration counter, and clears conversation context between turns.
-- The hook stops on a completion promise, an iteration cap, or a prompt mismatch that indicates the user moved on.
-- `/ralph:cancel` removes the state file and stops the loop.
+<Why_This_Exists>
+Complex tasks often fail silently: partial implementations get declared "done", tests get skipped, edge cases get forgotten. Ralph prevents this by looping until work is genuinely complete, requiring fresh verification evidence before allowing completion, and using tiered architect review to confirm quality.
+</Why_This_Exists>
 
-In Codex, emulate the behavior inside the current turn. Do not recreate extension files or hooks unless the user explicitly asks for harness-level tooling.
+<Execution_Policy>
+- Fire independent agent calls simultaneously -- never wait sequentially for independent work
+- Use `run_in_background: true` for long operations (installs, builds, test suites)
+- Always pass the `model` parameter explicitly when delegating to agents
+- Read `docs/shared/agent-tiers.md` before first delegation to select correct agent tiers
+- Deliver the full implementation: no scope reduction, no partial completion, no deleting tests to make them pass
+- Default to concise, evidence-dense progress and completion reporting unless the user or risk level requires more detail
+- Treat newer user task updates as local overrides for the active workflow branch while preserving earlier non-conflicting constraints
+- If correctness depends on additional inspection, retrieval, execution, or verification, keep using the relevant tools until the execution loop is grounded
+- Continue through clear, low-risk, reversible next steps automatically; ask only when the next step is materially branching, destructive, or preference-dependent
+</Execution_Policy>
 
-## What Carries Over
+<Steps>
+0. **Pre-context intake (required before planning/execution loop starts)**:
+   - Assemble or load a context snapshot at `.omx/context/{task-slug}-{timestamp}.md` (UTC `YYYYMMDDTHHMMSSZ`).
+   - Minimum snapshot fields:
+     - task statement
+     - desired outcome
+     - known facts/evidence
+     - constraints
+     - unknowns/open questions
+     - likely codebase touchpoints
+   - If an existing relevant snapshot is available, reuse it and record the path in Ralph state.
+   - If request ambiguity is high, gather brownfield facts first. When session guidance enables `USE_OMX_EXPLORE_CMD`, prefer `omx explore` for simple read-only repository lookups with narrow, concrete prompts; otherwise use the richer normal explore path. Then run `$deep-interview --quick <task>` to close critical gaps.
+   - Do not begin Ralph execution work (delegation, implementation, or verification loops) until snapshot grounding exists. If forced to proceed quickly, note explicit risk tradeoffs.
+1. **Review progress**: Check TODO list and any prior iteration state
+2. **Continue from where you left off**: Pick up incomplete tasks
+3. **Delegate in parallel**: Route tasks to specialist agents at appropriate tiers
+   - Simple lookups: LOW tier -- "What does this function return?"
+   - Standard work: STANDARD tier -- "Add error handling to this module"
+   - Complex analysis: THOROUGH tier -- "Debug this race condition"
+   - When Ralph is entered as a ralplan follow-up, start from the approved **available-agent-types roster** and make the delegation plan explicit: implementation lane, evidence/regression lane, and final sign-off lane using only known agent types
+4. **Run long operations in background**: Builds, installs, test suites use `run_in_background: true`
+5. **Visual task gate (when screenshot/reference images are present)**:
+   - Run `$visual-verdict` **before every next edit**.
+   - Require structured JSON output: `score`, `verdict`, `category_match`, `differences[]`, `suggestions[]`, `reasoning`.
+   - Persist verdict to `.omx/state/{scope}/ralph-progress.json` including numeric + qualitative feedback.
+   - Default pass threshold: `score >= 90`.
+   - **URL-based cloning tasks**: When the task description contains a target URL (e.g., "clone https://example.com"), invoke `$web-clone` instead of `$visual-verdict`. The web-clone skill handles the full extraction → generation → verification pipeline and uses `$visual-verdict` internally for visual scoring.
+6. **Verify completion with fresh evidence**:
+   a. Identify what command proves the task is complete
+   b. Run verification (test, build, lint)
+   c. Read the output -- confirm it actually passed
+   d. Check: zero pending/in_progress TODO items
+7. **Architect verification** (tiered):
+   - <5 files, <100 lines with full tests: STANDARD tier minimum (architect role)
+   - Standard changes: STANDARD tier (architect role)
+   - >20 files or security/architectural changes: THOROUGH tier (architect role)
+   - Ralph floor: always at least STANDARD, even for small changes
+7.5 **Mandatory Deslop Pass**:
+   - After Step 7 passes, run `oh-my-codex:ai-slop-cleaner` on **all files changed during the Ralph session**.
+   - Scope the cleaner to **changed files only**; do not widen the pass beyond Ralph-owned edits.
+   - Run the cleaner in **standard mode** (not `--review`).
+   - If the prompt contains `--no-deslop`, skip Step 7.5 entirely and proceed with the most recent successful verification evidence.
+7.6 **Regression Re-verification**:
+   - After the deslop pass, re-run all tests/build/lint and read the output to confirm they still pass.
+   - If post-deslop regression fails, roll back cleaner changes or fix and retry. Then rerun Step 7.5 and Step 7.6 until the regression is green.
+   - Do not proceed to completion until post-deslop regression is green (unless `--no-deslop` explicitly skipped the deslop pass).
+8. **On approval**: Run `/cancel` to cleanly exit and clean up all state files
+9. **On rejection**: Fix the issues raised, then re-verify at the same tier
+</Steps>
 
-- Ralph is repeated improvement on the same task, not one large speculative pass.
-- Each iteration should start from the repository's current state.
-- `--max-iterations <N>` is a hard safety cap. Default to `5` if the user omits it.
-- `--completion-promise <TEXT>` means emit exactly `<promise>TEXT</promise>` once, and only when the task is actually complete.
-- If the user changes to a different task, the Ralph loop no longer owns the turn.
+<Tool_Usage>
+- Before first MCP tool use, call `ToolSearch("mcp")` to discover deferred MCP tools
+- Use `ask_codex` with `agent_role: "architect"` for verification cross-checks when changes are security-sensitive, architectural, or involve complex multi-system integration
+- Skip Codex consultation for simple feature additions, well-tested changes, or time-critical verification
+- If ToolSearch finds no MCP tools or Codex is unavailable, proceed with architect agent verification alone -- never block on external tools
+- Use `state_write` / `state_read` for ralph mode state persistence between iterations
+- Persist context snapshot path in Ralph mode state so later phases and agents share the same grounding context
+</Tool_Usage>
 
-## What Does Not Carry Over
+## State Management
 
-- Do not create `.codex/ralph/state.json`.
-- Do not implement `/ralph:loop`, `/ralph:cancel`, `/ralph:help`, hook files, or extension manifests unless the user explicitly asks for harness-level extension work.
-- There is no automatic re-entry across turns in Codex. Run the iterations yourself inside the current task.
-- There is no hook enforcing continuation. The loop discipline must come from your own planning, validation, and reflection.
+Use the `omx_state` MCP server tools (`state_write`, `state_read`, `state_clear`) for Ralph lifecycle state.
 
-## Input Contract
+- **On start**:
+  `state_write({mode: "ralph", active: true, iteration: 1, max_iterations: 10, current_phase: "executing", started_at: "<now>", state: {context_snapshot_path: "<snapshot-path>"}})`
+- **On each iteration**:
+  `state_write({mode: "ralph", iteration: <current>, current_phase: "executing"})`
+- **On verification/fix transition**:
+  `state_write({mode: "ralph", current_phase: "verifying"})` or `state_write({mode: "ralph", current_phase: "fixing"})`
+- **On completion**:
+  `state_write({mode: "ralph", active: false, current_phase: "complete", completed_at: "<now>"})`
+- **On cancellation/cleanup**:
+  run `$cancel` (which should call `state_clear(mode="ralph")`)
 
-- Parse only these Ralph-style control flags from the user request:
-  - `--max-iterations <N>`
-  - `--completion-promise <TEXT>`
-- Treat the remaining text as the fixed objective.
-- Do not silently rename, reorder, or invent controls.
-- If the user includes unknown flags, call that out and treat them as literal task text unless their meaning is explicit from context.
-- Freeze the objective at the start of the loop. Do not keep redefining "done" midstream.
 
-## Loop Setup
+## Scenario Examples
 
-1. Extract the fixed objective and loop controls.
-2. Define completion before editing.
-3. If the user did not define "done", infer conservative, testable completion criteria and state them in a short progress update.
-4. Identify the narrowest validation command that can prove progress.
-5. Record the iteration budget in the active plan so the loop stays explicit.
+**Good:** The user says `continue` after the workflow already has a clear next step. Continue the current branch of work instead of restarting or re-asking the same question.
 
-## Iteration Protocol
+**Good:** The user changes only the output shape or downstream delivery step (for example `make a PR`). Preserve earlier non-conflicting workflow constraints and apply the update locally.
 
-For each iteration from `1` to `max_iterations`:
+**Bad:** The user says `continue`, and the workflow restarts discovery or stops before the missing verification/evidence is gathered.
 
-1. Rebuild context from the source of truth.
-   - Re-read the relevant files, diagnostics, tests, and repository state.
-   - Distrust stale chat context. Ralph works because file state persists while conversational memory is disposable; simulate that by checking the workspace again each pass.
-2. Choose one high-leverage step.
-   - Make the smallest change that materially improves the task.
-   - Avoid unrelated cleanup, opportunistic refactors, or broad rewrites unless validation forces them.
-3. Implement the change.
-4. Validate immediately.
-   - Run the narrowest command that proves or disproves the latest step.
-   - Escalate to broader validation only when the focused check passes or is insufficient.
-5. Reflect before the next pass.
-   - If validation passed and the full completion criteria are satisfied, stop.
-   - If validation failed, diagnose the exact failure and use it to plan the next iteration.
-   - If the remaining work cannot fit in the loop budget, stop and report that directly.
+<Examples>
+<Good>
+Correct parallel delegation:
+```
+delegate(role="executor", tier="LOW", task="Add type export for UserConfig")
+delegate(role="executor", tier="STANDARD", task="Implement the caching layer for API responses")
+delegate(role="executor", tier="THOROUGH", task="Refactor auth module to support OAuth2 flow")
+```
+Why good: Three independent tasks fired simultaneously at appropriate tiers.
+</Good>
 
-## Stop Conditions
+<Good>
+Correct verification before completion:
+```
+1. Run: npm test           → Output: "42 passed, 0 failed"
+2. Run: npm run build      → Output: "Build succeeded"
+3. Run: lsp_diagnostics    → Output: 0 errors
+4. Delegate to architect at STANDARD tier  → Verdict: "APPROVED"
+5. Run /cancel
+```
+Why good: Fresh evidence at each step, architect verification, then clean exit.
+</Good>
 
-Stop the loop when any of these becomes true:
+<Bad>
+Claiming completion without verification:
+"All the changes look good, the implementation should work correctly. Task complete."
+Why bad: Uses "should" and "look good" -- no fresh test/build output, no architect verification.
+</Bad>
 
-- The completion criteria are satisfied.
-- The exact promise token has been earned and can be emitted.
-- `max_iterations` is exhausted.
-- The user explicitly cancels, aborts, or switches to a different task.
-- A blocker requires user input, permissions, or a decision that cannot be inferred safely.
+<Bad>
+Sequential execution of independent tasks:
+```
+delegate(executor, LOW, "Add type export") → wait →
+delegate(executor, STANDARD, "Implement caching") → wait →
+delegate(executor, THOROUGH, "Refactor auth")
+```
+Why bad: These are independent tasks that should run in parallel, not sequentially.
+</Bad>
+</Examples>
 
-## Cancel Semantics
+<Escalation_And_Stop_Conditions>
+- Stop and report when a fundamental blocker requires user input (missing credentials, unclear requirements, external service down)
+- Stop when the user says "stop", "cancel", or "abort" -- run `/cancel`
+- Continue working when the hook system sends "The boulder never stops" -- this means the iteration continues
+- If architect rejects verification, fix the issues and re-verify (do not stop)
+- If the same issue recurs across 3+ iterations, report it as a potential fundamental problem
+</Escalation_And_Stop_Conditions>
 
-The original Ralph flow has `/ralph:cancel`. In Codex, interpret cancellation behaviorally:
+<Final_Checklist>
+- [ ] All requirements from the original task are met (no scope reduction)
+- [ ] Zero pending or in_progress TODO items
+- [ ] Fresh test run output shows all tests pass
+- [ ] Fresh build output shows success
+- [ ] lsp_diagnostics shows 0 errors on affected files
+- [ ] Architect verification passed (STANDARD tier minimum)
+- [ ] ai-slop-cleaner pass completed on changed files (or --no-deslop specified)
+- [ ] Post-deslop regression tests pass
+- [ ] `/cancel` run for clean state cleanup
+</Final_Checklist>
 
-- If the user says `cancel`, `stop`, or redirects the task, stop iterating immediately.
-- Report the current state, the last validation result, and the next highest-leverage step.
-- Do not leave fake Ralph state files behind.
+<Advanced>
+## PRD Mode (Optional)
 
-## Ghost Protection
+When the user provides the `--prd` flag, initialize a Product Requirements Document before starting the ralph loop.
 
-The original Ralph flow prevents an old loop from hijacking a new prompt. Mirror that rule:
+### Detecting PRD Mode
+Check if `{{PROMPT}}` contains `--prd` or `--PRD`.
 
-- If the user introduces a new objective, abandon the old Ralph loop framing instead of dragging prior completion criteria forward.
-- Never emit a stale completion promise for a superseded objective.
+### Detecting `--no-deslop`
+Check if `{{PROMPT}}` contains `--no-deslop`.
+If `--no-deslop` is present, skip the deslop pass entirely after Step 7 and continue using the latest successful pre-deslop verification evidence.
 
-## Prompting Guidance
+### Visual Reference Flags (Optional)
+Ralph execution supports visual reference flags for screenshot tasks:
+- Repeatable image inputs: `-i <image-path>` (can be used multiple times)
+- Image directory input: `--images-dir <directory>`
 
-Ralph works best when the prompt includes:
+Example:
+`ralph -i refs/hn.png -i refs/hn-item.png --images-dir ./screenshots "match HackerNews layout"`
 
-- a concrete deliverable,
-- objective validation,
-- a bounded iteration cap,
-- an explicit promise token when the user needs strict completion signaling.
+### PRD Workflow
+1. Run deep-interview in quick mode before creating PRD artifacts:
+   - Execute: `$deep-interview --quick <task>`
+   - Complete a compact requirements pass (context, goals, scope, constraints, validation)
+   - Persist interview output to `.omx/interviews/{slug}-{timestamp}.md`
+2. Create canonical PRD/progress artifacts:
+   - PRD: `.omx/plans/prd-{slug}.md`
+   - Progress ledger: `.omx/state/{scope}/ralph-progress.json` (session scope when available, else root scope)
+3. Parse the task (everything after `--prd` flag)
+4. Break down into user stories:
 
-Use or accept prompts like these:
+```json
+{
+  "project": "[Project Name]",
+  "branchName": "ralph/[feature-name]",
+  "description": "[Feature description]",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "[Short title]",
+      "description": "As a [user], I want to [action] so that [benefit].",
+      "acceptanceCriteria": ["Criterion 1", "Typecheck passes"],
+      "priority": 1,
+      "passes": false
+    }
+  ]
+}
+```
 
-- `$ralph fix the failing parser tests and keep iterating until the targeted package passes --max-iterations 6 --completion-promise TESTS_GREEN`
-- `$ralph implement the missing pagination handling, validate it, and stop only when the API client tests pass --max-iterations 8`
-- `$ralph inspect this refactor, patch the highest-leverage bug each pass, and stop when the repository is stable`
+5. Initialize canonical progress ledger at `.omx/state/{scope}/ralph-progress.json`
+6. Guidelines: right-sized stories (one session each), verifiable criteria, independent stories, priority order (foundational work first)
+7. Proceed to normal ralph loop using user stories as the task list
 
-## Quality Bar
+### Example
+User input: `--prd build a todo app with React and TypeScript`
+Workflow: Detect flag, extract task, create `.omx/plans/prd-{slug}.md`, create `.omx/state/{scope}/ralph-progress.json`, begin ralph loop.
 
-- Prefer deterministic evidence: targeted tests, diagnostics, reproducible commands, concrete diffs.
-- Prefer several short corrective passes over one speculative rewrite.
-- Do not claim success because the approach seems right.
-- If `--completion-promise` is set, emit the exact token once in the final response and nowhere else.
-- If the loop stops incomplete, report the best current state, the last failed check, and the next step.
+### Legacy compatibility
+- If `.omx/prd.json` exists and canonical PRD is absent, migrate one-way into `.omx/plans/prd-{slug}.md`.
+- If `.omx/progress.txt` exists and canonical progress ledger is absent, import one-way into `.omx/state/{scope}/ralph-progress.json`.
+- Keep legacy files unchanged for one release cycle.
+
+## Background Execution Rules
+
+**Run in background** (`run_in_background: true`):
+- Package installation (npm install, pip install, cargo build)
+- Build processes (make, project build commands)
+- Test suites
+- Docker operations (docker build, docker pull)
+
+**Run blocking** (foreground):
+- Quick status checks (git status, ls, pwd)
+- File reads and edits
+- Simple commands
+</Advanced>
+
+Original task:
+{{PROMPT}}
