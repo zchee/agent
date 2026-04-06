@@ -1,26 +1,38 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "alwaysThinkingEnabled": true,
+  "autoUpdatesChannel": "latest",
   "cleanupPeriodDays": 99999,
-  "includeCoAuthoredBy": true,
-  "permissions": {
-    "allow": [
-      "TodoWrite",
-      "mcp__pencil"
-    ],
-    "deny": [
-      "Read(third_party)",
-      "Read(_tmp)",
-      "Read(.ruff_cache)",
-      "Read(.venv)"
-    ],
-    "defaultMode": "dontAsk",
-    "additionalDirectories": [
-      "~/src",
-      "~/go/src"
-    ]
-  },
-  "model": "opus[1m]",
+  "effortLevel": "high",
   "enableAllProjectMcpServers": true,
+  "enabledPlugins": {
+    "claude-hud@claude-hud": true,
+    "oh-my-claudecode@omc": true,
+    "rust-analyzer-lsp@claude-plugins-official": true,
+    "skill-creator@claude-plugins-official": true
+  },
+  "env": {},
+  "extraKnownMarketplaces": {
+    "claude-hud": {
+      "source": {
+        "repo": "jarrodwatts/claude-hud",
+        "source": "github"
+      }
+    },
+    "goland-claude-marketplace": {
+      "source": {
+        "repo": "JetBrains/go-modern-guidelines",
+        "source": "github"
+      }
+    },
+    "omc": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/Yeachan-Heo/oh-my-claudecode.git"
+      }
+    }
+  },
+  "fastMode": true,
   "hooks": {
     "Notification": [
       {
@@ -33,42 +45,27 @@
       }
     ]
   },
-  "statusLine": {
-    "type": "command",
-    "command": "node $HOME/.claude/hud/omc-hud.mjs"
-  },
-  "enabledPlugins": {
-    "skill-creator@claude-plugins-official": true,
-    "rust-analyzer-lsp@claude-plugins-official": true,
-    "claude-hud@claude-hud": true,
-    "oh-my-claudecode@omc": true
-  },
-  "extraKnownMarketplaces": {
-    "claude-hud": {
-      "source": {
-        "source": "github",
-        "repo": "jarrodwatts/claude-hud"
-      }
-    },
-    "goland-claude-marketplace": {
-      "source": {
-        "source": "github",
-        "repo": "JetBrains/go-modern-guidelines"
-      }
-    },
-    "omc": {
-      "source": {
-        "source": "git",
-        "url": "https://github.com/Yeachan-Heo/oh-my-claudecode.git"
-      }
-    }
-  },
+  "includeCoAuthoredBy": true,
+  "model": "opus[1m]",
   "outputStyle": "default",
-  "spinnerTipsEnabled": true,
-  "alwaysThinkingEnabled": true,
-  "effortLevel": "high",
-  "autoUpdatesChannel": "latest",
+  "permissions": {
+    "allow": [
+      "TodoWrite",
+      "mcp__pencil"
+    ],
+    "deny": [
+      "Read(third_party)",
+      "Read(_tmp)",
+      "Read(.ruff_cache)",
+      "Read(.venv)"
+    ]
+  },
   "skipDangerousModePermissionPrompt": true,
+  "spinnerTipsEnabled": true,
+  "statusLine": {
+    "command": "node $HOME/.claude/hud/omc-hud.mjs",
+    "type": "command"
+  },
   "teammateMode": "tmux",
-  "fastMode": true
+  "verbose": true
 }
