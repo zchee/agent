@@ -3,7 +3,7 @@
   "checkpoint_id": "da93bceabd5f",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 1,
+  "checkpoints_count": 2,
   "files_touched": [
     "gemini/settings.json"
   ],
@@ -13,6 +13,12 @@
       "transcript": "/da/93bceabd5f/0/full.jsonl",
       "content_hash": "/da/93bceabd5f/0/content_hash.txt",
       "prompt": "/da/93bceabd5f/0/prompt.txt"
+    },
+    {
+      "metadata": "/da/93bceabd5f/1/metadata.json",
+      "transcript": "/da/93bceabd5f/1/full.jsonl",
+      "content_hash": "/da/93bceabd5f/1/content_hash.txt",
+      "prompt": ""
     }
   ],
   "token_usage": {
