@@ -123,7 +123,7 @@
       ]
     },
     "pencil": {
-      "command": "/Applications/Pencil.app/Contents/Resources/app.asar.unpacked/out/mcp-server-darwin-arm64",
+      "command": "/Users/zchee/.vscode-insiders/extensions/highagency.pencildev-0.6.35/out/mcp-server-darwin-arm64",
       "args": [
         "--app",
         "desktop"
@@ -146,7 +146,10 @@
     "enableAutoUpdateNotification": false,
     "defaultApprovalMode": "default",
     "devtools": true,
-    "enableNotifications": true
+    "enableNotifications": true,
+    "plan": {
+      "enabled": true
+    }
   },
   "ui": {
     "theme": "GitHub",
@@ -183,7 +186,7 @@
     "inlineThinkingMode": "full"
   },
   "hooksConfig": {
-    "enabled": false
+    "enabled": true
   },
   "context": {
     "fileName": [
@@ -233,10 +236,14 @@
     "jitContext": true,
     "useOSC52Copy": true,
     "useOSC52Paste": true,
-    "plan": true,
     "modelSteering": true,
     "extensionRegistry": true,
-    "taskTracker": true
+    "taskTracker": true,
+    "memoryManager": true,
+    "generalistProfile": true,
+    "contextManagement": true,
+    "topicUpdateNarration": true,
+    "dynamicModelConfiguration": true
   },
   "model": {
     "name": "gemini-3.1-pro-preview"
@@ -244,6 +251,14 @@
   "security": {
     "auth": {
       "selectedType": "vertex-ai"
-    }
+    },
+    "environmentVariableRedaction": {
+      "enabled": true
+    },
+    "enableConseca": false,
+    "autoAddToPolicyByDefault": true
+  },
+  "agents": {
+    "overrides": {}
   }
 }
