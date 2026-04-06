@@ -1,6 +1,6 @@
-# Claude Code Environment Variables (v2.1.81)
+# Claude Code Environment Variables (v2.1.88)
 
-Reverse-engineered from `cli.unpack.js` at tag `2.1.81`. This catalog includes first-party Claude Code knobs plus ambient/dependency environment variables that are read somewhere in the bundled runtime.
+Reverse-engineered from `cli.unpack.js` at tag `2.1.88`. This catalog includes first-party Claude Code knobs plus ambient/dependency environment variables that are read somewhere in the bundled runtime.
 
 ## Authentication & API
 
@@ -26,14 +26,24 @@ Reverse-engineered from `cli.unpack.js` at tag `2.1.81`. This catalog includes f
 | `CLAUDE_CODE_ACCOUNT_UUID` | — | Account UUID for telemetry |
 | `CLAUDE_CODE_USER_EMAIL` | — | User email for telemetry |
 | `CLAUDE_CODE_ORGANIZATION_UUID` | — | Organization UUID |
+| `CLAUDE_TRUSTED_DEVICE_TOKEN` | — | Trusted device token for authentication |
 
 ## Model Configuration
 
 | Variable | Default | Description |
 |---|---|---|
 | `ANTHROPIC_DEFAULT_SONNET_MODEL` | — | Override the default Sonnet model ID |
+| `ANTHROPIC_DEFAULT_SONNET_MODEL_NAME` | value of `ANTHROPIC_DEFAULT_SONNET_MODEL` | Display label for custom Sonnet model |
+| `ANTHROPIC_DEFAULT_SONNET_MODEL_DESCRIPTION` | `Custom Sonnet model` | Display description for custom Sonnet model |
+| `ANTHROPIC_DEFAULT_SONNET_MODEL_SUPPORTED_CAPABILITIES` | — | Comma-separated capabilities for custom Sonnet model |
 | `ANTHROPIC_DEFAULT_OPUS_MODEL` | — | Override the default Opus model ID |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL_NAME` | value of `ANTHROPIC_DEFAULT_OPUS_MODEL` | Display label for custom Opus model |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION` | `Custom Opus model` | Display description for custom Opus model |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES` | — | Comma-separated capabilities for custom Opus model |
 | `ANTHROPIC_DEFAULT_HAIKU_MODEL` | — | Override the default Haiku model ID |
+| `ANTHROPIC_DEFAULT_HAIKU_MODEL_NAME` | value of `ANTHROPIC_DEFAULT_HAIKU_MODEL` | Display label for custom Haiku model |
+| `ANTHROPIC_DEFAULT_HAIKU_MODEL_DESCRIPTION` | `Custom Haiku model` | Display description for custom Haiku model |
+| `ANTHROPIC_DEFAULT_HAIKU_MODEL_SUPPORTED_CAPABILITIES` | — | Comma-separated capabilities for custom Haiku model |
 | `ANTHROPIC_SMALL_FAST_MODEL` | — | Override the small/fast model used internally |
 | `ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION` | — | AWS region for the small/fast model |
 | `CLAUDE_CODE_SUBAGENT_MODEL` | — | Override model for subagents |
@@ -43,6 +53,9 @@ Reverse-engineered from `cli.unpack.js` at tag `2.1.81`. This catalog includes f
 | `CLAUDE_CODE_ALWAYS_ENABLE_EFFORT` | `false` | Force enable effort/thinking for all models |
 | `CLAUDE_CODE_MAX_RETRIES` | — | Maximum API retry count |
 | `API_TIMEOUT_MS` | `600000` | API request timeout in milliseconds |
+| `ANTHROPIC_CUSTOM_MODEL_OPTION` | — | Add a custom model ID to the model picker and model-validation path |
+| `ANTHROPIC_CUSTOM_MODEL_OPTION_NAME` | value of `ANTHROPIC_CUSTOM_MODEL_OPTION` | Display label for `ANTHROPIC_CUSTOM_MODEL_OPTION` |
+| `ANTHROPIC_CUSTOM_MODEL_OPTION_DESCRIPTION` | `Custom model (<id>)` | Display description for `ANTHROPIC_CUSTOM_MODEL_OPTION` |
 
 ## AWS Bedrock
 
@@ -144,7 +157,9 @@ Reverse-engineered from `cli.unpack.js` at tag `2.1.81`. This catalog includes f
 | `CLAUDE_CODE_GLOB_NO_IGNORE` | `true` | Whether glob ignores gitignore patterns |
 | `CLAUDE_CODE_GLOB_HIDDEN` | `true` | Whether glob includes hidden files |
 | `USE_BUILTIN_RIPGREP` | `false` | Use built-in ripgrep instead of system |
-| `CLAUDE_CODE_USE_POWERSHELL_TOOL` | `false` | Allow the Bash/input-box execution path to run via PowerShell when `defaultShell` is `powershell` and sandbox policy permits it. |
+| `CLAUDE_CODE_USE_POWERSHELL_TOOL` | `false` | Allow the Bash/input-box execution path to run via PowerShell when `defaultShell` is `powershell` and sandbox policy permits it |
+| `CLAUDE_CODE_PWSH_PARSE_TIMEOUT_MS` | — | Timeout for PowerShell command parsing (ms) |
+| `CLAUDE_CODE_USE_NATIVE_FILE_SEARCH` | `false` | Use native file search |
 
 ## MCP (Model Context Protocol)
 
@@ -156,9 +171,9 @@ Reverse-engineered from `cli.unpack.js` at tag `2.1.81`. This catalog includes f
 | `MCP_SERVER_CONNECTION_BATCH_SIZE` | `3` | Local MCP server connection batch size |
 | `MCP_REMOTE_SERVER_CONNECTION_BATCH_SIZE` | `20` | Remote MCP server connection batch size |
 | `MCP_OAUTH_CALLBACK_PORT` | — | Port for MCP OAuth callbacks |
-| `MCP_OAUTH_CLIENT_METADATA_URL` | — | Override the client metadata URL advertised during MCP OAuth registration flows. |
+| `MCP_OAUTH_CLIENT_METADATA_URL` | — | Override the client metadata URL advertised during MCP OAuth registration flows |
 | `MCP_CLIENT_SECRET` | — | OAuth client secret for MCP servers |
-| `MCP_CONNECTION_NONBLOCKING` | `false` | Use non-blocking MCP connections |
+| `MCP_XAA_IDP_CLIENT_SECRET` | — | OAuth client secret for MCP XAA IdP connections |
 | `ENABLE_MCP_LARGE_OUTPUT_FILES` | `false` | Enable large file output for MCP |
 | `ENABLE_CLAUDEAI_MCP_SERVERS` | `false` | Enable claude.ai MCP proxy servers |
 | `CLAUDE_CODE_MCP_INSTR_DELTA` | — | MCP instruction delta feature toggle |
@@ -187,6 +202,11 @@ Reverse-engineered from `cli.unpack.js` at tag `2.1.81`. This catalog includes f
 | `CLAUDE_CODE_DISABLE_PRECOMPACT_SKIP` | `false` | Disable pre-compaction skip optimization |
 | `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY` | `false` | Disable feedback survey |
 | `CLAUDE_CODE_DISABLE_OFFICIAL_MARKETPLACE_AUTOINSTALL` | `false` | Disable auto-install of official marketplace items |
+| `CLAUDE_CODE_DISABLE_ADVISOR_TOOL` | `false` | Disable the advisor tool |
+| `CLAUDE_CODE_DISABLE_MOUSE` | `false` | Disable mouse input entirely |
+| `CLAUDE_CODE_DISABLE_MOUSE_CLICKS` | `false` | Disable mouse click handling (mouse still tracked) |
+| `CLAUDE_CODE_DISABLE_NONSTREAMING_FALLBACK` | `false` | Disable fallback from streaming to non-streaming API calls |
+| `CLAUDE_CODE_DISABLE_POLICY_SKILLS` | `false` | Disable policy-driven skills loading |
 | `DISABLE_AUTOUPDATER` | `false` | Disable auto-updater |
 | `DISABLE_TELEMETRY` | `false` | Disable all telemetry |
 | `DISABLE_COMPACT` | `false` | Disable context compaction entirely |
@@ -207,7 +227,6 @@ Reverse-engineered from `cli.unpack.js` at tag `2.1.81`. This catalog includes f
 | `DISABLE_UPGRADE_COMMAND` | `false` | Disable the `/upgrade` command |
 | `DISABLE_INSTALL_GITHUB_APP_COMMAND` | `false` | Disable the GitHub App install command |
 | `DISABLE_EXTRA_USAGE_COMMAND` | `false` | Disable extra usage display |
-| `DISABLE_AUTO_MIGRATE_TO_NATIVE` | `false` | Disable auto-migration to native |
 
 ## Feature Enable Flags
 
@@ -220,12 +239,12 @@ Reverse-engineered from `cli.unpack.js` at tag `2.1.81`. This catalog includes f
 | `CLAUDE_CODE_ENABLE_SDK_FILE_CHECKPOINTING` | `false` | Enable file checkpointing in SDK mode |
 | `CLAUDE_CODE_ENABLE_FINE_GRAINED_TOOL_STREAMING` | `false` | Enable fine-grained tool streaming |
 | `CLAUDE_CODE_ENABLE_CFC` | — | Enable CFC feature |
+| `CLAUDE_CODE_ENABLE_XAA` | — | Enable XAA IdP authentication feature |
 | `ENABLE_TOOL_SEARCH` | — | Enable tool search/deferred tools (`true`, `auto`, `auto:N`) |
 | `ENABLE_PROMPT_CACHING_1H_BEDROCK` | `false` | Enable 1-hour prompt caching on Bedrock |
 | `ENABLE_ENHANCED_TELEMETRY_BETA` | `false` | Enable enhanced telemetry beta |
 | `ENABLE_BETA_TRACING_DETAILED` | `false` | Enable detailed beta tracing |
 | `ENABLE_CLAUDE_CODE_SM_COMPACT` | `false` | Enable SM compaction |
-| `CLAUDE_CODE_FORCE_GLOBAL_CACHE` | `false` | Force global prompt cache |
 | `CLAUDE_CODE_FORCE_FULL_LOGO` | `false` | Force display of full logo |
 
 ## Compaction & Context
@@ -243,15 +262,19 @@ Reverse-engineered from `cli.unpack.js` at tag `2.1.81`. This catalog includes f
 |---|---|---|
 | `CLAUDE_CODE_DEBUG_LOGS_DIR` | `~/.claude/debug/{timestamp}.txt` | Debug log file directory |
 | `CLAUDE_CODE_DEBUG_LOG_LEVEL` | `debug` | Log level: `debug`, `info`, `warn`, `error` |
+| `CLAUDE_CODE_DEBUG_REPAINTS` | `false` | Enable debug logging for UI repaints |
 | `CLAUDE_CODE_SLOW_OPERATION_THRESHOLD_MS` | — | Threshold for logging slow operations (ms) |
 | `CLAUDE_CODE_PROFILE_STARTUP` | — | Set to `1` to enable startup profiling |
 | `CLAUDE_CODE_DIAGNOSTICS_FILE` | — | Path to diagnostics output file |
 | `CLAUDE_CODE_FRAME_TIMING_LOG` | — | Path to frame timing log |
 | `CLAUDE_CODE_PERFETTO_TRACE` | — | Path for Perfetto trace output |
+| `CLAUDE_CODE_COMMIT_LOG` | — | Path to commit log file |
 | `CLAUDE_CODE_DATADOG_FLUSH_INTERVAL_MS` | — | Datadog flush interval |
 | `DEBUG` | — | npm debug module namespace patterns |
 | `DEBUG_SDK` | `false` | Enable SDK debug logging |
+| `DEBUG_AUTH` | — | Enable authentication debug logging |
 | `CLAUDE_DEBUG` | `false` | Enable Claude debug logging |
+| `ANTHROPIC_LOG` | library default | Anthropic SDK log-level override used by the bundled client logger |
 
 ## OpenTelemetry
 
@@ -322,13 +345,15 @@ Reverse-engineered from `cli.unpack.js` at tag `2.1.81`. This catalog includes f
 | `HTTP_PROXY` / `http_proxy` | — | HTTP proxy URL |
 | `HTTPS_PROXY` / `https_proxy` | — | HTTPS proxy URL |
 | `NO_PROXY` / `no_proxy` | — | Comma-separated proxy bypass list |
-| `ALL_PROXY` / `all_proxy` | — | SOCKS proxy URL used by sandbox/proxy setup and compatible network clients. |
+| `ALL_PROXY` / `all_proxy` | — | SOCKS proxy URL used by sandbox/proxy setup and compatible network clients |
 | `CLAUDE_CODE_PROXY_RESOLVES_HOSTS` | `false` | Let proxy resolve hostnames |
 | `CLAUDE_CODE_CLIENT_CERT` | — | Path to client TLS certificate |
 | `CLAUDE_CODE_CLIENT_KEY` | — | Path to client TLS private key |
 | `CLAUDE_CODE_CLIENT_KEY_PASSPHRASE` | — | Passphrase for client TLS key |
 | `NODE_EXTRA_CA_CERTS` | — | Path to additional CA certificates |
+| `SSL_CERT_FILE` | — | Path to SSL certificate file (used with proxy config) |
 | `CLAUDE_CODE_ADDITIONAL_PROTECTION` | `false` | Enable additional API protection headers |
+| `CCR_UPSTREAM_PROXY_ENABLED` | `false` | Enable upstream proxy for CCR connections |
 
 ## Remote / Headless Mode
 
@@ -341,7 +366,9 @@ Reverse-engineered from `cli.unpack.js` at tag `2.1.81`. This catalog includes f
 | `CLAUDE_CODE_REMOTE_SEND_KEEPALIVES` | `false` | Send keepalive pings in remote mode |
 | `CLAUDE_CODE_CONTAINER_ID` | — | Container ID for remote environments |
 | `SESSION_INGRESS_URL` | — | Session ingress URL for remote |
+| `CLAUDE_SESSION_INGRESS_TOKEN_FILE` | — | Path to session ingress token file |
 | `CLAUDE_CODE_WEBSOCKET_AUTH_FILE_DESCRIPTOR` | — | WebSocket auth file descriptor |
+| `CLAUDE_STREAM_IDLE_TIMEOUT_MS` | `90000` | Stream idle timeout before disconnect (ms) |
 
 ## IDE Integration
 
@@ -359,11 +386,16 @@ Reverse-engineered from `cli.unpack.js` at tag `2.1.81`. This catalog includes f
 | Variable | Default | Description |
 |---|---|---|
 | `CLAUDE_CODE_ACCESSIBILITY` | `false` | Enable accessibility mode |
-| `CLAUDE_CODE_SYNTAX_HIGHLIGHT` | — | Control syntax highlighting (`false` to disable) |
+| `CLAUDE_CODE_SYNTAX_HIGHLIGHT` | — | Control syntax highlighting (`false` to disable); falls back to `BAT_THEME` |
+| `BAT_THEME` | — | Fallback syntax highlight theme (bat/batcat theme name) |
 | `CLAUDE_CODE_SIMPLE` | `false` | Simplified mode (disables CLAUDE.md, attachments, etc.) |
 | `CLAUDE_CODE_BRIEF` | `false` | Brief output mode |
 | `CLAUDE_CODE_BRIEF_UPLOAD` | `false` | Brief mode for uploads |
 | `CLAUDE_CODE_EMIT_TOOL_USE_SUMMARIES` | `false` | Emit tool use summaries |
+| `CLAUDE_CODE_NO_FLICKER` | — | Control flicker reduction (`true` to enable, `false` to disable) |
+| `CLAUDE_CODE_SCROLL_SPEED` | — | Override scroll speed |
+| `CLAUDE_CODE_DISABLE_MOUSE` | `false` | Disable mouse input entirely |
+| `CLAUDE_CODE_DISABLE_MOUSE_CLICKS` | `false` | Disable mouse click handling |
 
 ## Sandbox
 
@@ -385,6 +417,9 @@ Reverse-engineered from `cli.unpack.js` at tag `2.1.81`. This catalog includes f
 | `CLAUDE_AGENT_SDK_DISABLE_BUILTIN_AGENTS` | `false` | Disable built-in agent types |
 | `CLAUDE_AGENT_SDK_MCP_NO_PREFIX` | `false` | Don't prefix MCP tool names in SDK mode |
 | `CLAUDE_CODE_ENTRYPOINT` | `cli` | Entry point identifier (`cli`, `sdk-ts`, `sdk-py`, `sdk-cli`, `local-agent`, `claude-desktop`) |
+| `CLAUDE_CODE_EMIT_SESSION_STATE_EVENTS` | `false` | Emit session state change events in SDK mode |
+| `CLAUDE_CODE_INCLUDE_PARTIAL_MESSAGES` | `false` | Include partial stream events/messages in SDK output |
+| `CLAUDE_CODE_AGENT_LIST_IN_MESSAGES` | — | Control agent list inclusion in messages (`true` to always include, `false` to never) |
 
 ## Teams / Teammates
 
@@ -399,6 +434,7 @@ Reverse-engineered from `cli.unpack.js` at tag `2.1.81`. This catalog includes f
 | `CLAUDE_CODE_TMUX_SESSION` | — | Tmux session name for teams |
 | `CLAUDE_CODE_TMUX_PREFIX` | — | Tmux prefix key |
 | `CLAUDE_CODE_TMUX_PREFIX_CONFLICTS` | — | Whether tmux prefix conflicts exist |
+| `CLAUDE_CODE_TMUX_TRUECOLOR` | — | Override truecolor detection for tmux sessions |
 | `TEAM_MEMORY_SYNC_URL` | — | URL for team memory synchronization |
 
 ## Plugins / Cowork
@@ -411,7 +447,10 @@ Reverse-engineered from `cli.unpack.js` at tag `2.1.81`. This catalog includes f
 | `CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS` | — | Git timeout for plugin operations (ms) |
 | `CLAUDE_CODE_PLUGIN_USE_ZIP_CACHE` | `false` | Use zip cache for plugins |
 | `CLAUDE_CODE_SYNC_PLUGIN_INSTALL` | `false` | Synchronous plugin installation |
+| `CLAUDE_CODE_SYNC_PLUGIN_INSTALL_TIMEOUT_MS` | — | Timeout for synchronous plugin installation |
 | `FORCE_AUTOUPDATE_PLUGINS` | `false` | Force auto-update plugins |
+| `CLAUDE_PLUGIN_ROOT` | injected for plugin execution | Absolute path to the active plugin root, exposed to plugin commands and templated config expansion |
+| `CLAUDE_PLUGIN_DATA` | injected for plugin execution | Per-plugin data directory, exposed to plugin commands and templated config expansion |
 
 ## Memory & Prompt History
 
@@ -421,6 +460,14 @@ Reverse-engineered from `cli.unpack.js` at tag `2.1.81`. This catalog includes f
 | `CLAUDE_COWORK_MEMORY_EXTRA_GUIDELINES` | — | Extra guidelines for cowork memory |
 | `CLAUDE_CODE_SKIP_PROMPT_HISTORY` | `false` | Skip saving prompt history |
 | `CLAUDE_CODE_SAVE_HOOK_ADDITIONAL_CONTEXT` | `false` | Save hook additional context |
+
+## Idle & Background
+
+| Variable | Default | Description |
+|---|---|---|
+| `CLAUDE_CODE_IDLE_THRESHOLD_MINUTES` | `75` | Minutes of idle time before idle behavior triggers |
+| `CLAUDE_CODE_IDLE_TOKEN_THRESHOLD` | `100000` | Token threshold for idle detection |
+| `CLAUDE_AUTO_BACKGROUND_TASKS` | `false` | Auto-spawn background tasks |
 
 ## Miscellaneous
 
@@ -434,30 +481,61 @@ Reverse-engineered from `cli.unpack.js` at tag `2.1.81`. This catalog includes f
 | `CLAUDE_CODE_WORKER_EPOCH` | — | Worker epoch for process management |
 | `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS` | — | Timeout for session-end hooks (ms) |
 | `CLAUDE_CODE_DONT_INHERIT_ENV` | `false` | Don't inherit env vars in spawned processes |
-| `CLAUDE_CODE_USE_NATIVE_FILE_SEARCH` | `false` | Use native file search |
 | `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD` | `false` | Scan additional directories for CLAUDE.md |
 | `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS` | `false` | Skip network errors in fast mode |
-| `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB` | `false` | Scrub a built-in set of sensitive credentials from inherited subprocess environments before spawning child processes. |
+| `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB` | `false` | Scrub a built-in set of sensitive credentials from inherited subprocess environments before spawning child processes |
 | `CLAUDE_CODE_USE_CCR_V2` | `false` | Use CCR v2 |
 | `CLAUDE_CODE_NEW_INIT` | `false` | Use new init flow |
-| `CLAUDE_CODE_SEARCH_HINTS_IN_LIST` | — | Show search hints in list |
 | `CLAUDE_CODE_TASK_LIST_ID` | — | Task list ID override |
+| `CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST` | `false` | Provider credentials are managed by the host application |
 | `CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR` | `false` | Maintain working directory between bash calls |
 | `CLAUDE_REPL_MODE` | `false` | REPL mode |
+| `CLAUDE_CODE_REPL` | — | Enable REPL mode (alternative flag) |
 | `CLAUDE_ENABLE_STREAM_WATCHDOG` | `false` | Enable stream watchdog |
 | `CLAUDE_AFTER_LAST_COMPACT` | `false` | Flag set after last compaction |
-| `CLAUDE_AUTO_BACKGROUND_TASKS` | `false` | Auto-spawn background tasks |
 | `CLAUDE_CHROME_PERMISSION_MODE` | — | Permission mode for Chrome integration |
 | `CLAUDE_CODE_ACTION` | `false` | Running as a GitHub Action |
 | `EMBEDDED_SEARCH_TOOLS` | `false` | Enable embedded search tools |
 | `USE_API_CONTEXT_MANAGEMENT` | `false` | Use API context management |
 | `USE_STAGING_OAUTH` | `false` | Use staging OAuth |
+| `USE_LOCAL_OAUTH` | `false` | Use local OAuth / local bridge endpoints instead of the production OAuth flow |
+| `LOCAL_BRIDGE` | `false` | Alias flag that enables local OAuth / local bridge behavior |
+| `CLAUDE_LOCAL_OAUTH_API_BASE` | `http://localhost:8000` | Local OAuth API base URL |
+| `CLAUDE_LOCAL_OAUTH_APPS_BASE` | `http://localhost:4000` | Local OAuth apps base URL |
+| `CLAUDE_LOCAL_OAUTH_CONSOLE_BASE` | `http://localhost:3000` | Local OAuth console base URL |
 | `MODIFIERS_NODE_PATH` | — | Path for modifiers node |
 | `AUDIO_CAPTURE_NODE_PATH` | — | Path for audio capture node |
+| `COMPUTER_USE_INPUT_NODE_PATH` | — | Path for computer-use input native module |
+| `COMPUTER_USE_SWIFT_NODE_PATH` | — | Path for computer-use Swift native module |
+| `URL_HANDLER_NODE_PATH` | — | Path for URL handler native module |
 | `VOICE_STREAM_BASE_URL` | — | WebSocket URL for voice streaming |
 | `CLAUBBIT` | `false` | Running in Claubbit mode |
 | `IS_DEMO` | `false` | Running in demo mode |
+| `DEMO_VERSION` | — | Demo mode version string |
 | `CLAUDECODE` | — | Set to `1` in spawned processes |
+| `BUGHUNTER_DEV_BUNDLE_B64` | — | Base64-encoded bughunter dev bundle |
+| `CLAUDE_CODE_ACCOUNT_TAGGED_ID` | — | Override the tagged account identifier emitted in OpenTelemetry metric attributes |
+| `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA` | inherits `ENABLE_ENHANCED_TELEMETRY_BETA` when unset | Alternate flag name for enhanced telemetry beta |
+| `CLAUDE_CODE_EXTRA_METADATA` | — | JSON object merged into the emitted `user_id` telemetry payload |
+| `CLAUDE_CODE_WORKSPACE_HOST_PATHS` | — | Pipe-separated host workspace paths attached to telemetry events |
+| `CLAUDE_FORCE_DISPLAY_SURVEY` | `false` | Force the feedback survey to appear when the user is otherwise eligible |
+| `CLAUDE_CODE_ENVIRONMENT_RUNNER_VERSION` | — | Attach an environment-runner version header in remote bridge mode |
+| `CCR_ENABLE_BUNDLE` | `false` | Enable the CCR bundle path used by remote/background task bootstrap logic |
+| `CCR_FORCE_BUNDLE` | `false` | Force the CCR bundle path even when normal preflight heuristics would not select it |
+| `CLAUDE_CODE_POST_FOR_SESSION_INGRESS_V2` | `false` | Use POST transport for session-ingress v2 websocket URLs |
+| `CLAUDE_BRIDGE_USE_CCR_V2` | `false` | Force bridge/session handling onto the CCR v2 path |
+| `CLAUDE_CODE_EAGER_FLUSH` | `false` | Flush persisted session data eagerly after writes |
+| `CLAUDE_CODE_IS_COWORK` | `false` | Mark the session as cowork/bridge mode for eager flushing and related behaviors |
+| `CLAUDE_CODE_EXIT_AFTER_FIRST_RENDER` | `false` | Exit after the first UI render; useful for smoke tests and harnesses |
+| `CLAUDE_CODE_EXIT_AFTER_STOP_DELAY` | — | Delay process exit after stop/termination logic |
+| `CLAUDE_CODE_RESUME_INTERRUPTED_TURN` | — | Resume an interrupted turn/session by identifier or token |
+| `REVIEW_REMOTE` | `false` | Route the built-in `/review` command through the remote-review launcher when enabled |
+| `CLAUDE_CODE_QUESTION_PREVIEW_FORMAT` | `markdown` outside SDK mode | Format for question previews: `markdown` or `html` |
+| `MAX_STRUCTURED_OUTPUT_RETRIES` | `5` | Maximum retries for structured-output validation loops |
+| `CLAUDE_CODE_STALL_TIMEOUT_MS_FOR_TESTING` | test default | Override the internal stall timeout in test harnesses |
+| `CLAUDE_CODE_TEST_FIXTURES_ROOT` | current workspace | Override the root directory used for JSON test fixtures |
+| `FALLBACK_FOR_ALL_PRIMARY_MODELS` | — | Enable fallback for all primary models |
+| `AWS_LAMBDA_BENCHMARK_MODE` | `false` | AWS SDK benchmark/testing flag observed in the bundled dependencies |
 
 ## Bash Environment Allowlist
 
@@ -467,126 +545,110 @@ These environment variables are passed through to Bash tool executions:
 
 ## Teammate Env Vars Forwarded to Subprocesses
 
-`CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, `CLAUDE_CODE_USE_FOUNDRY`, `ANTHROPIC_BASE_URL`, `CLAUDE_CONFIG_DIR`, `CLAUDE_CODE_REMOTE`, `CLAUDE_CODE_REMOTE_MEMORY_DIR`
+`CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, `CLAUDE_CODE_USE_FOUNDRY`, `ANTHROPIC_BASE_URL`, `CLAUDE_CONFIG_DIR`, `CLAUDE_CODE_REMOTE`, `CLAUDE_CODE_REMOTE_MEMORY_DIR`, `HTTPS_PROXY`, `https_proxy`, `HTTP_PROXY`, `http_proxy`, `NO_PROXY`, `no_proxy`, `SSL_CERT_FILE`, `NODE_EXTRA_CA_CERTS`, `REQUESTS_CA_BUNDLE`, `CURL_CA_BUNDLE`
 
 Teammate launchers also inject `CLAUDECODE=1` and `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` before appending the forwarded parent environment variables above.
 
-## Additional First-Party & Internal Variables
+## Provider-Sensitive Env Vars
 
-| Variable | Default | Description |
-|---|---|---|
-| `ANTHROPIC_CUSTOM_MODEL_OPTION` | — | Add a custom model ID to the model picker and model-validation path. |
-| `ANTHROPIC_CUSTOM_MODEL_OPTION_NAME` | value of `ANTHROPIC_CUSTOM_MODEL_OPTION` | Display label for `ANTHROPIC_CUSTOM_MODEL_OPTION`. |
-| `ANTHROPIC_CUSTOM_MODEL_OPTION_DESCRIPTION` | `Custom model (<id>)` | Display description for `ANTHROPIC_CUSTOM_MODEL_OPTION`. |
-| `ANTHROPIC_LOG` | library default | Anthropic SDK log-level override used by the bundled client logger. |
-| `AWS_LOGIN_CACHE_DIRECTORY` | `~/.aws/login/cache` | Override the AWS SSO login-cache directory used by bundled AWS credential providers. |
-| `OTEL_EXPORTER_PROMETHEUS_HOST` | library default | Prometheus exporter host for the bundled OpenTelemetry Prometheus exporter. |
-| `OTEL_EXPORTER_PROMETHEUS_PORT` | library default | Prometheus exporter port for the bundled OpenTelemetry Prometheus exporter. |
-| `USE_LOCAL_OAUTH` | `false` | Use local OAuth / local bridge endpoints instead of the production OAuth flow. |
-| `LOCAL_BRIDGE` | `false` | Alias flag that enables local OAuth / local bridge behavior. |
-| `CLAUDE_CODE_ACCOUNT_TAGGED_ID` | — | Override the tagged account identifier emitted in OpenTelemetry metric attributes. |
-| `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA` | inherits `ENABLE_ENHANCED_TELEMETRY_BETA` when unset | Alternate flag name for enhanced telemetry beta. |
-| `CLAUDE_CODE_EXTRA_METADATA` | — | JSON object merged into the emitted `user_id` telemetry payload. |
-| `CLAUDE_CODE_WORKSPACE_HOST_PATHS` | — | Pipe-separated host workspace paths attached to telemetry events. |
-| `CLAUDE_FORCE_DISPLAY_SURVEY` | `false` | Force the feedback survey to appear when the user is otherwise eligible. |
-| `CLAUDE_CODE_ENVIRONMENT_RUNNER_VERSION` | — | Attach an environment-runner version header in remote bridge mode. |
-| `CCR_ENABLE_BUNDLE` | `false` | Enable the CCR bundle path used by remote/background task bootstrap logic. |
-| `CCR_FORCE_BUNDLE` | `false` | Force the CCR bundle path even when normal preflight heuristics would not select it. |
-| `CLAUDE_CODE_POST_FOR_SESSION_INGRESS_V2` | `false` | Use POST transport for session-ingress v2 websocket URLs. |
-| `CLAUDE_BRIDGE_USE_CCR_V2` | `false` | Force bridge/session handling onto the CCR v2 path. |
-| `CLAUDE_CODE_EAGER_FLUSH` | `false` | Flush persisted session data eagerly after writes. |
-| `CLAUDE_CODE_IS_COWORK` | `false` | Mark the session as cowork/bridge mode for eager flushing and related behaviors. |
-| `CLAUDE_CODE_EXIT_AFTER_FIRST_RENDER` | `false` | Exit after the first UI render; useful for smoke tests and harnesses. |
-| `CLAUDE_CODE_EXIT_AFTER_STOP_DELAY` | — | Delay process exit after stop/termination logic. |
-| `CLAUDE_CODE_RESUME_INTERRUPTED_TURN` | — | Resume an interrupted turn/session by identifier or token. |
-| `REVIEW_REMOTE` | `false` | Route the built-in `/review` command through the remote-review launcher when enabled. |
-| `CLAUDE_CODE_QUESTION_PREVIEW_FORMAT` | `markdown` outside SDK mode | Format for question previews: `markdown` or `html`. |
-| `CLAUDE_CODE_INCLUDE_PARTIAL_MESSAGES` | `false` | Include partial stream events/messages in SDK output. |
-| `CLAUDE_CODE_SYNC_PLUGIN_INSTALL_TIMEOUT_MS` | — | Timeout for synchronous plugin installation. |
-| `MAX_STRUCTURED_OUTPUT_RETRIES` | `5` | Maximum retries for structured-output validation loops. |
-| `CLAUDE_CODE_STALL_TIMEOUT_MS_FOR_TESTING` | test default | Override the internal stall timeout in test harnesses. |
-| `CLAUDE_CODE_TEST_FIXTURES_ROOT` | current workspace | Override the root directory used for JSON test fixtures. |
-| `AWS_LAMBDA_BENCHMARK_MODE` | `false` | AWS SDK benchmark/testing flag observed in the bundled dependencies. |
-| `CLAUDE_PLUGIN_ROOT` | injected for plugin execution | Absolute path to the active plugin root, exposed to plugin commands and templated config expansion. |
-| `CLAUDE_PLUGIN_DATA` | injected for plugin execution | Per-plugin data directory, exposed to plugin commands and templated config expansion. |
+These environment variables are tracked as provider-sensitive (changes may trigger re-authentication):
+
+`CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST`, `CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, `CLAUDE_CODE_USE_FOUNDRY`, `ANTHROPIC_BASE_URL`, `ANTHROPIC_BEDROCK_BASE_URL`, `ANTHROPIC_VERTEX_BASE_URL`, `ANTHROPIC_FOUNDRY_BASE_URL`, `ANTHROPIC_FOUNDRY_RESOURCE`, `ANTHROPIC_VERTEX_PROJECT_ID`, `CLOUD_ML_REGION`, `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN`, `AWS_BEARER_TOKEN_BEDROCK`, `ANTHROPIC_FOUNDRY_API_KEY`, `CLAUDE_CODE_SKIP_BEDROCK_AUTH`, `CLAUDE_CODE_SKIP_VERTEX_AUTH`, `CLAUDE_CODE_SKIP_FOUNDRY_AUTH`, `ANTHROPIC_MODEL`, `ANTHROPIC_DEFAULT_HAIKU_MODEL`, `ANTHROPIC_DEFAULT_HAIKU_MODEL_DESCRIPTION`, `ANTHROPIC_DEFAULT_HAIKU_MODEL_NAME`, `ANTHROPIC_DEFAULT_HAIKU_MODEL_SUPPORTED_CAPABILITIES`, `ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION`, `ANTHROPIC_DEFAULT_OPUS_MODEL_NAME`, `ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES`, `ANTHROPIC_DEFAULT_SONNET_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL_DESCRIPTION`, `ANTHROPIC_DEFAULT_SONNET_MODEL_NAME`, `ANTHROPIC_DEFAULT_SONNET_MODEL_SUPPORTED_CAPABILITIES`, `ANTHROPIC_SMALL_FAST_MODEL`, `ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION`, `CLAUDE_CODE_SUBAGENT_MODEL`
+
+## Config-Panel Env Vars
+
+These environment variables can be overridden via the config panel / settings UI:
+
+`ANTHROPIC_CUSTOM_HEADERS`, `ANTHROPIC_CUSTOM_MODEL_OPTION`, `ANTHROPIC_CUSTOM_MODEL_OPTION_DESCRIPTION`, `ANTHROPIC_CUSTOM_MODEL_OPTION_NAME`, `ANTHROPIC_DEFAULT_HAIKU_MODEL`, `ANTHROPIC_DEFAULT_HAIKU_MODEL_DESCRIPTION`, `ANTHROPIC_DEFAULT_HAIKU_MODEL_NAME`, `ANTHROPIC_DEFAULT_HAIKU_MODEL_SUPPORTED_CAPABILITIES`, `ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION`, `ANTHROPIC_DEFAULT_OPUS_MODEL_NAME`, `ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES`, `ANTHROPIC_DEFAULT_SONNET_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL_DESCRIPTION`, `ANTHROPIC_DEFAULT_SONNET_MODEL_NAME`, `ANTHROPIC_DEFAULT_SONNET_MODEL_SUPPORTED_CAPABILITIES`, `ANTHROPIC_FOUNDRY_API_KEY`, `ANTHROPIC_MODEL`, `ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION`, `ANTHROPIC_SMALL_FAST_MODEL`, `AWS_DEFAULT_REGION`, `AWS_PROFILE`, `AWS_REGION`, `BASH_DEFAULT_TIMEOUT_MS`, `BASH_MAX_OUTPUT_LENGTH`, `BASH_MAX_TIMEOUT_MS`, `CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR`, `CLAUDE_CODE_API_KEY_HELPER_TTL_MS`, `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`, `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`, `CLAUDE_CODE_DISABLE_TERMINAL_TITLE`, `CLAUDE_CODE_ENABLE_TELEMETRY`, `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`, `CLAUDE_CODE_MAX_OUTPUT_TOKENS`, `CLAUDE_CODE_SKIP_BEDROCK_AUTH`, `CLAUDE_CODE_SKIP_FOUNDRY_AUTH`, `CLAUDE_CODE_SKIP_VERTEX_AUTH`, `CLAUDE_CODE_SUBAGENT_MODEL`, `CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_FOUNDRY`, `CLAUDE_CODE_USE_VERTEX`, `DISABLE_AUTOUPDATER`, `DISABLE_BUG_COMMAND`, `DISABLE_COST_WARNINGS`, `DISABLE_ERROR_REPORTING`, `DISABLE_FEEDBACK_COMMAND`, `DISABLE_TELEMETRY`, `ENABLE_TOOL_SEARCH`, `MAX_MCP_OUTPUT_TOKENS`, `MAX_THINKING_TOKENS`, `MCP_TIMEOUT`, `MCP_TOOL_TIMEOUT`, `OTEL_EXPORTER_OTLP_HEADERS`, `OTEL_EXPORTER_OTLP_LOGS_HEADERS`, `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`, `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`, `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`, `OTEL_EXPORTER_OTLP_METRICS_HEADERS`, `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`, `OTEL_EXPORTER_OTLP_PROTOCOL`, `OTEL_EXPORTER_OTLP_TRACES_HEADERS`, `OTEL_LOG_TOOL_DETAILS`, `OTEL_LOG_USER_PROMPTS`, `OTEL_LOGS_EXPORT_INTERVAL`, `OTEL_LOGS_EXPORTER`, `OTEL_METRIC_EXPORT_INTERVAL`, `OTEL_METRICS_EXPORTER`, `OTEL_METRICS_INCLUDE_ACCOUNT_UUID`, `OTEL_METRICS_INCLUDE_SESSION_ID`, `OTEL_METRICS_INCLUDE_VERSION`, `OTEL_RESOURCE_ATTRIBUTES`, `USE_BUILTIN_RIPGREP`, `VERTEX_REGION_CLAUDE_3_5_HAIKU`, `VERTEX_REGION_CLAUDE_3_5_SONNET`, `VERTEX_REGION_CLAUDE_3_7_SONNET`, `VERTEX_REGION_CLAUDE_4_0_OPUS`, `VERTEX_REGION_CLAUDE_4_0_SONNET`, `VERTEX_REGION_CLAUDE_4_1_OPUS`, `VERTEX_REGION_CLAUDE_4_5_SONNET`, `VERTEX_REGION_CLAUDE_4_6_SONNET`, `VERTEX_REGION_CLAUDE_HAIKU_4_5`
+
+## Sensitive Env Vars Redacted from Logs
+
+These environment variables are redacted from debug logs and subprocess visibility:
+
+`ANTHROPIC_API_KEY`, `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_AUTH_TOKEN`, `ANTHROPIC_FOUNDRY_API_KEY`, `ANTHROPIC_CUSTOM_HEADERS`, `OTEL_EXPORTER_OTLP_HEADERS`, `OTEL_EXPORTER_OTLP_LOGS_HEADERS`, `OTEL_EXPORTER_OTLP_METRICS_HEADERS`, `OTEL_EXPORTER_OTLP_TRACES_HEADERS`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN`, `AWS_BEARER_TOKEN_BEDROCK`, `GOOGLE_APPLICATION_CREDENTIALS`, `AZURE_CLIENT_SECRET`, `AZURE_CLIENT_CERTIFICATE_PATH`, `ACTIONS_ID_TOKEN_REQUEST_TOKEN`, `ACTIONS_ID_TOKEN_REQUEST_URL`, `ACTIONS_RUNTIME_TOKEN`, `ACTIONS_RUNTIME_URL`, `ALL_INPUTS`, `OVERRIDE_GITHUB_TOKEN`, `DEFAULT_WORKFLOW_TOKEN`, `SSH_SIGNING_KEY`
 
 ## Hosted Environment Detection
 
 | Variable | Default | Description |
 |---|---|---|
-| `CODESPACES` | ambient | Detect GitHub Codespaces and classify the session as running in Codespaces. |
-| `GITPOD_WORKSPACE_ID` | ambient | Detect Gitpod and classify the session as running in Gitpod. |
-| `REPL_ID` | ambient | Detect Replit when `REPL_ID` is present. |
-| `REPL_SLUG` | ambient | Detect Replit when `REPL_SLUG` is present. |
-| `PROJECT_DOMAIN` | ambient | Detect Glitch from its project-domain environment. |
-| `VERCEL` | ambient | Detect Vercel-hosted environments. |
-| `RAILWAY_ENVIRONMENT_NAME` | ambient | Detect Railway-hosted environments. |
-| `RAILWAY_SERVICE_NAME` | ambient | Detect Railway-hosted environments. |
-| `RENDER` | ambient | Detect Render-hosted environments. |
-| `NETLIFY` | ambient | Detect Netlify-hosted environments. |
-| `DYNO` | ambient | Detect Heroku dynos. |
-| `FLY_APP_NAME` | ambient | Detect Fly.io workloads. |
-| `FLY_MACHINE_ID` | ambient | Detect Fly.io workloads. |
-| `CF_PAGES` | ambient | Detect Cloudflare Pages deployments. |
-| `DENO_DEPLOYMENT_ID` | ambient | Detect Deno Deploy environments. |
-| `AWS_LAMBDA_FUNCTION_NAME` | ambient | Detect AWS Lambda runtimes. |
-| `AWS_EXECUTION_ENV` | ambient | Distinguish AWS ECS/Fargate execution environments. |
-| `K_SERVICE` | ambient | Detect Google Cloud Run services. |
-| `GOOGLE_CLOUD_PROJECT` | ambient | Detect generic Google Cloud environments and supply project context. |
-| `WEBSITE_SITE_NAME` | ambient | Detect Azure App Service deployments. |
-| `WEBSITE_SKU` | ambient | Detect Azure App Service deployments. |
-| `AZURE_FUNCTIONS_ENVIRONMENT` | ambient | Detect Azure Functions runtimes. |
-| `APP_URL` | ambient | Detect DigitalOcean App Platform when the app URL matches that host pattern. |
-| `SPACE_CREATOR_USER_ID` | ambient | Detect Hugging Face Spaces environments. |
-| `GITHUB_ACTIONS` | ambient | Detect GitHub Actions and adapt telemetry/session classification. |
-| `GITLAB_CI` | ambient | Detect GitLab CI environments. |
-| `CIRCLECI` | ambient | Detect CircleCI environments. |
-| `BUILDKITE` | ambient | Detect Buildkite environments. |
-| `KUBERNETES_SERVICE_HOST` | ambient | Detect generic Kubernetes environments. |
+| `CODESPACES` | ambient | Detect GitHub Codespaces and classify the session as running in Codespaces |
+| `GITPOD_WORKSPACE_ID` | ambient | Detect Gitpod and classify the session as running in Gitpod |
+| `REPL_ID` | ambient | Detect Replit when `REPL_ID` is present |
+| `REPL_SLUG` | ambient | Detect Replit when `REPL_SLUG` is present |
+| `PROJECT_DOMAIN` | ambient | Detect Glitch from its project-domain environment |
+| `VERCEL` | ambient | Detect Vercel-hosted environments |
+| `RAILWAY_ENVIRONMENT_NAME` | ambient | Detect Railway-hosted environments |
+| `RAILWAY_SERVICE_NAME` | ambient | Detect Railway-hosted environments |
+| `RENDER` | ambient | Detect Render-hosted environments |
+| `NETLIFY` | ambient | Detect Netlify-hosted environments |
+| `DYNO` | ambient | Detect Heroku dynos |
+| `FLY_APP_NAME` | ambient | Detect Fly.io workloads |
+| `FLY_MACHINE_ID` | ambient | Detect Fly.io workloads |
+| `CF_PAGES` | ambient | Detect Cloudflare Pages deployments |
+| `DENO_DEPLOYMENT_ID` | ambient | Detect Deno Deploy environments |
+| `AWS_LAMBDA_FUNCTION_NAME` | ambient | Detect AWS Lambda runtimes |
+| `AWS_EXECUTION_ENV` | ambient | Distinguish AWS ECS/Fargate execution environments |
+| `K_SERVICE` | ambient | Detect Google Cloud Run services |
+| `GOOGLE_CLOUD_PROJECT` | ambient | Detect generic Google Cloud environments and supply project context |
+| `WEBSITE_SITE_NAME` | ambient | Detect Azure App Service deployments |
+| `WEBSITE_SKU` | ambient | Detect Azure App Service deployments |
+| `AZURE_FUNCTIONS_ENVIRONMENT` | ambient | Detect Azure Functions runtimes |
+| `APP_URL` | ambient | Detect DigitalOcean App Platform when the app URL matches that host pattern |
+| `SPACE_CREATOR_USER_ID` | ambient | Detect Hugging Face Spaces environments |
+| `GITHUB_ACTIONS` | ambient | Detect GitHub Actions and adapt telemetry/session classification |
+| `GITLAB_CI` | ambient | Detect GitLab CI environments |
+| `CIRCLECI` | ambient | Detect CircleCI environments |
+| `BUILDKITE` | ambient | Detect Buildkite environments |
+| `KUBERNETES_SERVICE_HOST` | ambient | Detect generic Kubernetes environments |
 
 ## GitHub Actions Context
 
 | Variable | Default | Description |
 |---|---|---|
-| `GITHUB_ACTION_INPUTS` | ambient | Pass GitHub Action inputs into SDK/session metadata. |
-| `GITHUB_ACTION_PATH` | ambient | Identify the running GitHub Action path/version when Claude Code is used inside an action. |
-| `GITHUB_ACTOR` | ambient | Capture GitHub Actions actor metadata. |
-| `GITHUB_ACTOR_ID` | ambient | Capture GitHub Actions actor ID metadata. |
-| `GITHUB_REPOSITORY` | ambient | Capture GitHub Actions repository metadata. |
-| `GITHUB_REPOSITORY_ID` | ambient | Capture GitHub Actions repository ID metadata. |
-| `GITHUB_REPOSITORY_OWNER` | ambient | Capture GitHub Actions repository-owner metadata. |
-| `GITHUB_REPOSITORY_OWNER_ID` | ambient | Capture GitHub Actions repository-owner ID metadata. |
-| `GITHUB_EVENT_NAME` | ambient | Capture the GitHub event name in action telemetry. |
-| `RUNNER_ENVIRONMENT` | ambient | Capture GitHub Actions runner environment metadata. |
-| `RUNNER_OS` | ambient | Capture GitHub Actions runner OS metadata. |
+| `GITHUB_ACTION_INPUTS` | ambient | Pass GitHub Action inputs into SDK/session metadata |
+| `GITHUB_ACTION_PATH` | ambient | Identify the running GitHub Action path/version when Claude Code is used inside an action |
+| `GITHUB_ACTOR` | ambient | Capture GitHub Actions actor metadata |
+| `GITHUB_ACTOR_ID` | ambient | Capture GitHub Actions actor ID metadata |
+| `GITHUB_REPOSITORY` | ambient | Capture GitHub Actions repository metadata |
+| `GITHUB_REPOSITORY_ID` | ambient | Capture GitHub Actions repository ID metadata |
+| `GITHUB_REPOSITORY_OWNER` | ambient | Capture GitHub Actions repository-owner metadata |
+| `GITHUB_REPOSITORY_OWNER_ID` | ambient | Capture GitHub Actions repository-owner ID metadata |
+| `GITHUB_EVENT_NAME` | ambient | Capture the GitHub event name in action telemetry |
+| `RUNNER_ENVIRONMENT` | ambient | Capture GitHub Actions runner environment metadata |
+| `RUNNER_OS` | ambient | Capture GitHub Actions runner OS metadata |
 
 ## Terminal & Platform Detection
 
 | Variable | Default | Description |
 |---|---|---|
-| `TERMINAL_EMULATOR` | ambient | Detect JetBrains JediTerm / IDE-hosted terminals. |
-| `TERM_PROGRAM` | ambient | Detect the current terminal program (for example vscode, iTerm, ghostty, Warp). |
-| `VSCODE_GIT_ASKPASS_MAIN` | ambient | Infer Cursor/Windsurf/Antigravity from the VS Code askpass helper path. |
-| `TMUX` | ambient | Detect tmux sessions. |
-| `STY` | ambient | Detect GNU screen sessions. |
-| `KITTY_WINDOW_ID` | ambient | Detect kitty terminals. |
-| `WT_SESSION` | ambient | Detect Windows Terminal sessions. |
-| `VTE_VERSION` | ambient | Detect VTE-based terminal emulators. |
-| `KONSOLE_VERSION` | ambient | Detect Konsole. |
-| `GNOME_TERMINAL_SERVICE` | ambient | Detect GNOME Terminal. |
-| `XTERM_VERSION` | ambient | Detect xterm. |
-| `WSL_DISTRO_NAME` | ambient | Detect WSL and include the distro name in terminal/platform detection. |
+| `TERMINAL` | ambient | Detect terminal emulator name |
+| `TERMINAL_EMULATOR` | ambient | Detect JetBrains JediTerm / IDE-hosted terminals |
+| `TERM_PROGRAM` | ambient | Detect the current terminal program (for example vscode, iTerm, ghostty, Warp) |
+| `TERM_PROGRAM_VERSION` | ambient | Detect terminal program version |
+| `VSCODE_GIT_ASKPASS_MAIN` | ambient | Infer Cursor/Windsurf/Antigravity from the VS Code askpass helper path |
+| `TMUX` | ambient | Detect tmux sessions |
+| `TMUX_PANE` | ambient | Detect tmux pane context |
+| `STY` | ambient | Detect GNU screen sessions |
+| `KITTY_WINDOW_ID` | ambient | Detect kitty terminals |
+| `WT_SESSION` | ambient | Detect Windows Terminal sessions |
+| `VTE_VERSION` | ambient | Detect VTE-based terminal emulators |
+| `KONSOLE_VERSION` | ambient | Detect Konsole |
+| `GNOME_TERMINAL_SERVICE` | ambient | Detect GNOME Terminal |
+| `XTERM_VERSION` | ambient | Detect xterm |
+| `WSL_DISTRO_NAME` | ambient | Detect WSL and include the distro name in terminal/platform detection |
+| `COLORFGBG` | ambient | Detect terminal foreground/background colors for theme selection |
+| `ITERM_SESSION_ID` | ambient | Detect iTerm2 sessions |
 
 ## External Tool & Runtime Inputs
 
 | Variable | Default | Description |
 |---|---|---|
-| `CLI_WIDTH` | ambient | Override terminal width when TTY dimensions are unavailable. |
-| `BROWSER` | ambient | Browser command preference used when opening links. |
-| `EDITOR` | ambient | Editor preference used when launching external editors. |
-| `VISUAL` | ambient | Alternate editor preference used when launching external editors. |
-| `TMPDIR` | ambient | OS temporary-directory input; also influences sandbox temp paths. |
-| `P4PORT` | ambient | Detect Perforce environments. |
+| `CLI_WIDTH` | ambient | Override terminal width when TTY dimensions are unavailable |
+| `BROWSER` | ambient | Browser command preference used when opening links |
+| `EDITOR` | ambient | Editor preference used when launching external editors |
+| `VISUAL` | ambient | Alternate editor preference used when launching external editors |
+| `TMPDIR` | ambient | OS temporary-directory input; also influences sandbox temp paths |
+| `P4PORT` | ambient | Detect Perforce environments |
 
 ## Additional Ambient / Dependency Variables
 
@@ -594,102 +656,103 @@ The tables below cover additional ambient or dependency-owned environment variab
 
 | Variable | Default | Description |
 |---|---|---|
-| `ALACRITTY_LOG` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `APPDATA` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection. |
-| `AZURE_ADDITIONALLY_ALLOWED_TENANTS` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components. |
-| `AZURE_AUTHORITY_HOST` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components. |
-| `AZURE_CLIENT_CERTIFICATE_PASSWORD` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components. |
-| `AZURE_CLIENT_CERTIFICATE_PATH` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components. |
-| `AZURE_CLIENT_ID` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components. |
-| `AZURE_CLIENT_SECRET` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components. |
-| `AZURE_CLIENT_SEND_CERTIFICATE_CHAIN` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components. |
-| `AZURE_FEDERATED_TOKEN_FILE` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components. |
-| `AZURE_IDENTITY_DISABLE_MULTITENANTAUTH` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components. |
-| `AZURE_PASSWORD` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components. |
-| `AZURE_POD_IDENTITY_AUTHORITY_HOST` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components. |
-| `AZURE_REGIONAL_AUTHORITY_NAME` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components. |
-| `AZURE_TENANT_ID` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components. |
-| `AZURE_TOKEN_CREDENTIALS` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components. |
-| `AZURE_USERNAME` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components. |
-| `AWS_LAMBDA_MAX_CONCURRENCY` | ambient | AWS Lambda internal concurrency/testing flag read by bundled AWS Lambda utilities. |
-| `AWS_LAMBDA_NODEJS_NO_GLOBAL_AWSLAMBDA` | ambient | Disable the bundled AWS Lambda helper from injecting `globalThis.awslambda`. |
-| `BEDROCK_BASE_URL` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `CHOKIDAR_INTERVAL` | ambient | File-watcher polling setting read by bundled `chokidar`. |
-| `CHOKIDAR_USEPOLLING` | ambient | File-watcher polling setting read by bundled `chokidar`. |
-| `CLOUD_RUN_JOB` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `COREPACK_ENABLE_AUTO_PIN` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `CURSOR_TRACE_ID` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `DEBUG_AUTH` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `DEMO_VERSION` | ambient | Demo-mode environment variable observed in Claude Code runtime paths. |
-| `DETECT_GCP_RETRIES` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `FALLBACK_FOR_ALL_PRIMARY_MODELS` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `FUNCTION_NAME` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `FUNCTION_TARGET` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `GAE_MODULE_NAME` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `GAE_SERVICE` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `GCE_METADATA_HOST` | ambient | Google auth / metadata environment variable read by bundled Google SDK components. |
-| `GCE_METADATA_IP` | ambient | Google auth / metadata environment variable read by bundled Google SDK components. |
-| `GCLOUD_PROJECT` | ambient | Google auth / metadata environment variable read by bundled Google SDK components. |
-| `GOOGLE_APPLICATION_CREDENTIALS` | ambient | Google auth / metadata environment variable read by bundled Google SDK components. |
-| `GOOGLE_EXTERNAL_ACCOUNT_ALLOW_EXECUTABLES` | ambient | Must be set to `1` before bundled Google external-account auth code will run executable credential sources. |
-| `GOOGLE_CLOUD_QUOTA_PROJECT` | ambient | Google auth / metadata environment variable read by bundled Google SDK components. |
-| `GRACEFUL_FS_PLATFORM` | ambient | Platform override used by bundled `graceful-fs`. |
-| `GRPC_DEFAULT_SSL_ROOTS_FILE_PATH` | ambient | gRPC transport/debug environment variable read by bundled gRPC libraries. |
-| `GRPC_EXPERIMENTAL_ENABLE_OUTLIER_DETECTION` | ambient | gRPC transport/debug environment variable read by bundled gRPC libraries. |
-| `GRPC_NODE_TRACE` | ambient | gRPC transport/debug environment variable read by bundled gRPC libraries. |
-| `GRPC_NODE_USE_ALTERNATIVE_RESOLVER` | ambient | gRPC transport/debug environment variable read by bundled gRPC libraries. |
-| `GRPC_NODE_VERBOSITY` | ambient | gRPC transport/debug environment variable read by bundled gRPC libraries. |
-| `GRPC_SSL_CIPHER_SUITES` | ambient | gRPC transport/debug environment variable read by bundled gRPC libraries. |
-| `GRPC_TRACE` | ambient | gRPC transport/debug environment variable read by bundled gRPC libraries. |
-| `GRPC_VERBOSITY` | ambient | gRPC transport/debug environment variable read by bundled gRPC libraries. |
-| `HOME` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection. |
-| `ITERM_SESSION_ID` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `JEST_WORKER_ID` | ambient | Testing/debug environment variable observed in bundled code paths. |
-| `K_CONFIGURATION` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `LC_TERMINAL` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `LOCALAPPDATA` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection. |
-| `METADATA_SERVER_DETECTION` | ambient | Google auth / metadata environment variable read by bundled Google SDK components. |
-| `MSAL_FORCE_REGION` | ambient | Force the Azure MSAL region override used by bundled client-credential auth flows. |
-| `MSYSTEM` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `NODE_DEBUG` | ambient | Node runtime behavior/debug variable observed by Claude Code or bundled dependencies. |
-| `NODE_OPTIONS` | ambient | Node runtime behavior/debug variable observed by Claude Code or bundled dependencies. |
-| `NODE_V8_COVERAGE` | ambient | Node runtime behavior/debug variable observed by Claude Code or bundled dependencies. |
-| `OSTYPE` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection. |
-| `PATH` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection. |
-| `PATHEXT` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection. |
-| `PKG_CONFIG_PATH` | ambient | Native runtime/build environment variable observed by bundled dependencies. |
-| `PWD` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection. |
-| `REGION_NAME` | ambient | Ambient Azure/App Service region name forwarded into bundled MSAL environment-region detection. |
-| `SAFEUSER` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `SESSIONNAME` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `SHARP_FORCE_GLOBAL_LIBVIPS` | ambient | Native image-library setting read by bundled `sharp`. |
-| `SHARP_IGNORE_GLOBAL_LIBVIPS` | ambient | Native image-library setting read by bundled `sharp`. |
-| `SHELL` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection. |
-| `SRT_DEBUG` | ambient | Testing/debug environment variable observed in bundled code paths. |
-| `SSH_CLIENT` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `SSH_CONNECTION` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `SSH_TTY` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `SWE_BENCH_INSTANCE_ID` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `SWE_BENCH_RUN_ID` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `SWE_BENCH_TASK_ID` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `SYSTEMROOT` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection. |
-| `SYSTEM_OIDCREQUESTURI` | ambient | Google auth / metadata environment variable read by bundled Google SDK components. |
-| `TEMP` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection. |
-| `TERMINATOR_UUID` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `TERM_PROGRAM_VERSION` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `TEST_ENABLE_SESSION_PERSISTENCE` | ambient | Testing/debug environment variable observed in bundled code paths. |
-| `TEST_GRACEFUL_FS_GLOBAL_PATCH` | ambient | Testing/debug environment variable observed in bundled code paths. |
-| `TILIX_ID` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `TMUX_PANE` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `UNDICI_NO_FG` | ambient | Disable foreground work in bundled `undici` internals. |
-| `USER` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection. |
-| `USERNAME` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection. |
-| `USERPROFILE` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection. |
-| `UV_THREADPOOL_SIZE` | ambient | Native runtime/build environment variable observed by bundled dependencies. |
-| `VCR_RECORD` | ambient | Testing/debug environment variable observed in bundled code paths. |
-| `VERTEX_BASE_URL` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
-| `WS_NO_BUFFER_UTIL` | ambient | Disable optional native optimization in the bundled `ws` library. |
-| `WS_NO_UTF_8_VALIDATE` | ambient | Disable optional native optimization in the bundled `ws` library. |
-| `XDG_CONFIG_HOME` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection. |
-| `XDG_RUNTIME_DIR` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection. |
-| `ZED_TERM` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies. |
+| `ALACRITTY_LOG` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies |
+| `APPDATA` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection |
+| `AZURE_ADDITIONALLY_ALLOWED_TENANTS` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components |
+| `AZURE_AUTHORITY_HOST` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components |
+| `AZURE_CLIENT_CERTIFICATE_PASSWORD` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components |
+| `AZURE_CLIENT_CERTIFICATE_PATH` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components |
+| `AZURE_CLIENT_ID` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components |
+| `AZURE_CLIENT_SECRET` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components |
+| `AZURE_CLIENT_SEND_CERTIFICATE_CHAIN` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components |
+| `AZURE_FEDERATED_TOKEN_FILE` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components |
+| `AZURE_IDENTITY_DISABLE_MULTITENANTAUTH` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components |
+| `AZURE_PASSWORD` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components |
+| `AZURE_POD_IDENTITY_AUTHORITY_HOST` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components |
+| `AZURE_REGIONAL_AUTHORITY_NAME` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components |
+| `AZURE_TENANT_ID` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components |
+| `AZURE_TOKEN_CREDENTIALS` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components |
+| `AZURE_USERNAME` | ambient | Standard Azure Identity / credential environment variable read by bundled Azure SDK components |
+| `AWS_LAMBDA_MAX_CONCURRENCY` | ambient | AWS Lambda internal concurrency/testing flag read by bundled AWS Lambda utilities |
+| `AWS_LAMBDA_NODEJS_NO_GLOBAL_AWSLAMBDA` | ambient | Disable the bundled AWS Lambda helper from injecting `globalThis.awslambda` |
+| `AWS_LOGIN_CACHE_DIRECTORY` | `~/.aws/login/cache` | Override the AWS SSO login-cache directory used by bundled AWS credential providers |
+| `BEDROCK_BASE_URL` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies |
+| `CHOKIDAR_INTERVAL` | ambient | File-watcher polling setting read by bundled `chokidar` |
+| `CHOKIDAR_USEPOLLING` | ambient | File-watcher polling setting read by bundled `chokidar` |
+| `CLOUD_RUN_JOB` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies |
+| `COREPACK_ENABLE_AUTO_PIN` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies |
+| `CURSOR_TRACE_ID` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies |
+| `DETECT_GCP_RETRIES` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies |
+| `FUNCTION_NAME` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies |
+| `FUNCTION_TARGET` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies |
+| `GAE_MODULE_NAME` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies |
+| `GAE_SERVICE` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies |
+| `GCE_METADATA_HOST` | ambient | Google auth / metadata environment variable read by bundled Google SDK components |
+| `GCE_METADATA_IP` | ambient | Google auth / metadata environment variable read by bundled Google SDK components |
+| `GCLOUD_PROJECT` | ambient | Google auth / metadata environment variable read by bundled Google SDK components |
+| `GOOGLE_APPLICATION_CREDENTIALS` | ambient | Google auth / metadata environment variable read by bundled Google SDK components |
+| `GOOGLE_EXTERNAL_ACCOUNT_ALLOW_EXECUTABLES` | ambient | Must be set to `1` before bundled Google external-account auth code will run executable credential sources |
+| `GOOGLE_CLOUD_QUOTA_PROJECT` | ambient | Google auth / metadata environment variable read by bundled Google SDK components |
+| `GRACEFUL_FS_PLATFORM` | ambient | Platform override used by bundled `graceful-fs` |
+| `GRPC_DEFAULT_SSL_ROOTS_FILE_PATH` | ambient | gRPC transport/debug environment variable read by bundled gRPC libraries |
+| `GRPC_EXPERIMENTAL_ENABLE_OUTLIER_DETECTION` | ambient | gRPC transport/debug environment variable read by bundled gRPC libraries |
+| `GRPC_NODE_TRACE` | ambient | gRPC transport/debug environment variable read by bundled gRPC libraries |
+| `GRPC_NODE_USE_ALTERNATIVE_RESOLVER` | ambient | gRPC transport/debug environment variable read by bundled gRPC libraries |
+| `GRPC_NODE_VERBOSITY` | ambient | gRPC transport/debug environment variable read by bundled gRPC libraries |
+| `GRPC_SSL_CIPHER_SUITES` | ambient | gRPC transport/debug environment variable read by bundled gRPC libraries |
+| `GRPC_TRACE` | ambient | gRPC transport/debug environment variable read by bundled gRPC libraries |
+| `GRPC_VERBOSITY` | ambient | gRPC transport/debug environment variable read by bundled gRPC libraries |
+| `grpc_proxy` | ambient | gRPC proxy URL (lowercase) read by bundled gRPC libraries |
+| `no_grpc_proxy` | ambient | gRPC proxy bypass list (lowercase) read by bundled gRPC libraries |
+| `HOME` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection |
+| `JEST_WORKER_ID` | ambient | Testing/debug environment variable observed in bundled code paths |
+| `K_CONFIGURATION` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies |
+| `LC_TERMINAL` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies |
+| `LOCALAPPDATA` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection |
+| `METADATA_SERVER_DETECTION` | ambient | Google auth / metadata environment variable read by bundled Google SDK components |
+| `MSAL_FORCE_REGION` | ambient | Force the Azure MSAL region override used by bundled client-credential auth flows |
+| `MSYSTEM` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies |
+| `NODE_DEBUG` | ambient | Node runtime behavior/debug variable observed by Claude Code or bundled dependencies |
+| `NODE_OPTIONS` | ambient | Node runtime behavior/debug variable observed by Claude Code or bundled dependencies |
+| `NODE_V8_COVERAGE` | ambient | Node runtime behavior/debug variable observed by Claude Code or bundled dependencies |
+| `OSTYPE` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection |
+| `PATH` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection |
+| `PATHEXT` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection |
+| `PKG_CONFIG_PATH` | ambient | Native runtime/build environment variable observed by bundled dependencies |
+| `PWD` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection |
+| `REGION_NAME` | ambient | Ambient Azure/App Service region name forwarded into bundled MSAL environment-region detection |
+| `REQUESTS_CA_BUNDLE` | ambient | CA bundle path forwarded to teammate subprocesses |
+| `CURL_CA_BUNDLE` | ambient | CA bundle path forwarded to teammate subprocesses |
+| `SAFEUSER` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies |
+| `SESSIONNAME` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies |
+| `SHARP_FORCE_GLOBAL_LIBVIPS` | ambient | Native image-library setting read by bundled `sharp` |
+| `SHARP_IGNORE_GLOBAL_LIBVIPS` | ambient | Native image-library setting read by bundled `sharp` |
+| `SHELL` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection |
+| `SRT_DEBUG` | ambient | Testing/debug environment variable observed in bundled code paths |
+| `SSH_CLIENT` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies |
+| `SSH_CONNECTION` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies |
+| `SSH_TTY` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies |
+| `SWE_BENCH_INSTANCE_ID` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies |
+| `SWE_BENCH_RUN_ID` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies |
+| `SWE_BENCH_TASK_ID` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies |
+| `SYSTEMROOT` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection |
+| `SYSTEM_OIDCREQUESTURI` | ambient | Google auth / metadata environment variable read by bundled Google SDK components |
+| `TEMP` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection |
+| `TERMINATOR_UUID` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies |
+| `TEST_ENABLE_SESSION_PERSISTENCE` | ambient | Testing/debug environment variable observed in bundled code paths |
+| `TEST_GRACEFUL_FS_GLOBAL_PATCH` | ambient | Testing/debug environment variable observed in bundled code paths |
+| `TILIX_ID` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies |
+| `UNDICI_NO_FG` | ambient | Disable foreground work in bundled `undici` internals |
+| `USER` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection |
+| `USERNAME` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection |
+| `USERPROFILE` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection |
+| `UV_THREADPOOL_SIZE` | ambient | Native runtime/build environment variable observed by bundled dependencies |
+| `VCR_RECORD` | ambient | Testing/debug environment variable observed in bundled code paths |
+| `VERTEX_BASE_URL` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies |
+| `WS_NO_BUFFER_UTIL` | ambient | Disable optional native optimization in the bundled `ws` library |
+| `WS_NO_UTF_8_VALIDATE` | ambient | Disable optional native optimization in the bundled `ws` library |
+| `XDG_CONFIG_HOME` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection |
+| `XDG_RUNTIME_DIR` | ambient | Standard OS/runtime environment variable consulted for path resolution or platform detection |
+| `ZED_TERM` | ambient | Ambient environment variable inspected by Claude Code or one of its bundled dependencies |
+| `OTEL_EXPORTER_PROMETHEUS_HOST` | library default | Prometheus exporter host for the bundled OpenTelemetry Prometheus exporter |
+| `OTEL_EXPORTER_PROMETHEUS_PORT` | library default | Prometheus exporter port for the bundled OpenTelemetry Prometheus exporter |
