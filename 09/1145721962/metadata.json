@@ -1,0 +1,33 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "091145721962",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "codex/skills/agent-browser/SKILL.md",
+    "codex/skills/agent-browser/agents/openai.yaml",
+    "codex/skills/agent-browser/assets/authenticated-session.sh",
+    "codex/skills/agent-browser/assets/capture-workflow.sh",
+    "codex/skills/agent-browser/assets/form-automation.sh",
+    "codex/skills/agent-browser/references/authentication.md",
+    "codex/skills/agent-browser/references/commands.md",
+    "codex/skills/agent-browser/references/session-management.md",
+    "codex/skills/agent-browser/references/snapshot-refs.md"
+  ],
+  "sessions": [
+    {
+      "metadata": "/09/1145721962/0/metadata.json",
+      "transcript": "/09/1145721962/0/full.jsonl",
+      "content_hash": "/09/1145721962/0/content_hash.txt",
+      "prompt": "/09/1145721962/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 2224025,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1991552,
+    "output_tokens": 29945,
+    "api_call_count": 22
+  }
+}

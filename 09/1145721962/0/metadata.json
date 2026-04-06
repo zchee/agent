@@ -1,0 +1,45 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "091145721962",
+  "session_id": "019d636f-6d3f-7ba3-bac3-b33fbac7261f",
+  "strategy": "manual-commit",
+  "created_at": "2026-04-06T15:56:14.188795Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "codex/skills/agent-browser/SKILL.md",
+    "codex/skills/agent-browser/agents/openai.yaml",
+    "codex/skills/agent-browser/assets/authenticated-session.sh",
+    "codex/skills/agent-browser/assets/capture-workflow.sh",
+    "codex/skills/agent-browser/assets/form-automation.sh",
+    "codex/skills/agent-browser/references/authentication.md",
+    "codex/skills/agent-browser/references/commands.md",
+    "codex/skills/agent-browser/references/session-management.md",
+    "codex/skills/agent-browser/references/snapshot-refs.md"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.4",
+  "turn_id": "f0479db78b3d",
+  "token_usage": {
+    "input_tokens": 2224025,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1991552,
+    "output_tokens": 29945,
+    "api_call_count": 22
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-04-06T15:56:13.47147Z",
+    "agent_lines": 616,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 616,
+    "total_lines_changed": 616,
+    "agent_percentage": 100,
+    "metric_version": 2
+  }
+}
