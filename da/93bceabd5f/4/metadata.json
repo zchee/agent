@@ -1,0 +1,30 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "da93bceabd5f",
+  "session_id": "019d52cd-be7f-73a3-8561-380e64a09c4b",
+  "strategy": "manual-commit",
+  "created_at": "2026-04-06T14:52:49.487797Z",
+  "branch": "main",
+  "checkpoints_count": 0,
+  "files_touched": [
+    "gemini/settings.json"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.4-mini",
+  "turn_id": "87736bb0cbbc",
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-04-06T14:52:49.487276Z",
+    "agent_lines": 16,
+    "agent_removed": 6,
+    "human_added": 4,
+    "human_modified": 3,
+    "human_removed": 0,
+    "total_committed": 23,
+    "total_lines_changed": 29,
+    "agent_percentage": 75.86206896551724,
+    "metric_version": 2
+  }
+}
