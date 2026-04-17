@@ -1,6 +1,6 @@
-# Claude Code Environment Variables (v2.1.104)
+# Claude Code Environment Variables (v2.1.112)
 
-Reverse-engineered from `cli.unpack.js` at tag `2.1.104`. This catalog includes first-party Claude Code knobs plus ambient/dependency environment variables that are read somewhere in the bundled runtime.
+Reverse-engineered from `cli.unpack.js` at tag `2.1.112` (last updated 2026-04-17). This catalog includes first-party Claude Code knobs plus ambient/dependency environment variables that are read somewhere in the bundled runtime.
 
 ## Authentication & API
 
@@ -272,12 +272,18 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_CODE_ENABLE_FINE_GRAINED_TOOL_STREAMING` | `false` | Enable fine-grained tool streaming |
 | `CLAUDE_CODE_ENABLE_CFC` | — | Enable CFC feature |
 | `CLAUDE_CODE_ENABLE_XAA` | — | Enable XAA IdP authentication feature |
+| `CLAUDE_CODE_ENABLE_AWAY_SUMMARY` | — | Enable away summary feature |
+| `CLAUDE_CODE_ENABLE_BACKGROUND_PLUGIN_REFRESH` | `false` | Enable background refresh for plugins |
+| `CLAUDE_CODE_ENABLE_EXPERIMENTAL_ADVISOR_TOOL` | `false` | Enable the experimental advisor tool |
 | `ENABLE_TOOL_SEARCH` | — | Enable tool search/deferred tools (`true`, `auto`, `auto:N`) |
+| `ENABLE_PROMPT_CACHING_1H` | `false` | Enable 1-hour prompt caching |
 | `ENABLE_PROMPT_CACHING_1H_BEDROCK` | `false` | Enable 1-hour prompt caching on Bedrock |
 | `ENABLE_ENHANCED_TELEMETRY_BETA` | `false` | Enable enhanced telemetry beta |
 | `ENABLE_BETA_TRACING_DETAILED` | `false` | Enable detailed beta tracing |
-| `ENABLE_CLAUDE_CODE_SM_COMPACT` | `false` | Enable SM compaction |
 | `CLAUDE_CODE_FORCE_FULL_LOGO` | `false` | Force display of full logo |
+| `FORCE_PROMPT_CACHING_5M` | `false` | Force 5-minute prompt caching |
+| `EMBEDDED_SEARCH_TOOLS` | `false` | Enable embedded search tools |
+| `USE_API_CONTEXT_MANAGEMENT` | `false` | Use API context management |
 
 ## Compaction & Context
 
@@ -351,6 +357,7 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `OTEL_LOG_USER_PROMPTS` | `false` | Log user prompts in OTEL spans |
 | `OTEL_LOG_TOOL_DETAILS` | `false` | Log tool details in OTEL spans |
 | `OTEL_LOG_TOOL_CONTENT` | `false` | Log tool content in OTEL spans |
+| `OTEL_LOG_RAW_API_BODIES` | `false` | Include raw API request/response bodies in OTEL spans (truncated by an internal size cap); verbose and sensitive — intended for debugging only |
 | `OTEL_RESOURCE_ATTRIBUTES` | — | Additional OTEL resource attributes |
 | `OTEL_SERVICE_NAME` | — | Override the OTEL service name resource attribute |
 | `OTEL_ATTRIBUTE_COUNT_LIMIT` | `128` | Global OpenTelemetry attribute-count limit |
@@ -369,6 +376,8 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_CODE_OTEL_FLUSH_TIMEOUT_MS` | `5000` | OTEL flush timeout |
 | `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS` | — | OTEL headers helper debounce |
 | `BETA_TRACING_ENDPOINT` | — | Beta tracing endpoint URL |
+| `TRACEPARENT` | — | W3C trace context propagation: trace parent header (used in SDK mode) |
+| `TRACESTATE` | — | W3C trace context propagation: trace state header (used in SDK mode) |
 
 ## Network & Proxy
 
@@ -385,9 +394,15 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_CODE_CERT_STORE` | — | Select the CA certificate store strategy (`system`, `bundled`, or a custom path); when unset, Node defaults are used |
 | `NODE_EXTRA_CA_CERTS` | — | Path to additional CA certificates |
 | `SSL_CERT_FILE` | — | Path to SSL certificate file (used with proxy config) |
+| `REQUESTS_CA_BUNDLE` | — | Path to CA bundle file (forwarded to subprocesses for Python compatibility) |
+| `CURL_CA_BUNDLE` | — | Path to CA bundle file (forwarded to subprocesses for curl compatibility) |
 | `CLAUDE_CODE_ADDITIONAL_PROTECTION` | `false` | Enable additional API protection headers |
 | `CCR_UPSTREAM_PROXY_ENABLED` | `false` | Enable upstream proxy for CCR connections |
 | `CLAUDE_CODE_SIMULATE_PROXY_USAGE` | `false` | Simulate proxy usage for testing |
+| `CLAUDE_CODE_ENABLE_PROXY_AUTH_HELPER` | `false` | Enable the proxy-auth helper (`proxyAuthHelper` settings entry) that supplies dynamic `Proxy-Authorization` headers; must be `1` to activate |
+| `CLAUDE_CODE_PROXY_AUTH_HELPER_TTL_MS` | helper default | Cache TTL (ms) for credentials produced by the proxy-auth helper |
+| `CLAUDE_SLOW_FIRST_BYTE_MS` | `30000` | Timeout threshold for first byte from API (ms) |
+| `CLAUDE_ENABLE_BYTE_WATCHDOG` | — | Enable byte-level stream watchdog |
 
 ## Remote / Headless Mode
 
@@ -404,6 +419,15 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_CODE_WEBSOCKET_AUTH_FILE_DESCRIPTOR` | — | WebSocket auth file descriptor |
 | `CLAUDE_STREAM_IDLE_TIMEOUT_MS` | `90000` | Stream idle timeout before disconnect (ms) |
 | `CLAUDE_REMOTE_CONTROL_SESSION_NAME_PREFIX` | — | Prefix for remote control session names |
+| `CLAUDE_CODE_USE_CCR_V2` | `false` | Use CCR v2 |
+| `CLAUDE_CODE_POST_FOR_SESSION_INGRESS_V2` | `false` | Use POST transport for session-ingress v2 websocket URLs |
+| `CLAUDE_BRIDGE_USE_CCR_V2` | `false` | Force bridge/session handling onto the CCR v2 path |
+| `CCR_ENABLE_BUNDLE` | `false` | Enable the CCR bundle path used by remote/background task bootstrap logic |
+| `CCR_FORCE_BUNDLE` | `false` | Force the CCR bundle path even when normal preflight heuristics would not select it |
+| `CLAUDE_CODE_ENVIRONMENT_RUNNER_VERSION` | — | Attach an environment-runner version header in remote bridge mode |
+| `CLAUDE_CODE_RESUME_FROM_SESSION` | — | Resume from a specific session ID |
+| `CLAUDE_ENABLE_STREAM_WATCHDOG` | `false` | Enable stream watchdog |
+| `CLAUDE_CODE_SYSTEM_PROMPT_GB_FEATURE` | — | When running in remote mode, selects a Growthbook/feature-flag key whose evaluated string value is used to override the Agent SDK `systemPrompt` option |
 
 ## IDE Integration
 
@@ -417,6 +441,7 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `FORCE_CODE_TERMINAL` | `false` | Force code terminal mode |
 | `VSCODE_GIT_ASKPASS_MAIN` | ambient | Detect VS Code terminal environment |
 | `CURSOR_TRACE_ID` | ambient | Detect Cursor editor environment |
+| `VisualStudioVersion` | ambient | Detect Visual Studio environment |
 
 ## UI & Display
 
@@ -433,6 +458,8 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_CODE_SCROLL_SPEED` | — | Override scroll speed |
 | `CLAUDE_CODE_DISABLE_MOUSE` | `false` | Disable mouse input entirely |
 | `CLI_WIDTH` | ambient | Override terminal width detection |
+| `CLAUDE_CODE_FORCE_FULLSCREEN_UPSELL` | `false` | Force fullscreen upsell display |
+| `CLAUDE_CODE_TUI_JUST_SWITCHED` | — | Internal: track TUI mode switch state (set/dropped across process restarts) |
 
 ## Sandbox
 
@@ -456,12 +483,13 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_AGENT_SDK_CLIENT_APP` | — | Agent SDK client app identifier |
 | `CLAUDE_AGENT_SDK_DISABLE_BUILTIN_AGENTS` | `false` | Disable built-in agent types |
 | `CLAUDE_AGENT_SDK_MCP_NO_PREFIX` | `false` | Don't prefix MCP tool names in SDK mode |
-| `CLAUDE_CODE_ENTRYPOINT` | `cli` | Entry point identifier (`cli`, `sdk-ts`, `sdk-py`, `sdk-cli`, `local-agent`, `claude-desktop`) |
+| `CLAUDE_CODE_ENTRYPOINT` | `cli` | Entry point identifier (`cli`, `sdk-ts`, `sdk-py`, `sdk-cli`, `local-agent`, `claude-desktop`, `remote`, `mcp`, `claude-vscode`, `claude-code-github-action`) |
 | `CLAUDE_CODE_EMIT_SESSION_STATE_EVENTS` | `false` | Emit session state change events in SDK mode |
 | `CLAUDE_CODE_INCLUDE_PARTIAL_MESSAGES` | `false` | Include partial stream events/messages in SDK output |
 | `CLAUDE_CODE_AGENT_LIST_IN_MESSAGES` | — | Control agent list inclusion in messages (`true` to always include, `false` to never) |
 | `CLAUDE_CODE_AGENT_COST_STEER` | — | Enable agent cost steering (`true` to enable, `false` to disable) |
 | `CLAUDE_CODE_SDK_HAS_OAUTH_REFRESH` | `false` | Signal that the SDK host can refresh OAuth tokens on behalf of Claude Code (gated to specific entry points) |
+| `CLAUDE_CODE_ENABLE_APPEND_SUBAGENT_PROMPT` | `false` | Gate for opting-in to appending `appendSubagentSystemPrompt` (from the Agent SDK options) onto every Task-tool subagent's system prompt (propagates to nested subagents) |
 
 ## Teams / Teammates
 
@@ -503,7 +531,6 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_COWORK_MEMORY_PATH_OVERRIDE` | — | Override cowork memory path |
 | `CLAUDE_COWORK_MEMORY_EXTRA_GUIDELINES` | — | Extra guidelines for cowork memory |
 | `CLAUDE_CODE_SKIP_PROMPT_HISTORY` | `false` | Skip saving prompt history |
-| `CLAUDE_CODE_SAVE_HOOK_ADDITIONAL_CONTEXT` | `false` | Save hook additional context |
 | `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD` | `false` | Scan additional directories for CLAUDE.md |
 
 ## Idle, Resume & Background
@@ -526,7 +553,9 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_CODE_EXTRA_METADATA` | — | JSON object merged into the emitted `user_id` telemetry payload |
 | `CLAUDE_CODE_ATTRIBUTION_HEADER` | — | Custom attribution header |
 | `CLAUDE_CODE_BASE_REF` | — | Override base git ref for diffs |
-| `CLAUDE_CODE_ENVIRONMENT_KIND` | — | Environment kind label |
+| `CLAUDE_CODE_BASE_REFS` | — | Override base git refs (comma-separated list) |
+| `CLAUDE_CODE_REPO_CHECKOUTS` | — | Repository checkout paths |
+| `CLAUDE_CODE_ENVIRONMENT_KIND` | — | Environment kind label (e.g. `bridge`) |
 | `CLAUDE_CODE_TAGS` | — | Tags for telemetry |
 | `CLAUDE_CODE_WORKER_EPOCH` | — | Worker epoch for process management |
 | `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS` | — | Timeout for session-end hooks (ms) |
@@ -534,19 +563,15 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS` | `false` | Skip network errors in fast mode |
 | `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` | `false` | Skip organization check for fast mode eligibility |
 | `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB` | `false` | Scrub a built-in set of sensitive credentials from inherited subprocess environments before spawning child processes |
-| `CLAUDE_CODE_USE_CCR_V2` | `false` | Use CCR v2 |
 | `CLAUDE_CODE_NEW_INIT` | `false` | Use new init flow |
 | `CLAUDE_CODE_TASK_LIST_ID` | — | Task list ID override |
 | `CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST` | `false` | Provider credentials are managed by the host application |
 | `CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR` | `false` | Maintain working directory between bash calls |
-| `CLAUDE_REPL_MODE` | `false` | REPL mode |
-| `CLAUDE_CODE_REPL` | — | Enable REPL mode (alternative flag) |
-| `CLAUDE_ENABLE_STREAM_WATCHDOG` | `false` | Enable stream watchdog |
+| `CLAUDE_CODE_REPL` | — | Enable REPL mode |
+| `CLAUDE_REPL_VARIANT` | — | REPL variant identifier |
 | `CLAUDE_AFTER_LAST_COMPACT` | `false` | Flag set after last compaction |
 | `CLAUDE_CHROME_PERMISSION_MODE` | — | Permission mode for Chrome integration |
 | `CLAUDE_CODE_ACTION` | `false` | Running as a GitHub Action |
-| `EMBEDDED_SEARCH_TOOLS` | `false` | Enable embedded search tools |
-| `USE_API_CONTEXT_MANAGEMENT` | `false` | Use API context management |
 | `USE_STAGING_OAUTH` | `false` | Use staging OAuth |
 | `USE_LOCAL_OAUTH` | `false` | Use local OAuth / local bridge endpoints instead of the production OAuth flow |
 | `LOCAL_BRIDGE` | `false` | Alias flag that enables local OAuth / local bridge behavior |
@@ -568,11 +593,6 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA` | inherits `ENABLE_ENHANCED_TELEMETRY_BETA` when unset | Alternate flag name for enhanced telemetry beta |
 | `CLAUDE_CODE_WORKSPACE_HOST_PATHS` | — | Pipe-separated host workspace paths attached to telemetry events |
 | `CLAUDE_FORCE_DISPLAY_SURVEY` | `false` | Force the feedback survey to appear when the user is otherwise eligible |
-| `CLAUDE_CODE_ENVIRONMENT_RUNNER_VERSION` | — | Attach an environment-runner version header in remote bridge mode |
-| `CCR_ENABLE_BUNDLE` | `false` | Enable the CCR bundle path used by remote/background task bootstrap logic |
-| `CCR_FORCE_BUNDLE` | `false` | Force the CCR bundle path even when normal preflight heuristics would not select it |
-| `CLAUDE_CODE_POST_FOR_SESSION_INGRESS_V2` | `false` | Use POST transport for session-ingress v2 websocket URLs |
-| `CLAUDE_BRIDGE_USE_CCR_V2` | `false` | Force bridge/session handling onto the CCR v2 path |
 | `CLAUDE_CODE_EAGER_FLUSH` | `false` | Flush persisted session data eagerly after writes |
 | `CLAUDE_CODE_IS_COWORK` | `false` | Mark the session as cowork/bridge mode for eager flushing and related behaviors |
 | `CLAUDE_CODE_EXIT_AFTER_FIRST_RENDER` | `false` | Exit after the first UI render; useful for smoke tests and harnesses |
@@ -581,10 +601,13 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `MAX_STRUCTURED_OUTPUT_RETRIES` | `5` | Maximum retries for structured-output validation loops |
 | `CLAUDE_CODE_STALL_TIMEOUT_MS_FOR_TESTING` | test default | Override the internal stall timeout in test harnesses |
 | `CLAUDE_CODE_TEST_FIXTURES_ROOT` | current workspace | Override the root directory used for JSON test fixtures |
+| `CLAUDE_CODE_ULTRAREVIEW_PREFLIGHT_FIXTURE` | — | Override the preflight fixture path for ultrareview |
 | `FALLBACK_FOR_ALL_PRIMARY_MODELS` | — | Enable fallback for all primary models |
 | `AWS_LAMBDA_BENCHMARK_MODE` | `false` | AWS SDK benchmark/testing flag observed in the bundled dependencies |
+| `AWS_LAMBDA_NODEJS_NO_GLOBAL_AWSLAMBDA` | `false` | AWS Lambda Node.js runtime flag; when `"true"`/`"1"` suppresses the `awslambda` global that the bundled Lambda runtime adapter would otherwise install |
 | `DO_NOT_TRACK` | — | Standard signal to disable telemetry (respects the do-not-track convention) |
 | `COREPACK_ENABLE_AUTO_PIN` | forced to `0` | Corepack auto-pin is disabled by Claude Code at startup |
+| `NoDefaultCurrentDirectoryInExePath` | forced to `1` | Windows security: prevent current directory in exe path resolution |
 | `SWE_BENCH_RUN_ID` | — | SWE-bench run identifier for telemetry |
 | `SWE_BENCH_INSTANCE_ID` | — | SWE-bench instance identifier for telemetry |
 | `SWE_BENCH_TASK_ID` | — | SWE-bench task identifier for telemetry |
@@ -606,13 +629,10 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `GITHUB_REPOSITORY_ID` | ambient | GitHub repository ID |
 | `GITHUB_REPOSITORY_OWNER` | ambient | GitHub repository owner |
 | `GITHUB_REPOSITORY_OWNER_ID` | ambient | GitHub repository owner ID |
-| `GITHUB_PATH` | ambient | Path to the GitHub Actions `GITHUB_PATH` file (appended to `$PATH`; denywrite-listed inside sandbox) |
 | `GITHUB_ENV` | ambient | Path to the GitHub Actions workflow env file (denywrite-listed inside sandbox) |
-| `GITHUB_OUTPUT` | ambient | Path to the GitHub Actions step output file (denywrite-listed inside sandbox) |
-| `GITHUB_STATE` | ambient | Path to the GitHub Actions step state file (denywrite-listed inside sandbox) |
-| `GITHUB_STEP_SUMMARY` | ambient | Path to the GitHub Actions step summary markdown file (denywrite-listed inside sandbox) |
 | `GITHUB_TOKEN` | ambient | GitHub token used by actions; also redacted when scrubbing subprocess environments |
 | `GH_TOKEN` | ambient | Alternative GitHub token name; scrubbed alongside `GITHUB_TOKEN` when `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB` is enabled |
+| `GITHUB_WORKSPACE` | ambient | GitHub Actions workspace directory |
 
 ## CI / Hosted Environment Detection
 
@@ -625,6 +645,14 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `RUNNER_OS` | ambient | Detect runner OS in CI environments |
 | `SYSTEM_OIDCREQUESTURI` | ambient | Detect Azure DevOps / Azure Pipelines environments |
 | `CODESPACES` | ambient | Detect GitHub Codespaces |
+| `CODER` | ambient | Detect Coder environments |
+| `CODER_WORKSPACE_NAME` | ambient | Detect Coder workspace name |
+| `DEVPOD` | ambient | Detect DevPod environments |
+| `DEVPOD_WORKSPACE_UID` | ambient | Detect DevPod workspace UID |
+| `DAYTONA_WS_ID` | ambient | Detect Daytona environments |
+| `CLOUD_WORKSTATIONS_CLUSTER_ID` | ambient | Detect Google Cloud Workstations |
+| `C9_PID` | ambient | Detect Cloud9 environments |
+| `C9_USER` | ambient | Detect Cloud9 user |
 | `GITPOD_WORKSPACE_ID` | ambient | Detect Gitpod |
 | `REPL_ID` | ambient | Detect Replit when `REPL_ID` is present |
 | `REPL_SLUG` | ambient | Detect Replit when `REPL_SLUG` is present |
@@ -701,6 +729,7 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `KONSOLE_VERSION` | ambient | Detect KDE Konsole |
 | `GNOME_TERMINAL_SERVICE` | ambient | Detect GNOME Terminal |
 | `TERMINAL_EMULATOR` | ambient | Generic terminal emulator name |
+| `TERMINAL` | ambient | Terminal name |
 | `TERMINATOR_UUID` | ambient | Detect Terminator |
 | `TILIX_ID` | ambient | Detect Tilix terminal |
 | `ALACRITTY_LOG` | ambient | Detect Alacritty terminal |
@@ -714,6 +743,9 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `TMUX` | ambient | Detect tmux session |
 | `TMUX_PANE` | ambient | Detect tmux pane |
 | `ZELLIJ` | ambient | Detect Zellij terminal multiplexer (gates DECSTBM and scroll-region features) |
+| `ConEmuANSI` | ambient | Detect ConEmu terminal |
+| `ConEmuPID` | ambient | Detect ConEmu process ID |
+| `ConEmuTask` | ambient | Detect ConEmu task |
 | `__CFBundleIdentifier` | ambient | Detect Conductor/macOS app bundle context via `__CFBundleIdentifier` inspection |
 
 ## System & Shell
@@ -735,12 +767,14 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `LC_ALL` | ambient | Override all locale settings |
 | `LC_TIME` | ambient | Time locale |
 | `OSTYPE` | ambient | Operating system type |
-| `SYSTEMROOT` | ambient | Windows system root |
+| `SYSTEMROOT` / `SystemRoot` | ambient | Windows system root |
 | `APPDATA` | ambient | Application data directory (Windows) |
 | `LOCALAPPDATA` | ambient | Local application data directory (Windows) |
+| `ProgramData` | ambient | Program data directory (Windows) |
+| `ProgramFiles` | ambient | Program files directory (Windows) |
+| `comspec` | `cmd.exe` | Windows command processor |
 | `XDG_CONFIG_HOME` | ambient | XDG configuration home |
 | `XDG_RUNTIME_DIR` | ambient | XDG runtime directory |
-| `TERMINAL` | ambient | Terminal name |
 | `SESSIONNAME` | ambient | Session name (Windows) |
 | `SSH_CLIENT` | ambient | Detect SSH connection |
 | `SSH_CONNECTION` | ambient | Detect SSH connection details |
@@ -753,6 +787,8 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `NODE_OPTIONS` | ambient | Node.js CLI options |
 | `NODE_DEBUG` | ambient | Node.js debug modules |
 | `NODE_V8_COVERAGE` | ambient | V8 code coverage output directory |
+| `NO_COLOR` | ambient | Disable color output |
+| `FORCE_COLOR` | ambient | Force color output (value: level 0-3) |
 | `GRACEFUL_FS_PLATFORM` | ambient | Override platform for graceful-fs |
 | `TEST_GRACEFUL_FS_GLOBAL_PATCH` | ambient | Test flag for graceful-fs global patching |
 
@@ -764,10 +800,12 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `GRPC_SSL_CIPHER_SUITES` | ambient | Custom gRPC SSL cipher suites |
 | `GRPC_NODE_TRACE` | ambient | gRPC Node.js tracing config |
 | `GRPC_NODE_VERBOSITY` | ambient | gRPC Node.js verbosity level |
-| `GRPC_NODE_USE_ALTERNATIVE_RESOLVER` | ambient | Use alternative DNS resolver in gRPC Node.js |
-| `GRPC_EXPERIMENTAL_ENABLE_OUTLIER_DETECTION` | ambient | Enable gRPC outlier detection |
+| `GRPC_NODE_USE_ALTERNATIVE_RESOLVER` | `false` | Use alternative DNS resolver in gRPC Node.js |
+| `GRPC_EXPERIMENTAL_ENABLE_OUTLIER_DETECTION` | `true` | Enable gRPC outlier detection |
 | `GRPC_TRACE` | ambient | gRPC tracing config |
 | `GRPC_VERBOSITY` | ambient | gRPC verbosity level |
+| `grpc_proxy` | ambient | gRPC-specific proxy URL |
+| `no_grpc_proxy` | ambient | gRPC-specific proxy bypass list |
 
 ## Dependency / Library Internals
 
@@ -781,16 +819,17 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `SRT_DEBUG` | ambient | Suppress structured-clone debug output |
 | `SHARP_IGNORE_GLOBAL_LIBVIPS` | ambient | Ignore system-wide libvips installation for sharp |
 | `SHARP_FORCE_GLOBAL_LIBVIPS` | ambient | Force use of system-wide libvips for sharp |
+| `npm_package_config_libvips` | ambient | Override the libvips version requirement that `sharp` reports during its install/postinstall probe |
 
 ## Bash Environment Allowlist
 
 These environment variables are passed through to Bash tool executions:
 
-`GOEXPERIMENT`, `GOOS`, `GOARCH`, `CGO_ENABLED`, `GO111MODULE`, `RUST_BACKTRACE`, `RUST_LOG`, `NODE_ENV`, `PYTHONUNBUFFERED`, `PYTHONDONTWRITEBYTECODE`, `PYTEST_DISABLE_PLUGIN_AUTOLOAD`, `PYTEST_DEBUG`, `ANTHROPIC_API_KEY`, `LANG`, `LANGUAGE`, `LC_ALL`, `LC_CTYPE`, `LC_TIME`, `CHARSET`, `TERM`, `COLORTERM`, `NO_COLOR`, `FORCE_COLOR`, `TZ`, `LS_COLORS`, `LSCOLORS`, `GREP_COLOR`, `GREP_COLORS`, `GCC_COLORS`, `TIME_STYLE`, `BLOCK_SIZE`, `BLOCKSIZE`
+`GOEXPERIMENT`, `GOOS`, `GOARCH`, `CGO_ENABLED`, `GO111MODULE`, `RUST_BACKTRACE`, `RUST_LOG`, `NODE_ENV`, `PYTHONUNBUFFERED`, `PYTHONDONTWRITEBYTECODE`, `PYTEST_DISABLE_PLUGIN_AUTOLOAD`, `PYTEST_DEBUG`, `ANTHROPIC_API_KEY`, `LANG`, `LANGUAGE`, `LC_ALL`, `LC_CTYPE`, `LC_TIME`, `CHARSET`, `TERM`, `COLORTERM`, `NO_COLOR`, `FORCE_COLOR`, `TZ`, `LS_COLORS`, `LSCOLORS`, `GREP_COLOR`, `GREP_COLORS`, `GCC_COLORS`, `TIME_STYLE`, `BLOCK_SIZE`, `BLOCKSIZE`, `COLUMNS`, `LINES`, `CLICOLOR`, `CLICOLOR_FORCE`, `CI`, `DEBIAN_FRONTEND`, `GIT_TERMINAL_PROMPT`
 
 ## Teammate Env Vars Forwarded to Subprocesses
 
-`CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, `CLAUDE_CODE_USE_FOUNDRY`, `CLAUDE_CODE_USE_ANTHROPIC_AWS`, `ANTHROPIC_AWS_WORKSPACE_ID`, `ANTHROPIC_AWS_BASE_URL`, `ANTHROPIC_AWS_API_KEY`, `CLAUDE_CODE_SKIP_ANTHROPIC_AWS_AUTH`, `AWS_REGION`, `ANTHROPIC_BASE_URL`, `CLAUDE_CONFIG_DIR`, `CLAUDE_CODE_REMOTE`, `CLAUDE_CODE_REMOTE_MEMORY_DIR`, `HTTPS_PROXY`, `https_proxy`, `HTTP_PROXY`, `http_proxy`, `NO_PROXY`, `no_proxy`, `SSL_CERT_FILE`, `NODE_EXTRA_CA_CERTS`, `REQUESTS_CA_BUNDLE`, `CURL_CA_BUNDLE`
+`CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, `CLAUDE_CODE_USE_FOUNDRY`, `CLAUDE_CODE_USE_ANTHROPIC_AWS`, `CLAUDE_CODE_USE_MANTLE`, `ANTHROPIC_AWS_WORKSPACE_ID`, `ANTHROPIC_AWS_BASE_URL`, `ANTHROPIC_AWS_API_KEY`, `CLAUDE_CODE_SKIP_ANTHROPIC_AWS_AUTH`, `AWS_BEARER_TOKEN_BEDROCK`, `ANTHROPIC_BEDROCK_MANTLE_BASE_URL`, `CLAUDE_CODE_SKIP_MANTLE_AUTH`, `AWS_REGION`, `ANTHROPIC_BASE_URL`, `CLAUDE_CONFIG_DIR`, `CLAUDE_CODE_REMOTE`, `CLAUDE_CODE_REMOTE_MEMORY_DIR`, `HTTPS_PROXY`, `https_proxy`, `HTTP_PROXY`, `http_proxy`, `NO_PROXY`, `no_proxy`, `SSL_CERT_FILE`, `NODE_EXTRA_CA_CERTS`, `REQUESTS_CA_BUNDLE`, `CURL_CA_BUNDLE`
 
 Teammate launchers also inject `CLAUDECODE=1` and `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` before appending the forwarded parent environment variables above.
 
@@ -800,14 +839,29 @@ These environment variables are tracked as provider-sensitive (changes may trigg
 
 `CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST`, `CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, `CLAUDE_CODE_USE_FOUNDRY`, `CLAUDE_CODE_USE_ANTHROPIC_AWS`, `CLAUDE_CODE_USE_MANTLE`, `ANTHROPIC_BASE_URL`, `ANTHROPIC_BEDROCK_BASE_URL`, `ANTHROPIC_VERTEX_BASE_URL`, `ANTHROPIC_FOUNDRY_BASE_URL`, `ANTHROPIC_AWS_BASE_URL`, `ANTHROPIC_BEDROCK_MANTLE_BASE_URL`, `ANTHROPIC_FOUNDRY_RESOURCE`, `ANTHROPIC_VERTEX_PROJECT_ID`, `ANTHROPIC_AWS_WORKSPACE_ID`, `CLOUD_ML_REGION`, `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN`, `AWS_BEARER_TOKEN_BEDROCK`, `ANTHROPIC_FOUNDRY_API_KEY`, `ANTHROPIC_AWS_API_KEY`, `ANTHROPIC_BEDROCK_MANTLE_API_KEY`, `CLAUDE_CODE_SKIP_BEDROCK_AUTH`, `CLAUDE_CODE_SKIP_VERTEX_AUTH`, `CLAUDE_CODE_SKIP_FOUNDRY_AUTH`, `CLAUDE_CODE_SKIP_ANTHROPIC_AWS_AUTH`, `CLAUDE_CODE_SKIP_MANTLE_AUTH`, `ANTHROPIC_MODEL`, `ANTHROPIC_DEFAULT_HAIKU_MODEL`, `ANTHROPIC_DEFAULT_HAIKU_MODEL_DESCRIPTION`, `ANTHROPIC_DEFAULT_HAIKU_MODEL_NAME`, `ANTHROPIC_DEFAULT_HAIKU_MODEL_SUPPORTED_CAPABILITIES`, `ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION`, `ANTHROPIC_DEFAULT_OPUS_MODEL_NAME`, `ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES`, `ANTHROPIC_DEFAULT_SONNET_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL_DESCRIPTION`, `ANTHROPIC_DEFAULT_SONNET_MODEL_NAME`, `ANTHROPIC_DEFAULT_SONNET_MODEL_SUPPORTED_CAPABILITIES`, `ANTHROPIC_SMALL_FAST_MODEL`, `ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION`, `CLAUDE_CODE_SUBAGENT_MODEL`, `CLAUDE_CODE_CERT_STORE`
 
+Provider-sensitive prefixes (any env var starting with these is also tracked): `VERTEX_REGION_CLAUDE_`
+
 ## Config-Panel Env Vars
 
 These environment variables can be overridden via the config panel / settings UI:
 
-`ANTHROPIC_CUSTOM_HEADERS`, `ANTHROPIC_CUSTOM_MODEL_OPTION`, `ANTHROPIC_CUSTOM_MODEL_OPTION_DESCRIPTION`, `ANTHROPIC_CUSTOM_MODEL_OPTION_NAME`, `ANTHROPIC_CUSTOM_MODEL_OPTION_SUPPORTED_CAPABILITIES`, `ANTHROPIC_DEFAULT_HAIKU_MODEL`, `ANTHROPIC_DEFAULT_HAIKU_MODEL_DESCRIPTION`, `ANTHROPIC_DEFAULT_HAIKU_MODEL_NAME`, `ANTHROPIC_DEFAULT_HAIKU_MODEL_SUPPORTED_CAPABILITIES`, `ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION`, `ANTHROPIC_DEFAULT_OPUS_MODEL_NAME`, `ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES`, `ANTHROPIC_DEFAULT_SONNET_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL_DESCRIPTION`, `ANTHROPIC_DEFAULT_SONNET_MODEL_NAME`, `ANTHROPIC_DEFAULT_SONNET_MODEL_SUPPORTED_CAPABILITIES`, `ANTHROPIC_FOUNDRY_API_KEY`, `ANTHROPIC_MODEL`, `ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION`, `ANTHROPIC_SMALL_FAST_MODEL`, `AWS_DEFAULT_REGION`, `AWS_PROFILE`, `AWS_REGION`, `BASH_DEFAULT_TIMEOUT_MS`, `BASH_MAX_OUTPUT_LENGTH`, `BASH_MAX_TIMEOUT_MS`, `CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR`, `CLAUDE_CODE_API_KEY_HELPER_TTL_MS`, `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`, `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`, `CLAUDE_CODE_DISABLE_TERMINAL_TITLE`, `CLAUDE_CODE_ENABLE_TELEMETRY`, `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`, `CLAUDE_CODE_MAX_OUTPUT_TOKENS`, `CLAUDE_CODE_SKIP_BEDROCK_AUTH`, `CLAUDE_CODE_SKIP_FOUNDRY_AUTH`, `CLAUDE_CODE_SKIP_ANTHROPIC_AWS_AUTH`, `CLAUDE_CODE_SKIP_MANTLE_AUTH`, `CLAUDE_CODE_SKIP_VERTEX_AUTH`, `CLAUDE_CODE_SUBAGENT_MODEL`, `CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_FOUNDRY`, `CLAUDE_CODE_USE_ANTHROPIC_AWS`, `CLAUDE_CODE_USE_MANTLE`, `CLAUDE_CODE_USE_VERTEX`, `DISABLE_AUTOUPDATER`, `DISABLE_BUG_COMMAND`, `DISABLE_COST_WARNINGS`, `DISABLE_ERROR_REPORTING`, `DISABLE_FEEDBACK_COMMAND`, `DISABLE_INSTALLATION_CHECKS`, `DISABLE_TELEMETRY`, `ENABLE_TOOL_SEARCH`, `MAX_MCP_OUTPUT_TOKENS`, `MAX_THINKING_TOKENS`, `MCP_TIMEOUT`, `MCP_TOOL_TIMEOUT`, `OTEL_EXPORTER_OTLP_HEADERS`, `OTEL_EXPORTER_OTLP_LOGS_HEADERS`, `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`, `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`, `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`, `OTEL_EXPORTER_OTLP_METRICS_HEADERS`, `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`, `OTEL_EXPORTER_OTLP_PROTOCOL`, `OTEL_EXPORTER_OTLP_TRACES_HEADERS`, `OTEL_LOG_TOOL_DETAILS`, `OTEL_LOG_USER_PROMPTS`, `OTEL_LOGS_EXPORT_INTERVAL`, `OTEL_LOGS_EXPORTER`, `OTEL_METRIC_EXPORT_INTERVAL`, `OTEL_METRICS_EXPORTER`, `OTEL_METRICS_INCLUDE_ACCOUNT_UUID`, `OTEL_METRICS_INCLUDE_SESSION_ID`, `OTEL_METRICS_INCLUDE_VERSION`, `OTEL_RESOURCE_ATTRIBUTES`, `USE_BUILTIN_RIPGREP`, `VERTEX_REGION_CLAUDE_3_5_HAIKU`, `VERTEX_REGION_CLAUDE_3_5_SONNET`, `VERTEX_REGION_CLAUDE_3_7_SONNET`, `VERTEX_REGION_CLAUDE_4_0_OPUS`, `VERTEX_REGION_CLAUDE_4_0_SONNET`, `VERTEX_REGION_CLAUDE_4_1_OPUS`, `VERTEX_REGION_CLAUDE_4_6_OPUS`, `VERTEX_REGION_CLAUDE_4_5_SONNET`, `VERTEX_REGION_CLAUDE_4_6_SONNET`, `VERTEX_REGION_CLAUDE_HAIKU_4_5`
+`ANTHROPIC_CUSTOM_HEADERS`, `ANTHROPIC_CUSTOM_MODEL_OPTION`, `ANTHROPIC_CUSTOM_MODEL_OPTION_DESCRIPTION`, `ANTHROPIC_CUSTOM_MODEL_OPTION_NAME`, `ANTHROPIC_CUSTOM_MODEL_OPTION_SUPPORTED_CAPABILITIES`, `ANTHROPIC_DEFAULT_HAIKU_MODEL`, `ANTHROPIC_DEFAULT_HAIKU_MODEL_DESCRIPTION`, `ANTHROPIC_DEFAULT_HAIKU_MODEL_NAME`, `ANTHROPIC_DEFAULT_HAIKU_MODEL_SUPPORTED_CAPABILITIES`, `ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION`, `ANTHROPIC_DEFAULT_OPUS_MODEL_NAME`, `ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES`, `ANTHROPIC_DEFAULT_SONNET_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL_DESCRIPTION`, `ANTHROPIC_DEFAULT_SONNET_MODEL_NAME`, `ANTHROPIC_DEFAULT_SONNET_MODEL_SUPPORTED_CAPABILITIES`, `ANTHROPIC_FOUNDRY_API_KEY`, `ANTHROPIC_MODEL`, `ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION`, `ANTHROPIC_SMALL_FAST_MODEL`, `AWS_DEFAULT_REGION`, `AWS_PROFILE`, `AWS_REGION`, `BASH_DEFAULT_TIMEOUT_MS`, `BASH_MAX_OUTPUT_LENGTH`, `BASH_MAX_TIMEOUT_MS`, `CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR`, `CLAUDE_CODE_API_KEY_HELPER_TTL_MS`, `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`, `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`, `CLAUDE_CODE_DISABLE_TERMINAL_TITLE`, `CLAUDE_CODE_ENABLE_TELEMETRY`, `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`, `CLAUDE_CODE_MAX_OUTPUT_TOKENS`, `CLAUDE_CODE_SKIP_BEDROCK_AUTH`, `CLAUDE_CODE_SKIP_FOUNDRY_AUTH`, `CLAUDE_CODE_SKIP_ANTHROPIC_AWS_AUTH`, `CLAUDE_CODE_SKIP_MANTLE_AUTH`, `CLAUDE_CODE_SKIP_VERTEX_AUTH`, `CLAUDE_CODE_SUBAGENT_MODEL`, `CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_FOUNDRY`, `CLAUDE_CODE_USE_ANTHROPIC_AWS`, `CLAUDE_CODE_USE_MANTLE`, `CLAUDE_CODE_USE_VERTEX`, `DISABLE_AUTOUPDATER`, `DISABLE_BUG_COMMAND`, `DISABLE_COST_WARNINGS`, `DISABLE_ERROR_REPORTING`, `DISABLE_FEEDBACK_COMMAND`, `DISABLE_INSTALLATION_CHECKS`, `DISABLE_TELEMETRY`, `ENABLE_TOOL_SEARCH`, `MAX_MCP_OUTPUT_TOKENS`, `MAX_THINKING_TOKENS`, `MCP_TIMEOUT`, `MCP_TOOL_TIMEOUT`, `OTEL_EXPORTER_OTLP_HEADERS`, `OTEL_EXPORTER_OTLP_LOGS_HEADERS`, `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`, `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`, `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`, `OTEL_EXPORTER_OTLP_METRICS_HEADERS`, `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`, `OTEL_EXPORTER_OTLP_PROTOCOL`, `OTEL_EXPORTER_OTLP_TRACES_HEADERS`, `OTEL_LOG_TOOL_CONTENT`, `OTEL_LOG_TOOL_DETAILS`, `OTEL_LOG_USER_PROMPTS`, `OTEL_LOGS_EXPORT_INTERVAL`, `OTEL_LOGS_EXPORTER`, `OTEL_METRIC_EXPORT_INTERVAL`, `OTEL_METRICS_EXPORTER`, `OTEL_METRICS_INCLUDE_ACCOUNT_UUID`, `OTEL_METRICS_INCLUDE_SESSION_ID`, `OTEL_METRICS_INCLUDE_VERSION`, `OTEL_RESOURCE_ATTRIBUTES`, `USE_BUILTIN_RIPGREP`, `VERTEX_REGION_CLAUDE_3_5_HAIKU`, `VERTEX_REGION_CLAUDE_3_5_SONNET`, `VERTEX_REGION_CLAUDE_3_7_SONNET`, `VERTEX_REGION_CLAUDE_4_0_OPUS`, `VERTEX_REGION_CLAUDE_4_0_SONNET`, `VERTEX_REGION_CLAUDE_4_1_OPUS`, `VERTEX_REGION_CLAUDE_4_6_OPUS`, `VERTEX_REGION_CLAUDE_4_5_SONNET`, `VERTEX_REGION_CLAUDE_4_6_SONNET`, `VERTEX_REGION_CLAUDE_HAIKU_4_5`
 
 ## Sensitive Env Vars Redacted from Logs
 
 These environment variables are redacted from debug logs and subprocess visibility:
 
 `ANTHROPIC_API_KEY`, `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_AUTH_TOKEN`, `ANTHROPIC_FOUNDRY_API_KEY`, `ANTHROPIC_AWS_API_KEY`, `ANTHROPIC_BEDROCK_MANTLE_API_KEY`, `ANTHROPIC_CUSTOM_HEADERS`, `OTEL_EXPORTER_OTLP_HEADERS`, `OTEL_EXPORTER_OTLP_LOGS_HEADERS`, `OTEL_EXPORTER_OTLP_METRICS_HEADERS`, `OTEL_EXPORTER_OTLP_TRACES_HEADERS`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN`, `AWS_BEARER_TOKEN_BEDROCK`, `GOOGLE_APPLICATION_CREDENTIALS`, `AZURE_CLIENT_SECRET`, `AZURE_CLIENT_CERTIFICATE_PATH`, `ACTIONS_ID_TOKEN_REQUEST_TOKEN`, `ACTIONS_ID_TOKEN_REQUEST_URL`, `ACTIONS_RUNTIME_TOKEN`, `ACTIONS_RUNTIME_URL`, `ALL_INPUTS`, `OVERRIDE_GITHUB_TOKEN`, `DEFAULT_WORKFLOW_TOKEN`, `SSH_SIGNING_KEY`
+
+## Removed / Legacy
+
+These variables were documented in prior revisions of this file but are no longer read by the bundled runtime as of v2.1.112. They are retained here for historical reference.
+
+| Variable | Last Seen | Notes |
+|---|---|---|
+| `CLAUDE_REPL_MODE` | ≤ v2.1.97 | Superseded by `CLAUDE_CODE_REPL` for gating REPL behavior |
+| `CLAUDE_CODE_SAVE_HOOK_ADDITIONAL_CONTEXT` | — | Hook-context persistence flag; no matching `process.env` read in v2.1.112 |
+| `GITHUB_PATH` | — | GitHub Actions `GITHUB_PATH` file path — no matching `process.env` read in v2.1.112 |
+| `GITHUB_OUTPUT` | — | GitHub Actions step output file path — no matching `process.env` read in v2.1.112 |
+| `GITHUB_STATE` | — | GitHub Actions step state file path — no matching `process.env` read in v2.1.112 |
+| `GITHUB_STEP_SUMMARY` | — | GitHub Actions step summary file path — no matching `process.env` read in v2.1.112 |
