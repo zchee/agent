@@ -1,0 +1,13 @@
+/skill-creator:skill-creator Zsh completion script skill. reference:
+- /opt/homebrew/share/zsh/htmldoc/index.html
+- /opt/homebrew/share/zsh/htmldoc/Completion-Builtin-Commands.html
+- /opt/homebrew/share/zsh/htmldoc/Completion-Condition-Codes.html
+- /opt/homebrew/share/zsh/htmldoc/Completion-Directories.html
+- /opt/homebrew/share/zsh/htmldoc/Completion-Matching-Control.html
+- /opt/homebrew/share/zsh/htmldoc/Completion-Special-Parameters.html
+- /opt/homebrew/share/zsh/htmldoc/Completion-System-Configuration.html
+- /opt/homebrew/share/zsh/htmldoc/Completion-System-Variables.html
+- /opt/homebrew/share/zsh/htmldoc/Completion-System.html
+- /opt/homebrew/share/zsh/htmldoc/Completion-Using-compctl.html
+- /opt/homebrew/share/zsh/htmldoc/Completion-Widget-Example.html
+- /opt/homebrew/share/zsh/htmldoc/Completion-Widgets.html
