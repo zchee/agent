@@ -1,4 +1,0 @@
-interface:
-  display_name: "Ralph"
-  short_description: "Run bounded Ralph-style repair loops"
-  default_prompt: "Use $ralph to keep iterating on one coding objective until validation passes or a loop stop condition is reached."
