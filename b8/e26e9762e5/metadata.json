@@ -1,0 +1,48 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "b8e26e9762e5",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 7,
+  "files_touched": [
+    "codex/skills/ai-slop-cleaner/SKILL.md",
+    "codex/skills/ask-claude/SKILL.md",
+    "codex/skills/ask-gemini/SKILL.md",
+    "codex/skills/autopilot/SKILL.md",
+    "codex/skills/cancel/SKILL.md",
+    "codex/skills/code-review/SKILL.md",
+    "codex/skills/configure-notifications/SKILL.md",
+    "codex/skills/deep-interview/SKILL.md",
+    "codex/skills/doctor/SKILL.md",
+    "codex/skills/help/SKILL.md",
+    "codex/skills/hud/SKILL.md",
+    "codex/skills/note/SKILL.md",
+    "codex/skills/omx-setup/SKILL.md",
+    "codex/skills/plan/SKILL.md",
+    "codex/skills/ralph/SKILL.md",
+    "codex/skills/ralplan/SKILL.md",
+    "codex/skills/security-review/SKILL.md",
+    "codex/skills/skill/SKILL.md",
+    "codex/skills/team/SKILL.md",
+    "codex/skills/trace/SKILL.md",
+    "codex/skills/ultrawork/SKILL.md",
+    "codex/skills/visual-verdict/SKILL.md",
+    "codex/skills/web-clone/SKILL.md",
+    "codex/skills/worker/SKILL.md"
+  ],
+  "sessions": [
+    {
+      "metadata": "/b8/e26e9762e5/0/metadata.json",
+      "transcript": "/b8/e26e9762e5/0/full.jsonl",
+      "content_hash": "/b8/e26e9762e5/0/content_hash.txt",
+      "prompt": "/b8/e26e9762e5/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 223,
+    "cache_creation_tokens": 727927,
+    "cache_read_tokens": 11636444,
+    "output_tokens": 45641,
+    "api_call_count": 77
+  }
+}
