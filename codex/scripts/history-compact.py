@@ -2,7 +2,7 @@
 # /// script
 # requires-python = ">=3.14"
 # dependencies = [
-#   "orjson>=3.10.18",
+#   "orjson",
 # ]
 # ///
 """Compact Codex history JSONL by removing older duplicate text entries."""
@@ -20,7 +20,7 @@ from typing import BinaryIO, Final
 
 import orjson
 
-DEFAULT_HISTORY_PATH: Final[Path] = Path("~/.config/codex/history.jsonl").expanduser()
+DEFAULT_HISTORY_PATH: Final[Path] = Path("~/.codex/history.jsonl").expanduser()
 
 
 class HistoryCompactError(RuntimeError):
