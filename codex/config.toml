@@ -1,8 +1,3 @@
-# oh-my-codex top-level settings (must be before any [table])
-notify = ["node", "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/notify-hook.js"]
-model_reasoning_effort = "high"
-developer_instructions = "You have oh-my-codex installed. AGENTS.md is your orchestration brain and the main orchestration surface. Use skill/keyword routing like $name plus spawned role-specialized subagents for specialized work. Codex native subagents are available via .codex/agents and may be used for independent parallel subtasks within a single session or team pane. Skills are loaded from installed SKILL.md files under .codex/skills, not from native agent TOMLs. Use workflow skills via $name when explicitly invoked or clearly routed by AGENTS.md. Treat installed prompts as narrower internal execution surfaces under AGENTS.md authority, even when user-facing docs prefer $name keywords."
-
 model = "gpt-5.4"
 review_model = "gpt-5.4"
 model_context_window = 1000000
@@ -26,6 +21,9 @@ web_search = "live"
 project_root_markers = [ ".git" ]
 suppress_unstable_features_warning = true
 approvals_reviewer = "guardian_subagent"
+include_permissions_instructions = true
+include_apps_instructions = true
+include_environment_context = true
 service_tier = "fast"
 
 [realtime]
@@ -33,7 +31,12 @@ version = "v2"
 
 [shell_environment_policy]
 inherit = "all"
+set = { USE_OMX_EXPLORE_CMD = "1" }
 experimental_use_profile = false
+
+[history]
+persistence = "save-all"
+max_bytes = 104857600
 
 [tui]
 notifications = true
@@ -43,6 +46,9 @@ status_line = [ "model-with-reasoning", "context-remaining", "context-used", "cu
 
 [tools]
 view_image = true
+
+[tools.web_search]
+context_size = "high"
 
 [agents]
 max_threads = 6
@@ -58,32 +64,37 @@ min_rollout_idle_hours = 24
 
 [features]
 undo = true
-unified_exec = true
 shell_zsh_fork = true
 js_repl = true
-js_repl_tools_only = false
 code_mode = true
+code_mode_only = true
+js_repl_tools_only = false
 codex_git_commit = true
 runtime_metrics = true
 general_analytics = true
-sqlite = true
 memories = true
+telepathy = true
 child_agents_md = true
-image_detail_original = true
 apply_patch_freeform = true
+apply_patch_streaming_events = true
 exec_permission_approvals = true
 codex_hooks = true
 request_permissions_tool = true
-multi_agent_v2 = true
 enable_fanout = true
-tool_search = true
+tool_search_always_defer_mcp_tools = true
+unavailable_dummy_tools = true
 default_mode_request_user_input = true
 guardian_approval = true
-artifact = true
 realtime_conversation = true
+remote_control = true
 prevent_idle_sleep = true
+use_agent_identity = true
 
-multi_agent = true
+[features.multi_agent_v2]
+enabled = true
+usage_hint_enabled = false
+hide_spawn_agent_metadata = false
+
 [ghost_snapshot]
 disable_warnings = true
 
@@ -98,12 +109,6 @@ hide_full_access_warning = true
 hide_gpt5_1_migration_prompt = true
 hide_rate_limit_model_nudge = false
 hide_world_writable_warning = false
-
-[notice.hide_gpt-5]
-1-codex-max_migration_prompt = true
-
-[notice.model_migrations]
-"gpt-5.3-codex" = "gpt-5.4"
 
 [model_providers.xai]
 name = "xAI"
@@ -148,20 +153,25 @@ url = "https://knowledge-mcp.global.api.aws"
 enabled = false
 command = "uvx"
 args = [ "awslabs.aws-documentation-mcp-server@latest" ]
+startup_timeout_sec = 15
 
 [mcp_servers.apple-docs]
 enabled = false
 command = "uv"
 args = [ "run", "--directory=/Users/zchee/go/src/github.com/zchee/mcp-servers/apple-docs", "apple-docs" ]
 
+[mcp_servers.context7]
+url = "https://mcp.context7.com/mcp"
+env_http_headers = { CONTEXT7_API_KEY = "CONTEXT7_API_KEY" }
+
 [mcp_servers.filesystem]
 command = "npx"
 args = [ "-y", "@modelcontextprotocol/server-filesystem@latest", "/Users/zchee/go", "/Users/zchee/src", "/opt" ]
+startup_timeout_sec = 15
 
-[mcp_servers.rust-mcp-filesystem]
+[mcp_servers.datadog]
 enabled = false
-command = "rust-mcp-filesystem"
-args = [ "--allow-write", "/Users/zchee/go", "/Users/zchee/src", "/opt/local" ]
+url = "https://mcp.us5.datadoghq.com/api/unstable/mcp-server/mcp"
 
 [mcp_servers.gemini-google-search]
 command = "mcp-gemini-google-search"
@@ -172,48 +182,35 @@ VERTEX_PROJECT_ID = "gaudiy-ai"
 VERTEX_LOCATION = "global"
 GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
 
-[mcp_servers.context7]
-url = "https://mcp.context7.com/mcp"
-env_http_headers = { CONTEXT7_API_KEY = "CONTEXT7_API_KEY" }
-
-[mcp_servers.sequential-thinking]
-command = "mcp-sequential-thinking"
-
 [mcp_servers.google-developer-knowledge]
+enabled = false
 url = "https://developerknowledge.googleapis.com/mcp"
 env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVERS_API_KEY" }
 
-[mcp_servers.gcp-stitch]
+[mcp_servers.google-cloud-run]
+enabled = false
+command = "npx"
+args = [ "-y", "@google-cloud/cloud-run-mcp" ]
+startup_timeout_sec = 15
+
+[mcp_servers.google-stitch]
 enabled = false
 url = "https://stitch.googleapis.com/mcp"
 bearer_token_env_var = "GAUDIY_GOOGLE_CLOUD_MCP_SERVERS_SNITCH_API_KEY"
 http_headers = { X-Goog-User-Project = "gaudiy-ai" }
-
-[mcp_servers.gcp-cloud-run]
-enabled = false
-command = "npx"
-args = [ "-y", "@google-cloud/cloud-run-mcp" ]
-
-[mcp_servers.datadog]
-enabled = false
-url = "https://mcp.us5.datadoghq.com/api/unstable/mcp-server/mcp"
 
 [mcp_servers.pencil]
 enabled = false
 command = "/Users/zchee/.vscode-insiders/extensions/highagency.pencildev-0.6.35/out/mcp-server-darwin-arm64"
 args = [ "--app", "desktop" ]
 
-[mcp_servers.bash-language-server]
+[mcp_servers.kubernetes]
 enabled = false
-command = "mcp-language-server"
-args = [ "--workspace", ".", "--lsp", "bash-language-server", "--", "start" ]
-startup_timeout_sec = 20
+command = "kubernetes-mcp-server"
+startup_timeout_sec = 15
 
-[mcp_servers.gopls]
-enabled = false
-command = "gopls"
-args = [ "mcp" ]
-startup_timeout_sec = 20
+[mcp_servers.sequential-thinking]
+command = "mcp-sequential-thinking"
 
 [mcp_servers.basedpyright]
 enabled = false
@@ -221,10 +218,22 @@ command = "mcp-language-server"
 args = [ "--workspace", ".", "--lsp", "basedpyright-langserver", "--", "--stdio" ]
 startup_timeout_sec = 20
 
-[mcp_servers.ts_ls]
+[mcp_servers.bash-language-server]
 enabled = false
 command = "mcp-language-server"
-args = [ "--workspace", ".", "--lsp", "typescript-language-server", "--", "--stdio" ]
+args = [ "--workspace", ".", "--lsp", "bash-language-server", "--", "start" ]
+startup_timeout_sec = 20
+
+[mcp_servers.clangd]
+enabled = false
+command = "mcp-language-server"
+args = [ "--workspace", ".", "--lsp", "/opt/llvm/clangd/bin/clangd", "--", "--background-index", "--background-index-priority=normal", "--all-scopes-completion", "--background-index", "--background-index-priority=normal", "--clang-tidy", "--completion-parse=auto", "--completion-style=detailed", "--experimental-modules-support", "--function-arg-placeholders=1", "--header-insertion=iwyu", "--header-insertion-decorators", "--import-insertions", "--include-ineligible-results", "--limit-references=0", "--limit-results=0", "--ranking-model=heuristics", "--rename-file-limit=1000", "--enable-config", "-j=16", "--parse-forwarding-functions", "--pch-storage=memory", "--use-dirty-headers", "--input-style=standard" ]
+startup_timeout_sec = 20
+
+[mcp_servers.gopls]
+enabled = false
+command = "gopls"
+args = [ "mcp" ]
 startup_timeout_sec = 20
 
 [mcp_servers.lldb]
@@ -245,10 +254,21 @@ command = "mcp-language-server"
 args = [ "--workspace", ".", "--lsp", "protols", "--", "--include-paths=/Users/zchee/src/github.com/googleapis/googleapis,/Users/zchee/src/github.com/bufbuild/protovalidate/proto/protovalidate" ]
 startup_timeout_sec = 20
 
+[mcp_servers.ts_ls]
+enabled = false
+command = "mcp-language-server"
+args = [ "--workspace", ".", "--lsp", "typescript-language-server", "--", "--stdio" ]
+startup_timeout_sec = 20
+
 [mcp_servers.terraform]
 enabled = false
 command = "mcp-language-server"
 args = [ "--workspace", ".", "--lsp", "terraform-ls", "--", "serve", "-req-concurrency=16" ]
+startup_timeout_sec = 20
+
+[mcp_servers.rust-analyzer]
+enabled = false
+command = "rust-analyzer-mcp" # https://github.com/cLazyZombie/rust-analyzer-mcp
 startup_timeout_sec = 20
 
 [mcp_servers.zls]
@@ -256,54 +276,3 @@ enabled = false
 command = "mcp-language-server"
 args = [ "--workspace", ".", "--lsp", "zls" ]
 startup_timeout_sec = 20
-
-[mcp_servers.clangd]
-enabled = false
-command = "mcp-language-server"
-args = [ "--workspace", ".", "--lsp", "/opt/llvm/clangd/bin/clangd", "--", "--background-index", "--background-index-priority=normal", "--all-scopes-completion", "--background-index", "--background-index-priority=normal", "--clang-tidy", "--completion-parse=auto", "--completion-style=detailed", "--experimental-modules-support", "--function-arg-placeholders=1", "--header-insertion=iwyu", "--header-insertion-decorators", "--import-insertions", "--include-ineligible-results", "--limit-references=0", "--limit-results=0", "--ranking-model=heuristics", "--rename-file-limit=1000", "--enable-config", "-j=16", "--parse-forwarding-functions", "--pch-storage=memory", "--use-dirty-headers", "--input-style=standard" ]
-startup_timeout_sec = 20
-
-[env]
-USE_OMX_EXPLORE_CMD = "1"
-
-# ============================================================
-# oh-my-codex (OMX) Configuration
-# Managed by omx setup - manual edits preserved on next setup
-# ============================================================
-
-# OMX State Management MCP Server
-[mcp_servers.omx_state]
-command = "node"
-args = ["/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/state-server.js"]
-enabled = true
-startup_timeout_sec = 5
-
-# OMX Project Memory MCP Server
-[mcp_servers.omx_memory]
-command = "node"
-args = ["/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/memory-server.js"]
-enabled = true
-startup_timeout_sec = 5
-
-# OMX Code Intelligence MCP Server (LSP diagnostics, AST search)
-[mcp_servers.omx_code_intel]
-command = "node"
-args = ["/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/code-intel-server.js"]
-enabled = true
-startup_timeout_sec = 10
-
-# OMX Trace MCP Server (agent flow timeline & statistics)
-[mcp_servers.omx_trace]
-command = "node"
-args = ["/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/trace-server.js"]
-enabled = true
-startup_timeout_sec = 5
-
-# OMX Team MCP Server (team job lifecycle: start, status, wait, cleanup)
-[mcp_servers.omx_team_run]
-command = "node"
-args = ["/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/team-server.js"]
-enabled = true
-startup_timeout_sec = 5
-# ============================================================
-# End oh-my-codex
