@@ -3,8 +3,9 @@
   "checkpoint_id": "b8e26e9762e5",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 8,
+  "checkpoints_count": 2,
   "files_touched": [
+    "codex/AGENTS.md",
     "codex/skills/ai-slop-cleaner/SKILL.md",
     "codex/skills/ask-claude/SKILL.md",
     "codex/skills/ask-gemini/SKILL.md",
