@@ -3,7 +3,7 @@
   "checkpoint_id": "cbdce4468ca7",
   "strategy": "manual-commit",
   "branch": "omx",
-  "checkpoints_count": 14,
+  "checkpoints_count": 15,
   "files_touched": [
     "codex/scripts/history-compact.py",
     "codex/tests/test_history_compact.py"
@@ -32,13 +32,19 @@
       "transcript": "/cb/dce4468ca7/3/full.jsonl",
       "content_hash": "/cb/dce4468ca7/3/content_hash.txt",
       "prompt": "/cb/dce4468ca7/3/prompt.txt"
+    },
+    {
+      "metadata": "/cb/dce4468ca7/4/metadata.json",
+      "transcript": "/cb/dce4468ca7/4/full.jsonl",
+      "content_hash": "/cb/dce4468ca7/4/content_hash.txt",
+      "prompt": "/cb/dce4468ca7/4/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 5221109,
+    "input_tokens": 5648074,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 4903168,
-    "output_tokens": 42961,
-    "api_call_count": 96
+    "cache_read_tokens": 5270144,
+    "output_tokens": 49143,
+    "api_call_count": 105
   }
 }
