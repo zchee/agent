@@ -1,0 +1,61 @@
+{
+  "$schema": "https://raw.githubusercontent.com/zchee/schema/refs/heads/main/codex.hooks.schema.json",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/zchee/src/github.com/Yeachan-Heo/oh-my-codex/dist/scripts/codex-native-hook.js\"",
+            "statusMessage": "Running OMX tool review"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/zchee/src/github.com/Yeachan-Heo/oh-my-codex/dist/scripts/codex-native-hook.js\"",
+            "statusMessage": "Running OMX Bash preflight"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/zchee/src/github.com/Yeachan-Heo/oh-my-codex/dist/scripts/codex-native-hook.js\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/zchee/src/github.com/Yeachan-Heo/oh-my-codex/dist/scripts/codex-native-hook.js\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/zchee/src/github.com/Yeachan-Heo/oh-my-codex/dist/scripts/codex-native-hook.js\"",
+            "statusMessage": "Applying OMX prompt routing"
+          }
+        ]
+      }
+    ]
+  }
+}

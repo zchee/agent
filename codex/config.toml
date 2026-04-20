@@ -1,3 +1,6 @@
+notify = ["node", "/Users/zchee/src/github.com/Yeachan-Heo/oh-my-codex/dist/scripts/notify-hook.js"]
+model_reasoning_effort = "high"
+developer_instructions = "You have oh-my-codex installed. AGENTS.md is your orchestration brain and the main orchestration surface. Use skill/keyword routing like $name plus spawned role-specialized subagents for specialized work. Codex native subagents are available via .codex/agents and may be used for independent parallel subtasks within a single session or team pane. Skills are loaded from installed SKILL.md files under .codex/skills, not from native agent TOMLs. Use workflow skills via $name when explicitly invoked or clearly routed by AGENTS.md. Treat installed prompts as narrower internal execution surfaces under AGENTS.md authority, even when user-facing docs prefer $name keywords."
 model = "gpt-5.4"
 review_model = "gpt-5.4"
 model_context_window = 1000000
@@ -28,11 +31,14 @@ service_tier = "fast"
 
 [realtime]
 version = "v2"
+transport = "webrtc"
 
 [shell_environment_policy]
 inherit = "all"
-set = { USE_OMX_EXPLORE_CMD = "1" }
 experimental_use_profile = false
+
+[shell_environment_policy.set]
+USE_OMX_EXPLORE_CMD = "1"
 
 [history]
 persistence = "save-all"
@@ -42,7 +48,7 @@ max_bytes = 104857600
 notifications = true
 animations = true
 alternate_screen = "always"
-status_line = [ "model-with-reasoning", "context-remaining", "context-used", "current-dir", "git-branch", "five-hour-limit", "weekly-limit", "context-window-size", "used-tokens", "total-input-tokens", "total-output-tokens", "session-id" ]
+status_line = ["model-with-reasoning", "context-remaining", "context-used", "current-dir", "git-branch", "five-hour-limit", "weekly-limit", "context-window-size", "used-tokens", "total-input-tokens", "total-output-tokens", "session-id"]
 
 [tools]
 view_image = true
@@ -73,7 +79,7 @@ codex_git_commit = true
 runtime_metrics = true
 general_analytics = true
 memories = true
-telepathy = true
+chronicle = true
 child_agents_md = true
 apply_patch_freeform = true
 apply_patch_streaming_events = true
@@ -83,12 +89,14 @@ request_permissions_tool = true
 enable_fanout = true
 tool_search_always_defer_mcp_tools = true
 unavailable_dummy_tools = true
+external_migration = true
 default_mode_request_user_input = true
 guardian_approval = true
 realtime_conversation = true
 remote_control = true
 prevent_idle_sleep = true
-use_agent_identity = true
+workspace_owner_usage_nudge = true
+use_agent_identity = false
 
 [features.multi_agent_v2]
 enabled = true
@@ -110,20 +118,23 @@ hide_gpt5_1_migration_prompt = true
 hide_rate_limit_model_nudge = false
 hide_world_writable_warning = false
 
+[notice.external_config_migration_prompts]
+home_last_prompted_at = 1776697483
+
 [model_providers.xai]
 name = "xAI"
 base_url = "https://api.x.ai/v1"
 env_key = "XAI_API_KEY"
-
-[profiles.xai]
-model_provider = "xai"
-model = "grok-4.20-multi-agent-beta-latest"
 
 [model_providers.openrouter]
 name = "OpenRouter"
 base_url = "https://openrouter.ai/api/v1"
 env_key = "OPENROUTER_API_KEY"
 wire_api = "responses"
+
+[profiles.xai]
+model_provider = "xai"
+model = "grok-4.20-multi-agent-beta-latest"
 
 [profiles.openrouter]
 model_provider = "openrouter"
@@ -140,6 +151,20 @@ model = "google/gemini-3.1-pro-preview-customtools"
 [profiles.claude]
 model_provider = "openrouter"
 model = "anthropic/claude-opus-4.6"
+
+[marketplaces.openai-bundled]
+source_type = "local"
+# source = "/Users/zchee/src/github.com/zchee/dotfiles/.config/codex/.tmp/bundled-marketplaces/openai-bundled"
+source = "/Applications/Codex.app/Contents/Resources/plugins/openai-bundled"
+
+[plugins."browser-use@openai-bundled"]
+enabled = true
+
+[plugins."computer-use@openai-bundled"]
+enabled = true
+
+[plugins."chrome@openai-bundled"]
+enabled = true
 
 [mcp_servers.alphaxiv]
 enabled = false
@@ -162,16 +187,27 @@ args = [ "run", "--directory=/Users/zchee/go/src/github.com/zchee/mcp-servers/ap
 
 [mcp_servers.context7]
 url = "https://mcp.context7.com/mcp"
-env_http_headers = { CONTEXT7_API_KEY = "CONTEXT7_API_KEY" }
+
+[mcp_servers.context7.env_http_headers]
+CONTEXT7_API_KEY = "CONTEXT7_API_KEY"
 
 [mcp_servers.filesystem]
 command = "npx"
 args = [ "-y", "@modelcontextprotocol/server-filesystem@latest", "/Users/zchee/go", "/Users/zchee/src", "/opt" ]
 startup_timeout_sec = 15
 
+[mcp_servers.filesystem.tools.write_file]
+approval_mode = "approve"
+
 [mcp_servers.datadog]
 enabled = false
 url = "https://mcp.us5.datadoghq.com/api/unstable/mcp-server/mcp"
+
+[mcp_servers.exa]
+url = "https://mcp.exa.ai/mcp"
+
+[mcp_servers.grep-app]
+url = "https://mcp.grep.app"
 
 [mcp_servers.gemini-google-search]
 command = "mcp-gemini-google-search"
@@ -185,7 +221,9 @@ GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
 [mcp_servers.google-developer-knowledge]
 enabled = false
 url = "https://developerknowledge.googleapis.com/mcp"
-env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVERS_API_KEY" }
+
+[mcp_servers.google-developer-knowledge.env_http_headers]
+X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVERS_API_KEY"
 
 [mcp_servers.google-cloud-run]
 enabled = false
@@ -197,12 +235,9 @@ startup_timeout_sec = 15
 enabled = false
 url = "https://stitch.googleapis.com/mcp"
 bearer_token_env_var = "GAUDIY_GOOGLE_CLOUD_MCP_SERVERS_SNITCH_API_KEY"
-http_headers = { X-Goog-User-Project = "gaudiy-ai" }
 
-[mcp_servers.pencil]
-enabled = false
-command = "/Users/zchee/.vscode-insiders/extensions/highagency.pencildev-0.6.35/out/mcp-server-darwin-arm64"
-args = [ "--app", "desktop" ]
+[mcp_servers.google-stitch.http_headers]
+X-Goog-User-Project = "gaudiy-ai"
 
 [mcp_servers.kubernetes]
 enabled = false
@@ -268,7 +303,7 @@ startup_timeout_sec = 20
 
 [mcp_servers.rust-analyzer]
 enabled = false
-command = "rust-analyzer-mcp" # https://github.com/cLazyZombie/rust-analyzer-mcp
+command = "rust-analyzer-mcp"
 startup_timeout_sec = 20
 
 [mcp_servers.zls]
@@ -276,3 +311,45 @@ enabled = false
 command = "mcp-language-server"
 args = [ "--workspace", ".", "--lsp", "zls" ]
 startup_timeout_sec = 20
+
+# ============================================================
+# oh-my-codex (OMX) Configuration
+# Managed by omx setup - manual edits preserved on next setup
+# ============================================================
+
+[mcp_servers.omx_state]
+command = "node"
+args = ["/Users/zchee/src/github.com/Yeachan-Heo/oh-my-codex/dist/mcp/state-server.js"]
+enabled = true
+startup_timeout_sec = 5
+
+[mcp_servers.omx_memory]
+command = "node"
+args = ["/Users/zchee/src/github.com/Yeachan-Heo/oh-my-codex/dist/mcp/memory-server.js"]
+enabled = true
+startup_timeout_sec = 5
+
+[mcp_servers.omx_code_intel]
+command = "node"
+args = ["/Users/zchee/src/github.com/Yeachan-Heo/oh-my-codex/dist/mcp/code-intel-server.js"]
+enabled = true
+startup_timeout_sec = 10
+
+[mcp_servers.omx_trace]
+command = "node"
+args = ["/Users/zchee/src/github.com/Yeachan-Heo/oh-my-codex/dist/mcp/trace-server.js"]
+enabled = true
+startup_timeout_sec = 5
+
+[mcp_servers.omx_wiki]
+command = "node"
+args = ["/Users/zchee/src/github.com/Yeachan-Heo/oh-my-codex/dist/mcp/wiki-server.js"]
+enabled = true
+startup_timeout_sec = 5
+
+[mcp_servers.pencil]
+command = "/Applications/Pencil.app/Contents/Resources/app.asar.unpacked/out/mcp-server-darwin-arm64"
+args = [ "--app", "desktop" ]
+
+# ============================================================
+# End oh-my-codex
