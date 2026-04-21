@@ -3,7 +3,7 @@
   "checkpoint_id": "f402b2106987",
   "strategy": "manual-commit",
   "branch": "omx",
-  "checkpoints_count": 2,
+  "checkpoints_count": 3,
   "files_touched": [
     ".gitignore"
   ],
@@ -29,13 +29,19 @@
     {
       "metadata": "/f4/02b2106987/4/metadata.json",
       "prompt": ""
+    },
+    {
+      "metadata": "/f4/02b2106987/5/metadata.json",
+      "transcript": "/f4/02b2106987/5/full.jsonl",
+      "content_hash": "/f4/02b2106987/5/content_hash.txt",
+      "prompt": "/f4/02b2106987/5/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 3556966,
+    "input_tokens": 4336565,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 3405056,
-    "output_tokens": 21390,
-    "api_call_count": 50
+    "cache_read_tokens": 4121216,
+    "output_tokens": 28483,
+    "api_call_count": 64
   }
 }

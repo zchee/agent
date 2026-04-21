@@ -1,0 +1,1 @@
+$commit codex/scripts/history-compact.py
