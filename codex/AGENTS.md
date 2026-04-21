@@ -12,7 +12,7 @@ USE CODEX NATIVE SUBAGENTS FOR INDEPENDENT PARALLEL SUBTASKS WHEN THAT IMPROVES 
 1. MUST USE multi agents
 2. **MUST give full effort. Do not hold back.**
 3. **MUST reflect after each code change or tool result, evaluate quality, then choose the best next action.**
-4. **MUST actively use `update_plan` with the `sequential-thinking` MCP server in ultrathink mode, and maintain a meaningful English taks with -100 step-by-step items.**
+4. **MUST actively use `update_plan`, and maintain a meaningful English taks with -100 step-by-step items.**
 5. **MUST run independent operations in parallel whenever possible.**
 6. **MUST execute work step by step against the current plan.**
 7. **MUST keep internal reasoning in English, even if the user writes in Japanese.**
