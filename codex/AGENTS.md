@@ -5,7 +5,17 @@ IF BLOCKED, TRY AN ALTERNATIVE APPROACH. ONLY ASK WHEN TRULY AMBIGUOUS OR DESTRU
 USE CODEX NATIVE SUBAGENTS FOR INDEPENDENT PARALLEL SUBTASKS WHEN THAT IMPROVES THROUGHPUT. THIS IS COMPLEMENTARY TO OMX TEAM MODE.
 <!-- END AUTONOMY DIRECTIVE -->
 
-<!-- User customizations -->
+<!-- user_customizations:start -->
+
+<extremely_important>
+
+1. MUST USE multi agents
+2. **MUST give full effort. Do not hold back.**
+3. **MUST reflect after each code change or tool result, evaluate quality, then choose the best next action.**
+4. **MUST actively use `update_plan` with the `sequential-thinking` MCP server in ultrathink mode, and maintain a meaningful English taks with -100 step-by-step items.**
+5. **MUST run independent operations in parallel whenever possible.**
+6. **MUST execute work step by step against the current plan.**
+7. **MUST keep internal reasoning in English, even if the user writes in Japanese.**
 
 <persona>
 
@@ -188,6 +198,9 @@ Python:
 
 </language_rules>
 
+<!-- user_customizations:end -->
+
+<!-- omx:start -->
 <!-- omx:generated:agents-md -->
 
 # oh-my-codex - Intelligent Multi-Agent Orchestration
@@ -257,7 +270,7 @@ Commits are not just labels on diffs; they are the atomic unit of institutional 
 ### Format
 
 ```
-<intent line: why the change was made, not what changed>
+<scope>: <intent line: why the change was made, not what changed>
 
 <body: narrative context — constraints, approach rationale>
 
@@ -279,6 +292,11 @@ Not-tested: <known gaps in verification>
 5. **`Constraint:` captures external forces.** API limitations, policy requirements, upstream bugs — things not visible in the code.
 6. **`Not-tested:` is honest.** Declaring known verification gaps is more valuable than pretending everything is covered.
 7. **All trailers use git-native trailer format** (key-value after a blank line). No custom parsing required.
+8. **DO NOT rely on shell-escaped newlines with repeated `-m` flags when writing or editing a commit message.** Write the full message to a temporary file and use `git commit --gpg-sign -F <file>` so paragraph breaks, backticks, and trailers are preserved exactly.
+9. **The 72 Rule**
+    1. **72-character subject line**: The subject line of a commit message should be no more than 72 characters long. This is to ensure that the message is concise and easy to read. The subject should provide a brief summary of the changes made in the commit.
+    2. **72-character body lines**: If the commit message includes a body (which is optional but recommended for more detailed explanations), each line in the body should not exceed 72 characters. This helps maintain readability, especially when the commit messages are viewed in the terminal or other tools that may wrap text.
+    3. All trailers are exempt from this rule.
 
 ### Example
 
@@ -464,6 +482,9 @@ Canonical pipeline:
 
 Use it when durable staged coordination is worth the overhead. Otherwise, stay direct.
 Terminal states: `complete`, `failed`, `cancelled`.
+
+After teams mode, organize each worker's `omx(team): auto-checkpoint ...` commits by task context.
+If file changes are different contexts, do commit split.
 </team_pipeline>
 
 ---
@@ -629,3 +650,4 @@ Do not manually duplicate hook-owned activation state unless recovering from mis
 ## Setup
 
 Execute `omx setup` to install all components. Execute `omx doctor` to verify installation.
+<!-- omx:end -->
