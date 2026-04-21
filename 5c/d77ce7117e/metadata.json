@@ -3,7 +3,7 @@
   "checkpoint_id": "5cd77ce7117e",
   "strategy": "manual-commit",
   "branch": "omx",
-  "checkpoints_count": 1,
+  "checkpoints_count": 2,
   "files_touched": [
     "codex/config.toml"
   ],
@@ -13,6 +13,10 @@
       "transcript": "/5c/d77ce7117e/0/full.jsonl",
       "content_hash": "/5c/d77ce7117e/0/content_hash.txt",
       "prompt": "/5c/d77ce7117e/0/prompt.txt"
+    },
+    {
+      "metadata": "/5c/d77ce7117e/1/metadata.json",
+      "prompt": ""
     }
   ],
   "token_usage": {
