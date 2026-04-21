@@ -1,0 +1,25 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "5cd77ce7117e",
+  "strategy": "manual-commit",
+  "branch": "omx",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "codex/config.toml"
+  ],
+  "sessions": [
+    {
+      "metadata": "/5c/d77ce7117e/0/metadata.json",
+      "transcript": "/5c/d77ce7117e/0/full.jsonl",
+      "content_hash": "/5c/d77ce7117e/0/content_hash.txt",
+      "prompt": "/5c/d77ce7117e/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 3556966,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3405056,
+    "output_tokens": 21390,
+    "api_call_count": 50
+  }
+}
