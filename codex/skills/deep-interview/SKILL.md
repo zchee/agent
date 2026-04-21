@@ -52,6 +52,7 @@ If no flag is provided, use **Standard**.
 - Reduce user effort: ask only the highest-leverage unresolved question, and never ask the user for codebase facts that can be discovered directly
 - For brownfield work, prefer evidence-backed confirmation questions such as "I found X in Y. Should this change follow that pattern?"
 - In Codex CLI, deep-interview uses `omx question` as the required OMX-owned structured questioning path for every interview round
+- If you launch `omx question` in a background terminal, immediately wait for that background terminal to finish and read its JSON answer before scoring ambiguity, asking another round, or handing off
 - If `omx question` is unavailable in the current runtime, treat that as a blocker/error for deep-interview rather than falling back to `request_user_input` or plain-text questioning
 - Re-score ambiguity after each answer and show progress transparently
 - Do not hand off to execution while ambiguity remains above threshold unless user explicitly opts to proceed with warning
