@@ -1,4 +1,5 @@
 # oh-my-codex top-level settings (must be before any [table])
+notify = ["node", "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/notify-hook.js"]
 model_reasoning_effort = "high"
 developer_instructions = "You have oh-my-codex installed. AGENTS.md is your orchestration brain and the main orchestration surface. Use skill/keyword routing like $name plus spawned role-specialized subagents for specialized work. Codex native subagents are available via .codex/agents and may be used for independent parallel subtasks within a single session or team pane. Skills are loaded from installed SKILL.md files under .codex/skills, not from native agent TOMLs. Use workflow skills via $name when explicitly invoked or clearly routed by AGENTS.md. Treat installed prompts as narrower internal execution surfaces under AGENTS.md authority, even when user-facing docs prefer $name keywords."
 
@@ -31,8 +32,6 @@ include_environment_context = true
 service_tier = "fast"
 personality = "pragmatic"
 
-notify = ["/Users/zchee/src/github.com/zchee/agent/codex/plugins/cache/openai-bundled/computer-use/1.0.750/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended", "--previous-notify", "[\"node\",\"\\/opt\\/local\\/var\\/bun\\/install\\/global\\/node_modules\\/oh-my-codex\\/dist\\/scripts\\/notify-hook.js\"]"]
-
 [realtime]
 version = "v2"
 transport = "webrtc"
@@ -52,7 +51,7 @@ max_bytes = 104857600
 notifications = true
 animations = true
 alternate_screen = "always"
-status_line = ["model-with-reasoning", "context-remaining", "current-dir", "git-branch", "five-hour-limit", "weekly-limit", "context-window-size", "used-tokens", "total-input-tokens", "total-output-tokens", "session-id"]
+status_line = ["model-with-reasoning", "git-branch", "context-remaining", "total-input-tokens", "total-output-tokens", "five-hour-limit", "weekly-limit"]
 
 [tools]
 view_image = true
@@ -71,7 +70,6 @@ max_unused_days = 21
 max_rollout_age_days = 42
 max_rollouts_per_startup = 9
 min_rollout_idle_hours = 24
-# no_memories_if_mcp_or_web_search = true
 
 [features]
 undo = true
@@ -222,26 +220,131 @@ VERTEX_PROJECT_ID = "gaudiy-ai"
 VERTEX_LOCATION = "global"
 GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
 
+[mcp_servers.gcp-aiplatform]
+enabled = false
+url = "https://aiplatform.googleapis.com/mcp/generate"
+env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
+
+[mcp_servers.gcp-apihub]
+enabled = false
+url = "https://apihub.googleapis.com/mcp"
+env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
+
+[mcp_servers.gcp-bigquery]
+enabled = false
+url = "https://bigquery.googleapis.com/mcp"
+env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
+
+[mcp_servers.gcp-bigquerydatatransfer]
+enabled = false
+url = "https://bigquerydatatransfer.googleapis.com/mcp"
+env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
+
+[mcp_servers.gcp-bigquerymigration]
+enabled = false
+url = "https://bigquerymigration.googleapis.com/mcp"
+env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
+
+[mcp_servers.gcp-cloudresourcemanager]
+enabled = false
+url = "https://cloudresourcemanager.googleapis.com/mcp"
+env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
+
+[mcp_servers.gcp-cloudtrace]
+enabled = false
+url = "https://cloudtrace.googleapis.com/mcp"
+env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
+
+[mcp_servers.gcp-compute]
+enabled = false
+url = "https://compute.googleapis.com/mcp"
+env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
+
+[mcp_servers.gcp-container]
+enabled = false
+url = "https://container.googleapis.com/mcp"
+env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
+
+[mcp_servers.gcp-dataplex]
+enabled = false
+url = "https://dataplex.googleapis.com/mcp"
+env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
+
+[mcp_servers.gcp-dataproc]
+enabled = false
+url = "https://dataproc.googleapis.com/mcp"
+env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
+
+[mcp_servers.gcp-datastream]
+enabled = false
+url = "https://datastream.googleapis.com/mcp"
+env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
+
+[mcp_servers.gcp-discoveryengine]
+enabled = false
+url = "https://discoveryengine.googleapis.com/mcp"
+env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
+
+[mcp_servers.gcp-firestore]
+enabled = false
+url = "https://firestore.googleapis.com/mcp"
+env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
+
+[mcp_servers.gcp-geminicloudassist]
+enabled = false
+url = "https://geminicloudassist.googleapis.com/mcp"
+env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
+
+[mcp_servers.gcp-logging]
+enabled = false
+url = "https://logging.googleapis.com/mcp"
+env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
+
+[mcp_servers.gcp-monitoring]
+enabled = false
+url = "https://monitoring.googleapis.com/mcp"
+env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
+
+[mcp_servers.gcp-pubsub]
+enabled = false
+url = "https://pubsub.googleapis.com/mcp"
+env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
+
+[mcp_servers.gcp-run]
+enabled = false
+url = "https://run.googleapis.com/mcp"
+env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
+
+[mcp_servers.gcp-spanner]
+enabled = false
+url = "https://spanner.googleapis.com/mcp"
+env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
+
+[mcp_servers.gcp-sqladmin]
+enabled = false
+url = "https://sqladmin.googleapis.com/mcp"
+env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
+
+[mcp_servers.gcp-stitch]
+enabled = false
+url = "https://stitch.googleapis.com/mcp"
+env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
+
+[mcp_servers.gcp-storage]
+enabled = false
+url = "https://storage.googleapis.com/storage/mcp"
+env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
+
 [mcp_servers.google-developer-knowledge]
 enabled = false
 url = "https://developerknowledge.googleapis.com/mcp"
-
-[mcp_servers.google-developer-knowledge.env_http_headers]
-X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVERS_API_KEY"
-
-[mcp_servers.google-cloud-run]
-enabled = false
-command = "npx"
-args = [ "-y", "@google-cloud/cloud-run-mcp" ]
-startup_timeout_sec = 15
+env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
 
 [mcp_servers.google-stitch]
 enabled = false
 url = "https://stitch.googleapis.com/mcp"
-bearer_token_env_var = "GAUDIY_GOOGLE_CLOUD_MCP_SERVERS_SNITCH_API_KEY"
-
-[mcp_servers.google-stitch.http_headers]
-X-Goog-User-Project = "gaudiy-ai"
+bearer_token_env_var = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY"
+http_headers = { X-Goog-User-Project = "gaudiy-ai" }
 
 [mcp_servers.kubernetes]
 enabled = false
@@ -249,6 +352,7 @@ command = "kubernetes-mcp-server"
 startup_timeout_sec = 15
 
 [mcp_servers.sequential-thinking]
+enabled = false
 command = "mcp-sequential-thinking"
 
 [mcp_servers.basedpyright]
@@ -319,9 +423,6 @@ startup_timeout_sec = 20
 [mcp_servers.pencil]
 command = "/Applications/Pencil.app/Contents/Resources/app.asar.unpacked/out/mcp-server-darwin-arm64"
 args = [ "--app", "desktop" ]
-
-[env]
-USE_OMX_EXPLORE_CMD = "1"
 
 # ============================================================
 # oh-my-codex (OMX) Configuration
