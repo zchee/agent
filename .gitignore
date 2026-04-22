@@ -12,3 +12,4 @@ claude/plugins/claude-hud/transcript-cache/
 codex/skills/dist
 
 **/__pycache__/
+.omx/

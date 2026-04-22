@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import math
+import os
 import sys
 import tempfile
 from collections.abc import Iterator, Sequence
@@ -20,7 +21,7 @@ from typing import BinaryIO, Final
 
 import orjson
 
-DEFAULT_HISTORY_PATH: Final[Path] = Path("~/.codex/history.jsonl").expanduser()
+DEFAULT_CODEX_HOME: Final[str] = "~/.codex"
 
 
 class HistoryCompactError(RuntimeError):
@@ -50,6 +51,18 @@ class CompactStats:
 class CompactPlan:
     keep_line_numbers: frozenset[int]
     stats: CompactStats
+
+
+def resolve_path_argument(value: str) -> Path:
+    expanded_value = os.path.expandvars(value)
+    expanded_value = os.path.expanduser(expanded_value)
+    return Path(expanded_value)
+
+
+def default_history_path() -> Path:
+    configured_codex_home = os.environ.get("CODEX_HOME", "").strip()
+    codex_home = configured_codex_home or DEFAULT_CODEX_HOME
+    return resolve_path_argument(codex_home) / "history.jsonl"
 
 
 def _normalize_timestamp(value: object) -> int | float | None:
@@ -218,7 +231,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "input_path",
         nargs="?",
-        default=str(DEFAULT_HISTORY_PATH),
+        default=str(default_history_path()),
         help="History JSONL file to compact.",
     )
     destination_group = parser.add_mutually_exclusive_group()
@@ -242,8 +255,8 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = parse_args(argv)
-    input_path = Path(args.input_path).expanduser()
-    output_path = Path(args.output).expanduser() if args.output else None
+    input_path = resolve_path_argument(args.input_path)
+    output_path = resolve_path_argument(args.output) if args.output else None
 
     try:
         plan = compact_history(
