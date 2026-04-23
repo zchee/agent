@@ -1,6 +1,6 @@
-# Claude Code Environment Variables (v2.1.112)
+# Claude Code Environment Variables (v2.1.113)
 
-Reverse-engineered from `cli.unpack.js` at tag `2.1.112` (last updated 2026-04-17). This catalog includes first-party Claude Code knobs plus ambient/dependency environment variables that are read somewhere in the bundled runtime.
+Reverse-engineered from `cli.unpack.js` at tag `2.1.113` (last updated 2026-04-21). This catalog includes first-party Claude Code knobs plus ambient/dependency environment variables that are read somewhere in the bundled runtime.
 
 ## Authentication & API
 
@@ -460,6 +460,7 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLI_WIDTH` | ambient | Override terminal width detection |
 | `CLAUDE_CODE_FORCE_FULLSCREEN_UPSELL` | `false` | Force fullscreen upsell display |
 | `CLAUDE_CODE_TUI_JUST_SWITCHED` | — | Internal: track TUI mode switch state (set/dropped across process restarts) |
+| `CLAUDE_CODE_DECSTBM` | — | When truthy, force-enable DECSTBM (top/bottom-margin) scroll-region rendering; bypasses the `tengu_marlin_porch` feature-flag gate |
 
 ## Sandbox
 
@@ -543,6 +544,8 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_CODE_RESUME_TOKEN_THRESHOLD` | `100000` | Token threshold for resume-interrupted-turn eligibility |
 | `CLAUDE_CODE_RESUME_INTERRUPTED_TURN` | — | Resume an interrupted turn/session by identifier or token |
 | `CLAUDE_AUTO_BACKGROUND_TASKS` | `false` | Auto-spawn background tasks |
+| `CLAUDE_BG_BACKEND` | — | Set to `daemon` to run background tasks via the daemon backend (ignores SIGHUP so the daemon survives terminal disconnects) |
+| `CLAUDE_ASYNC_AGENT_STALL_TIMEOUT_MS` | `600000` | Stall timeout (ms) for async-agent turns; turns with no progress for this long are considered stalled |
 
 ## Miscellaneous
 
@@ -784,6 +787,7 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `PKG_CONFIG_PATH` | ambient | pkg-config search path |
 | `UV_THREADPOOL_SIZE` | ambient | libuv thread pool size |
 | `JEST_WORKER_ID` | ambient | Detect Jest test worker |
+| `BUN_INSTALL` | ambient | Bun installer prefix path; used to identify when Claude Code is running under Bun's global install layout |
 | `NODE_OPTIONS` | ambient | Node.js CLI options |
 | `NODE_DEBUG` | ambient | Node.js debug modules |
 | `NODE_V8_COVERAGE` | ambient | V8 code coverage output directory |
