@@ -29,19 +29,50 @@ approvals_reviewer = "guardian_subagent"
 include_permissions_instructions = true
 include_apps_instructions = true
 include_environment_context = true
-service_tier = "fast"
 personality = "pragmatic"
+service_tier = "fast"
+
+[model_providers.openrouter]
+name = "OpenRouter"
+base_url = "https://openrouter.ai/api/v1"
+env_key = "OPENROUTER_CODEX_API_KEY"
+wire_api = "responses"
+
+[profiles.openai]
+model_provider = "openrouter"
+model = "openai/gpt-5.4-pro"
+service_tier = "fast"
+
+[profiles.openrouter]
+model_provider = "openrouter"
+model = "minimax/minimax-m2.7"
+
+[profiles.gemini]
+model_provider = "openrouter"
+model = "google/gemini-3.1-pro-preview-customtools"
+
+[profiles.claude]
+model_provider = "openrouter"
+model = "anthropic/claude-opus-4.6"
+
+[model_providers.xai]
+name = "xAI"
+base_url = "https://api.x.ai/v1"
+env_key = "XAI_API_KEY"
+
+[profiles.xai]
+model_provider = "xai"
+model = "grok-4.20-multi-agent-beta-latest"
 
 [realtime]
 version = "v2"
 transport = "webrtc"
+type = "conversational"
 
 [shell_environment_policy]
 inherit = "all"
 experimental_use_profile = false
-
-[shell_environment_policy.set]
-USE_OMX_EXPLORE_CMD = "1"
+set = { USE_OMX_EXPLORE_CMD = "1" }
 
 [history]
 persistence = "save-all"
@@ -92,6 +123,7 @@ request_permissions_tool = true
 enable_fanout = true
 tool_search_always_defer_mcp_tools = true
 unavailable_dummy_tools = true
+remote_plugin = true
 external_migration = true
 default_mode_request_user_input = true
 guardian_approval = true
@@ -99,10 +131,8 @@ realtime_conversation = true
 remote_control = true
 prevent_idle_sleep = true
 workspace_owner_usage_nudge = true
-use_agent_identity = false
 skill_env_var_dependency_prompt = true
 
-multi_agent = true
 [features.multi_agent_v2]
 enabled = true
 usage_hint_enabled = false
@@ -123,49 +153,38 @@ hide_gpt5_1_migration_prompt = true
 hide_rate_limit_model_nudge = false
 hide_world_writable_warning = false
 
-[notice.external_config_migration_prompts]
-home_last_prompted_at = 1776697483
-
-[model_providers.xai]
-name = "xAI"
-base_url = "https://api.x.ai/v1"
-env_key = "XAI_API_KEY"
-
-[model_providers.openrouter]
-name = "OpenRouter"
-base_url = "https://openrouter.ai/api/v1"
-env_key = "OPENROUTER_API_KEY"
-wire_api = "responses"
-
-[profiles.xai]
-model_provider = "xai"
-model = "grok-4.20-multi-agent-beta-latest"
-
-[profiles.openrouter]
-model_provider = "openrouter"
-model = "minimax/minimax-m2.7"
-
-[profiles.openai]
-model_provider = "openrouter"
-model = "openai/gpt-5.4-pro"
-
-[profiles.gemini]
-model_provider = "openrouter"
-model = "google/gemini-3.1-pro-preview-customtools"
-
-[profiles.claude]
-model_provider = "openrouter"
-model = "anthropic/claude-opus-4.6"
-
 [marketplaces.openai-bundled]
 source_type = "local"
-# source = "/Users/zchee/src/github.com/zchee/dotfiles/.config/codex/.tmp/bundled-marketplaces/openai-bundled"
 source = "/Applications/Codex.app/Contents/Resources/plugins/openai-bundled"
+
+[marketplaces.memsearch-plugins]
+last_updated = "2026-04-23T06:47:01Z"
+last_revision = "dbb624a102518f500266973aebd8b81a7bc9cd36"
+source_type = "git"
+source = "https://github.com/zilliztech/memsearch.git"
 
 [plugins."browser-use@openai-bundled"]
 enabled = true
 
 [plugins."computer-use@openai-bundled"]
+enabled = true
+
+[plugins."figma@openai-curated"]
+enabled = true
+
+[plugins."memsearch@memsearch-plugins"]
+enabled = true
+
+[plugins."build-macos-apps@openai-curated"]
+enabled = true
+
+[plugins."superpowers@openai-curated"]
+enabled = false
+
+[plugins."cloudflare@openai-curated"]
+enabled = false
+
+[plugins."plugin-eval@openai-curated"]
 enabled = true
 
 [mcp_servers.alphaxiv]
@@ -370,7 +389,7 @@ startup_timeout_sec = 20
 [mcp_servers.clangd]
 enabled = false
 command = "mcp-language-server"
-args = [ "--workspace", ".", "--lsp", "/opt/llvm/clangd/bin/clangd", "--", "--background-index", "--background-index-priority=normal", "--all-scopes-completion", "--background-index", "--background-index-priority=normal", "--clang-tidy", "--completion-parse=auto", "--completion-style=detailed", "--experimental-modules-support", "--function-arg-placeholders=1", "--header-insertion=iwyu", "--header-insertion-decorators", "--import-insertions", "--include-ineligible-results", "--limit-references=0", "--limit-results=0", "--ranking-model=heuristics", "--rename-file-limit=1000", "--enable-config", "-j=16", "--parse-forwarding-functions", "--pch-storage=memory", "--use-dirty-headers", "--input-style=standard" ]
+args = [ "--workspace", ".", "--lsp", "/opt/local/llvm/clangd/bin/clangd", "--", "--background-index", "--background-index-priority=normal", "--all-scopes-completion", "--background-index", "--background-index-priority=normal", "--clang-tidy", "--completion-parse=auto", "--completion-style=detailed", "--experimental-modules-support", "--function-arg-placeholders=1", "--header-insertion=iwyu", "--header-insertion-decorators", "--import-insertions", "--include-ineligible-results", "--limit-references=0", "--limit-results=0", "--ranking-model=heuristics", "--rename-file-limit=1000", "--enable-config", "-j=16", "--parse-forwarding-functions", "--pch-storage=memory", "--use-dirty-headers", "--input-style=standard" ]
 startup_timeout_sec = 20
 
 [mcp_servers.gopls]
