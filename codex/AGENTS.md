@@ -9,13 +9,12 @@ USE CODEX NATIVE SUBAGENTS FOR INDEPENDENT PARALLEL SUBTASKS WHEN THAT IMPROVES 
 
 <extremely_important>
 
-1. MUST USE multi agents
-2. **MUST give full effort. Do not hold back.**
-3. **MUST reflect after each code change or tool result, evaluate quality, then choose the best next action.**
-4. **MUST actively use `update_plan`, and maintain a meaningful English taks with -100 step-by-step items.**
-5. **MUST run independent operations in parallel whenever possible.**
-6. **MUST execute work step by step against the current plan.**
-7. **MUST keep internal reasoning in English, even if the user writes in Japanese.**
+1. **MUST give full effort. Do not hold back.**
+2. **MUST reflect after each code change or tool result, evaluate quality, then choose the best next action.**
+3. **MUST actively use `update_plan`, and maintain a meaningful English taks with -100 step-by-step items.**
+4. **MUST run independent operations in parallel whenever possible.**
+5. **MUST execute work step by step against the current plan.**
+6. **MUST keep the internal reasoning written in English, even if the user inputs a prompt in Japanese.**
 
 <persona>
 
@@ -56,8 +55,6 @@ If any score is below 0.9, refine the solution before finalizing.
 
 </quality_control>
 
-</extremely_important>
-
 <absolute_rules>
 
 - **Build high-quality, general-purpose solutions using standard tools. Use helper scripts/workarounds only when they improve correctness or efficiency.**
@@ -95,50 +92,9 @@ If any score is below 0.9, refine the solution before finalizing.
 
 </prohibitions>
 
-<shell>
-
-`rg`
-
-- Use `rg --threads=8` for ripgrep commands.
-
-<shell>
-
-## MCP SERVERS
-
-- Always use the `memory` tool for persistent context and recall.
-- Use `gemini-google-search` for web search instead of built-in web search tools.
-- Use `context7` when detailed library/API documentation is needed.
-
 </absolute_rules>
 
-<philosophy>
-
-## EXECPLAN
-
-For complex features or significant refactors, use an ExecPlan from design through implementation (see `~/.config/codex/instructions/ExecPlan.md`).
-
-## ERROR HANDLING
-
-- Fail fast for critical configuration (for example, missing text model).
-- Log and continue for optional features (for example, extraction model).
-- Gracefully degrade when external services are unavailable.
-- Surface user-friendly messages via the resilience layer.
-
-## TESTING
-
-## SHELL
-
-### `rg`
-
-- Use `rg --threads=8` for ripgrep commands.
-
-# MCP SERVERS
-
-- Always use the `memory` tool for persistent context and recall.
-- Use `gemini-google-search` for web search instead of built-in web search tools.
-- Use `context7` when detailed library/API documentation is needed.
-
-</absolute_rules>
+</extremely_important>
 
 <philosophy>
 
@@ -163,6 +119,20 @@ For complex features or significant refactors, use an ExecPlan from design throu
 
 </philosophy>
 
+<shell>
+
+- Use `rg --threads=8` for `rg`(ripgrep) commands.
+
+</shell>
+
+<mcp>
+
+- Always use the `memory` tool for persistent context and recall.
+- Use `gemini-google-search` for web search instead of built-in web search tools.
+- Use `context7` when detailed library/API documentation is needed.
+
+</mcp>
+
 <!--
 <tone_and_behavior>
 
@@ -182,11 +152,11 @@ For complex features or significant refactors, use an ExecPlan from design throu
 <language_rules>
 
 Go:
-- `~/.config/codex/instructions/Go.md`
+@~/.config/codex/instructions/Go.md
 
 Python:
 
-- `~/.config/codex/instructions/Python.md`
+@~/.config/codex/instructions/Python.md
 
 <!-- ## Terraform programming language -->
 <!---->
