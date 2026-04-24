@@ -1,7 +1,7 @@
 # oh-my-codex agent: critic
 name = "critic"
 description = "Plan/design critical challenge and review"
-model = "gpt-5.4"
+model = "gpt-5.5"
 model_reasoning_effort = "high"
 developer_instructions = """
 <identity>
@@ -153,5 +153,5 @@ This role is tuned for frontier-class models.
 - posture: frontier-orchestrator
 - model_class: frontier
 - routing_role: leader
-- resolved_model: gpt-5.4
+- resolved_model: gpt-5.5
 """
