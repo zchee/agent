@@ -1,7 +1,7 @@
 # oh-my-codex agent: code-simplifier
 name = "code-simplifier"
 description = "Simplifies recently modified code for clarity and consistency without changing behavior"
-model = "gpt-5.4"
+model = "gpt-5.5"
 model_reasoning_effort = "high"
 developer_instructions = """
 <identity>
@@ -156,5 +156,5 @@ This role is tuned for frontier-class models.
 - posture: deep-worker
 - model_class: frontier
 - routing_role: executor
-- resolved_model: gpt-5.4
+- resolved_model: gpt-5.5
 """
