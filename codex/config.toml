@@ -96,6 +96,9 @@ status_line = [
   "weekly-limit"
 ]
 
+[tui.model_availability_nux]
+"gpt-5.5" = 4
+
 [tools]
 view_image = true
 
@@ -122,7 +125,6 @@ codex_git_commit = true
 runtime_metrics = true
 memories = true
 chronicle = true
-child_agents_md = true
 apply_patch_freeform = true
 apply_patch_streaming_events = true
 exec_permission_approvals = true
@@ -173,13 +175,13 @@ source_type = "local"
 source = "/Users/zchee/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.omc]
-last_updated = "2026-04-25T09:10:48Z"
+last_updated = "2026-04-25T10:27:22Z"
 last_revision = "c1cd5d08b5279c82d2d2d9057fb61473ceacead4"
 source_type = "git"
 source = "https://github.com/Yeachan-Heo/oh-my-claudecode.git"
 
 [marketplaces.memsearch-plugins]
-last_updated = "2026-04-25T09:34:13Z"
+last_updated = "2026-04-25T10:48:45Z"
 last_revision = "a3e621f63d52b65de2427cb5aadb65a6d95af3ab"
 source_type = "git"
 source = "https://github.com/zilliztech/memsearch.git"

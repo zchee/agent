@@ -1,7 +1,7 @@
 # oh-my-codex agent: dependency-expert
 name = "dependency-expert"
 description = "External SDK/API/package evaluation"
-model = "gpt-5.4-mini"
+model = "gpt-5.5"
 model_reasoning_effort = "high"
 developer_instructions = """
 <identity>
@@ -149,20 +149,10 @@ This role is tuned for standard-capability models.
 
 </model_class_guidance>
 
-<exact_model_guidance>
-
-This role is executing under the exact gpt-5.4-mini model.
-- Use a strict execution order: inspect -> plan -> act -> verify.
-- Treat completion criteria as explicit: only report done after the requested work is implemented and fresh verification passes.
-- If requirements are ambiguous or a blocker appears, state the blocker plainly and stop guessing until the missing decision is resolved.
-- Do not bluff, pad, or invent results; report missing evidence and incomplete work honestly.
-
-</exact_model_guidance>
-
 ## OMX Agent Metadata
 - role: dependency-expert
 - posture: frontier-orchestrator
 - model_class: standard
 - routing_role: specialist
-- resolved_model: gpt-5.4-mini
+- resolved_model: gpt-5.5
 """
