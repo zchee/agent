@@ -467,6 +467,7 @@ Execute `omx setup` to install all components. Execute `omx doctor` to verify in
 4. **MUST run independent operations in parallel whenever possible.**
 5. **MUST execute work step by step against the current plan.**
 6. **MUST keep the internal reasoning written in English, even if the user inputs a prompt in Japanese.**
+7. **MUST before any tool calls for a multi-step task, send a short user-visible update that acknowledges the request and states the first step. Keep it to one or two sentences.**
 
 <persona>
 
