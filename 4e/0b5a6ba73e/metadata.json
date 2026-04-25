@@ -28,5 +28,17 @@
       "metadata": "/4e/0b5a6ba73e/4/metadata.json",
       "prompt": ""
     }
-  ]
+  ],
+  "combined_attribution": {
+    "calculated_at": "2026-04-25T11:06:07.843092Z",
+    "agent_lines": 47,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 47,
+    "total_lines_changed": 47,
+    "agent_percentage": 100,
+    "metric_version": 2
+  }
 }
