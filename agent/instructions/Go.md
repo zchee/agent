@@ -16,13 +16,15 @@ Remember:
 * **MUST use the latest version of the Go language currently available.**
     - Use at least 1.25 or higher.
 * **MUST respect the Google Go Style Guide:**
-    - @./llms/google.github.io-styleguid-go.xml
+    - https://google.github.io/styleguide/go/guide
+    - https://google.github.io/styleguide/go/decisions
+    - https://google.github.io/styleguide/go/best-practices
 * **MUST use `any` instead of `interface{}`.**
 * **MUST use generic types when it makes sense.**
 * **MUST follow Go formatting with `gofmt -s -w .`**
 * **MUST actively use third-party packages whenever possible, when performance or any requirement.**
     - However, prefer standard packages when they already provide the same behavior.
-    - Use `encoding/json/v2` and `encoding/json/jsontext` instead of `encoding/json`.
+    - Use `github.com/go-json-experiment/json` and `github.com/go-json-experiment/json/jsontext` instead of `encoding/json`.
         - **MUST use `omitzero` instead of `omitempty` in json struct tags.**
 * Please write beneficial test code that shows common patterns in the Go language.
 * **MUST always end godoc comments with a period.**
