@@ -3,7 +3,7 @@
   "checkpoint_id": "696724d5e39e",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 1,
+  "checkpoints_count": 2,
   "files_touched": [
     "claude/plugins/blocklist.json",
     "claude/plugins/known_marketplaces.json"
@@ -14,6 +14,10 @@
       "transcript": "/69/6724d5e39e/0/full.jsonl",
       "content_hash": "/69/6724d5e39e/0/content_hash.txt",
       "prompt": "/69/6724d5e39e/0/prompt.txt"
+    },
+    {
+      "metadata": "/69/6724d5e39e/1/metadata.json",
+      "prompt": ""
     }
   ],
   "token_usage": {
