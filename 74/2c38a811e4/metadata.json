@@ -3,7 +3,7 @@
   "checkpoint_id": "742c38a811e4",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 1,
+  "checkpoints_count": 2,
   "files_touched": [
     "agent/instructions/Go.md"
   ],
@@ -13,6 +13,10 @@
       "transcript": "/74/2c38a811e4/0/full.jsonl",
       "content_hash": "/74/2c38a811e4/0/content_hash.txt",
       "prompt": "/74/2c38a811e4/0/prompt.txt"
+    },
+    {
+      "metadata": "/74/2c38a811e4/1/metadata.json",
+      "prompt": ""
     }
   ],
   "token_usage": {
