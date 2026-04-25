@@ -5,7 +5,7 @@
       "repo": "anthropics/claude-plugins-official"
     },
     "installLocation": "/Users/zchee/.claude/plugins/marketplaces/claude-plugins-official",
-    "lastUpdated": "2026-02-19T20:31:29.793Z"
+    "lastUpdated": "2026-04-25T07:53:53.967Z"
   },
   "knowledge-work-plugins": {
     "source": {
@@ -13,6 +13,54 @@
       "repo": "anthropics/knowledge-work-plugins"
     },
     "installLocation": "/Users/zchee/.claude/plugins/marketplaces/knowledge-work-plugins",
-    "lastUpdated": "2026-02-18T12:36:57.685Z"
+    "lastUpdated": "2026-04-17T04:39:08.171Z"
+  },
+  "anthropic-agent-skills": {
+    "source": {
+      "source": "github",
+      "repo": "anthropics/skills"
+    },
+    "installLocation": "/Users/zchee/.claude/plugins/marketplaces/anthropic-agent-skills",
+    "lastUpdated": "2026-04-17T04:39:02.754Z"
+  },
+  "chrome-devtools-plugins": {
+    "source": {
+      "source": "github",
+      "repo": "ChromeDevTools/chrome-devtools-mcp"
+    },
+    "installLocation": "/Users/zchee/.claude/plugins/marketplaces/chrome-devtools-plugins",
+    "lastUpdated": "2026-04-17T04:39:04.057Z"
+  },
+  "goland-claude-marketplace": {
+    "source": {
+      "source": "github",
+      "repo": "JetBrains/go-modern-guidelines"
+    },
+    "installLocation": "/Users/zchee/.claude/plugins/marketplaces/goland-claude-marketplace",
+    "lastUpdated": "2026-04-17T04:39:06.835Z"
+  },
+  "claude-hud": {
+    "source": {
+      "source": "github",
+      "repo": "jarrodwatts/claude-hud"
+    },
+    "installLocation": "/Users/zchee/.claude/plugins/marketplaces/claude-hud",
+    "lastUpdated": "2026-04-17T04:39:05.351Z"
+  },
+  "omc": {
+    "source": {
+      "source": "git",
+      "url": "https://github.com/Yeachan-Heo/oh-my-claudecode.git"
+    },
+    "installLocation": "/Users/zchee/.claude/plugins/marketplaces/omc",
+    "lastUpdated": "2026-04-17T05:47:52.157Z"
+  },
+  "openai-codex": {
+    "source": {
+      "source": "github",
+      "repo": "openai/codex-plugin-cc"
+    },
+    "installLocation": "/Users/zchee/.claude/plugins/marketplaces/openai-codex",
+    "lastUpdated": "2026-04-17T04:39:09.980Z"
   }
 }
