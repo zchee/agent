@@ -16,7 +16,7 @@ zsh_path = "/opt/homebrew/bin/zsh"
 hide_agent_reasoning = false
 show_raw_agent_reasoning = true
 model_reasoning_summary = "detailed"
-plan_mode_reasoning_effort = "xhigh"
+plan_mode_reasoning_effort = "high"
 model_verbosity = "high"
 model_supports_reasoning_summaries = true
 check_for_update_on_startup = false
@@ -36,14 +36,19 @@ personality = "pragmatic"
 service_tier = "fast"
 
 [model_providers.openrouter]
-name = "OpenRouter"
+name = "openrouter"
 base_url = "https://openrouter.ai/api/v1"
 env_key = "OPENROUTER_CODEX_API_KEY"
 wire_api = "responses"
 
+[model_providers.xai]
+name = "xai"
+base_url = "https://api.x.ai/v1"
+env_key = "XAI_API_KEY"
+
 [profiles.openai]
 model_provider = "openrouter"
-model = "openai/gpt-5.4-pro"
+model = "openai/gpt-5.5-pro"
 service_tier = "fast"
 
 [profiles.openrouter]
@@ -56,12 +61,7 @@ model = "google/gemini-3.1-pro-preview-customtools"
 
 [profiles.claude]
 model_provider = "openrouter"
-model = "anthropic/claude-opus-4.6"
-
-[model_providers.xai]
-name = "xAI"
-base_url = "https://api.x.ai/v1"
-env_key = "XAI_API_KEY"
+model = "anthropic/claude-opus-4.7"
 
 [profiles.xai]
 model_provider = "xai"
@@ -85,7 +85,16 @@ max_bytes = 104857600
 notifications = true
 animations = true
 alternate_screen = "always"
-status_line = ["model-with-reasoning", "git-branch", "context-remaining", "total-input-tokens", "total-output-tokens", "five-hour-limit", "weekly-limit"]
+# github.com/openai/codex/codex-rs/tui/src/bottom_pane/title_setup.rs#TerminalTitleItem
+status_line = [
+  "model-with-reasoning",
+  "git-branch",
+  "context-remaining",
+  "total-input-tokens",
+  "total-output-tokens",
+  "five-hour-limit",
+  "weekly-limit"
+]
 
 [tools]
 view_image = true
@@ -95,7 +104,6 @@ context_size = "high"
 
 [agents]
 max_depth = 5
-interrupt_message = true
 
 [memories]
 generate_memories = true
@@ -155,12 +163,24 @@ hide_world_writable_warning = false
 home_last_prompted_at = 1777068132
 
 [marketplaces.openai-bundled]
+last_updated = "2026-04-25T07:53:41Z"
 source_type = "local"
 source = "/Applications/Codex.app/Contents/Resources/plugins/openai-bundled"
 
+[marketplaces.openai-primary-runtime]
+last_updated = "2026-04-25T08:02:23Z"
+source_type = "local"
+source = "/Users/zchee/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
+
+[marketplaces.omc]
+last_updated = "2026-04-25T09:10:48Z"
+last_revision = "c1cd5d08b5279c82d2d2d9057fb61473ceacead4"
+source_type = "git"
+source = "https://github.com/Yeachan-Heo/oh-my-claudecode.git"
+
 [marketplaces.memsearch-plugins]
-last_updated = "2026-04-25T02:10:19Z"
-last_revision = "8c516dc61c6e0b44e5e335ca4cc178fd2fce9423"
+last_updated = "2026-04-25T09:34:13Z"
+last_revision = "a3e621f63d52b65de2427cb5aadb65a6d95af3ab"
 source_type = "git"
 source = "https://github.com/zilliztech/memsearch.git"
 
@@ -171,13 +191,10 @@ enabled = true
 enabled = true
 
 [plugins."figma@openai-curated"]
-enabled = true
-
-[plugins."memsearch@memsearch-plugins"]
-enabled = true
+enabled = false
 
 [plugins."build-macos-apps@openai-curated"]
-enabled = true
+enabled = false
 
 [plugins."superpowers@openai-curated"]
 enabled = false
@@ -187,6 +204,21 @@ enabled = false
 
 [plugins."plugin-eval@openai-curated"]
 enabled = true
+
+[plugins."documents@openai-primary-runtime"]
+enabled = false
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = false
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = false
+
+[plugins."memsearch@memsearch-plugins"]
+enabled = false
+
+# [plugins."gh-fix-ci@openai-curated"]
+# enabled = true
 
 [mcp_servers.alphaxiv]
 enabled = false
@@ -227,8 +259,8 @@ url = "https://mcp.us5.datadoghq.com/api/unstable/mcp-server/mcp"
 
 [mcp_servers.datadog-code-security]
 enabled = false
-command = "/opt/homebrew/opt/datadog-code-security-mcp/bin/datadog-code-security-mcp"
-args = ["start"]
+command = "datadog-code-security-mcp"
+args = [ "start" ]
 env = { DD_AUTH_DOMAIN = "us5.datadoghq.com" }
 
 [mcp_servers.exa]
@@ -250,13 +282,6 @@ GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
 enabled = false
 url = "https://developerknowledge.googleapis.com/mcp"
 env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
-
-[mcp_servers.google-stitch]
-enabled = false
-url = "https://stitch.googleapis.com/mcp"
-env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
-# bearer_token_env_var = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY"
-# http_headers = { X-Goog-User-Project = "gaudiy-ai" }
 
 [mcp_servers.gcp-aiplatform]
 enabled = false
@@ -397,7 +422,37 @@ startup_timeout_sec = 15
 [mcp_servers.clangd]
 enabled = false
 command = "mcp-language-server"
-args = [ "--workspace", ".", "--lsp", "/opt/local/llvm/clangd/bin/clangd", "--", "--background-index", "--background-index-priority=normal", "--all-scopes-completion", "--background-index", "--background-index-priority=normal", "--clang-tidy", "--completion-parse=auto", "--completion-style=detailed", "--experimental-modules-support", "--function-arg-placeholders=1", "--header-insertion=iwyu", "--header-insertion-decorators", "--import-insertions", "--include-ineligible-results", "--limit-references=0", "--limit-results=0", "--ranking-model=heuristics", "--rename-file-limit=1000", "--enable-config", "-j=16", "--parse-forwarding-functions", "--pch-storage=memory", "--use-dirty-headers", "--input-style=standard" ]
+args = [
+  "--workspace",
+  ".",
+  "--lsp",
+  "/opt/local/llvm/clangd/bin/clangd",
+  "--",
+  "--background-index",
+  "--background-index-priority=normal",
+  "--all-scopes-completion",
+  "--background-index",
+  "--background-index-priority=normal",
+  "--clang-tidy",
+  "--completion-parse=auto",
+  "--completion-style=detailed",
+  "--experimental-modules-support",
+  "--function-arg-placeholders=1",
+  "--header-insertion=iwyu",
+  "--header-insertion-decorators",
+  "--import-insertions",
+  "--include-ineligible-results",
+  "--limit-references=0",
+  "--limit-results=0",
+  "--ranking-model=heuristics",
+  "--rename-file-limit=1000",
+  "--enable-config",
+  "-j=16",
+  "--parse-forwarding-functions",
+  "--pch-storage=memory",
+  "--use-dirty-headers",
+  "--input-style=standard"
+]
 startup_timeout_sec = 15
 
 [mcp_servers.gopls]
@@ -421,7 +476,14 @@ startup_timeout_sec = 15
 [mcp_servers.protols]
 enabled = false
 command = "mcp-language-server"
-args = [ "--workspace", ".", "--lsp", "protols", "--", "--include-paths=/Users/zchee/src/github.com/googleapis/googleapis,/Users/zchee/src/github.com/bufbuild/protovalidate/proto/protovalidate" ]
+args = [
+  "--workspace",
+  ".",
+  "--lsp",
+  "protols",
+  "--",
+  "--include-paths=/Users/zchee/src/github.com/googleapis/googleapis,/Users/zchee/src/github.com/bufbuild/protovalidate/proto/protovalidate"
+]
 startup_timeout_sec = 15
 
 [mcp_servers.ts_ls]
