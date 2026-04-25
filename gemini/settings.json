@@ -123,7 +123,7 @@
       ]
     },
     "pencil": {
-      "command": "/Users/zchee/.vscode-insiders/extensions/highagency.pencildev-0.6.35/out/mcp-server-darwin-arm64",
+      "command": "/Applications/Pencil.app/Contents/Resources/app.asar.unpacked/out/mcp-server-darwin-arm64",
       "args": [
         "--app",
         "desktop"
@@ -139,17 +139,18 @@
     },
     "retryFetchErrors": true,
     "sessionRetention": {
-      "enabled": true,
+      "enabled": false,
       "maxAge": "30d"
     },
     "enableAutoUpdate": false,
     "enableAutoUpdateNotification": false,
-    "defaultApprovalMode": "default",
+    "defaultApprovalMode": "auto_edit",
     "devtools": true,
     "enableNotifications": true,
     "plan": {
       "enabled": true
-    }
+    },
+    "notificationMethod": "auto"
   },
   "ui": {
     "theme": "GitHub",
@@ -181,9 +182,12 @@
     "showLineNumbers": false,
     "showCitations": true,
     "showModelInfoInChat": true,
-    "useAlternateBuffer": false,
+    "useAlternateBuffer": true,
     "incrementalRendering": true,
-    "inlineThinkingMode": "full"
+    "inlineThinkingMode": "full",
+    "errorVerbosity": "full",
+    "loadingPhrases": "off",
+    "terminalBuffer": true
   },
   "hooksConfig": {
     "enabled": true
@@ -198,7 +202,7 @@
     ],
     "loadMemoryFromIncludeDirectories": true,
     "fileFiltering": {
-      "respectGitIgnore": false,
+      "respectGitIgnore": true,
       "respectGeminiIgnore": true,
       "enableRecursiveFileSearch": true,
       "enableFuzzySearch": true
@@ -239,11 +243,16 @@
     "modelSteering": true,
     "extensionRegistry": true,
     "taskTracker": true,
-    "memoryManager": true,
     "generalistProfile": true,
     "contextManagement": true,
     "topicUpdateNarration": true,
-    "dynamicModelConfiguration": true
+    "dynamicModelConfiguration": true,
+    "autoMemory": true,
+    "adk": {
+      "agentSessionInteractiveEnabled": true,
+      "agentSessionNoninteractiveEnabled": true
+    },
+    "memoryV2": true
   },
   "model": {
     "name": "gemini-3.1-pro-preview"
@@ -255,10 +264,15 @@
     "environmentVariableRedaction": {
       "enabled": true
     },
-    "enableConseca": false,
-    "autoAddToPolicyByDefault": true
+    "enableConseca": true,
+    "autoAddToPolicyByDefault": true,
+    "blockGitExtensions": true
   },
   "agents": {
-    "overrides": {}
+    "overrides": {},
+    "browser": {
+      "blockFileUploads": true,
+      "confirmSensitiveActions": true
+    }
   }
 }
