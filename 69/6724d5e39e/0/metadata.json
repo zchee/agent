@@ -1,0 +1,38 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "696724d5e39e",
+  "session_id": "019dab8a-a214-7643-b12a-7f4b04ba0de1",
+  "strategy": "manual-commit",
+  "created_at": "2026-04-25T11:07:36.193007Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "claude/plugins/blocklist.json",
+    "claude/plugins/known_marketplaces.json"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.4",
+  "turn_id": "4ed7f6b3619f",
+  "token_usage": {
+    "input_tokens": 151910,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3405056,
+    "output_tokens": 15744,
+    "api_call_count": 50
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-04-25T11:07:36.182188Z",
+    "agent_lines": 51,
+    "agent_removed": 3,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 51,
+    "total_lines_changed": 54,
+    "agent_percentage": 100,
+    "metric_version": 2
+  }
+}

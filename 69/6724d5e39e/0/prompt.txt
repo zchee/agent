@@ -1,0 +1,5 @@
+$autopilot "Support parse $CODEX_HOME env to ./codex/scripts/history-compact.py"
+
+---
+
+$commit codex/scripts/history-compact.py
