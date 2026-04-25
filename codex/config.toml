@@ -1,3 +1,5 @@
+#:schema https://raw.githubusercontent.com/openai/codex/refs/heads/main/codex-rs/core/config.schema.json
+
 # oh-my-codex top-level settings (must be before any [table])
 notify = ["node", "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/notify-hook.js"]
 model_reasoning_effort = "medium"
@@ -7,9 +9,9 @@ model = "gpt-5.5"
 review_model = "gpt-5.5"
 model_context_window = 1000000
 model_auto_compact_token_limit = 900000
+tool_output_token_limit = 40000
 project_doc_max_bytes = 46080
 project_doc_fallback_filenames = [ "AGENTS.md", "CLAUDE.md", "GEMINI.md" ]
-js_repl_node_path = "/opt/homebrew/bin/node"
 zsh_path = "/opt/homebrew/bin/zsh"
 hide_agent_reasoning = false
 show_raw_agent_reasoning = true
@@ -23,6 +25,7 @@ sandbox_mode = "danger-full-access"
 cli_auth_credentials_store = "file"
 mcp_oauth_credentials_store = "file"
 web_search = "live"
+experimental_thread_store = { type = "local" }
 project_root_markers = [ ".git" ]
 suppress_unstable_features_warning = true
 approvals_reviewer = "guardian_subagent"
@@ -91,7 +94,8 @@ view_image = true
 context_size = "high"
 
 [agents]
-max_depth = 3
+max_depth = 5
+interrupt_message = true
 
 [memories]
 generate_memories = true
@@ -104,33 +108,28 @@ min_rollout_idle_hours = 24
 [features]
 undo = true
 shell_zsh_fork = true
-js_repl = true
 code_mode = true
 code_mode_only = true
-js_repl_tools_only = false
 codex_git_commit = true
 runtime_metrics = true
-general_analytics = true
 memories = true
 chronicle = true
 child_agents_md = true
 apply_patch_freeform = true
 apply_patch_streaming_events = true
 exec_permission_approvals = true
-codex_hooks = true
 request_permissions_tool = true
 enable_fanout = true
 tool_search_always_defer_mcp_tools = true
 unavailable_dummy_tools = true
 remote_plugin = true
 external_migration = true
+skill_env_var_dependency_prompt = true
 default_mode_request_user_input = true
-guardian_approval = true
 realtime_conversation = true
 remote_control = true
 prevent_idle_sleep = true
 workspace_owner_usage_nudge = true
-skill_env_var_dependency_prompt = true
 
 [features.multi_agent_v2]
 enabled = true
@@ -152,13 +151,16 @@ hide_gpt5_1_migration_prompt = true
 hide_rate_limit_model_nudge = false
 hide_world_writable_warning = false
 
+[notice.external_config_migration_prompts]
+home_last_prompted_at = 1777068132
+
 [marketplaces.openai-bundled]
 source_type = "local"
 source = "/Applications/Codex.app/Contents/Resources/plugins/openai-bundled"
 
 [marketplaces.memsearch-plugins]
-last_updated = "2026-04-24T15:13:01Z"
-last_revision = "9a9d2fe927b615899a8fd34f7e18087f866ef7b7"
+last_updated = "2026-04-25T02:10:19Z"
+last_revision = "8c516dc61c6e0b44e5e335ca4cc178fd2fce9423"
 source_type = "git"
 source = "https://github.com/zilliztech/memsearch.git"
 
@@ -224,6 +226,7 @@ enabled = false
 url = "https://mcp.us5.datadoghq.com/api/unstable/mcp-server/mcp"
 
 [mcp_servers.datadog-code-security]
+enabled = false
 command = "/opt/homebrew/opt/datadog-code-security-mcp/bin/datadog-code-security-mcp"
 args = ["start"]
 env = { DD_AUTH_DOMAIN = "us5.datadoghq.com" }
@@ -242,6 +245,18 @@ GEMINI_PROVIDER = "vertex"
 VERTEX_PROJECT_ID = "gaudiy-ai"
 VERTEX_LOCATION = "global"
 GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
+
+[mcp_servers.google-developer-knowledge]
+enabled = false
+url = "https://developerknowledge.googleapis.com/mcp"
+env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
+
+[mcp_servers.google-stitch]
+enabled = false
+url = "https://stitch.googleapis.com/mcp"
+env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
+# bearer_token_env_var = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY"
+# http_headers = { X-Goog-User-Project = "gaudiy-ai" }
 
 [mcp_servers.gcp-aiplatform]
 enabled = false
@@ -358,17 +373,6 @@ enabled = false
 url = "https://storage.googleapis.com/storage/mcp"
 env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
 
-[mcp_servers.google-developer-knowledge]
-enabled = false
-url = "https://developerknowledge.googleapis.com/mcp"
-env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
-
-[mcp_servers.google-stitch]
-enabled = false
-url = "https://stitch.googleapis.com/mcp"
-bearer_token_env_var = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY"
-http_headers = { X-Goog-User-Project = "gaudiy-ai" }
-
 [mcp_servers.kubernetes]
 enabled = false
 command = "kubernetes-mcp-server"
@@ -382,66 +386,66 @@ command = "mcp-sequential-thinking"
 enabled = false
 command = "mcp-language-server"
 args = [ "--workspace", ".", "--lsp", "basedpyright-langserver", "--", "--stdio" ]
-startup_timeout_sec = 20
+startup_timeout_sec = 15
 
 [mcp_servers.bash-language-server]
 enabled = false
 command = "mcp-language-server"
 args = [ "--workspace", ".", "--lsp", "bash-language-server", "--", "start" ]
-startup_timeout_sec = 20
+startup_timeout_sec = 15
 
 [mcp_servers.clangd]
 enabled = false
 command = "mcp-language-server"
 args = [ "--workspace", ".", "--lsp", "/opt/local/llvm/clangd/bin/clangd", "--", "--background-index", "--background-index-priority=normal", "--all-scopes-completion", "--background-index", "--background-index-priority=normal", "--clang-tidy", "--completion-parse=auto", "--completion-style=detailed", "--experimental-modules-support", "--function-arg-placeholders=1", "--header-insertion=iwyu", "--header-insertion-decorators", "--import-insertions", "--include-ineligible-results", "--limit-references=0", "--limit-results=0", "--ranking-model=heuristics", "--rename-file-limit=1000", "--enable-config", "-j=16", "--parse-forwarding-functions", "--pch-storage=memory", "--use-dirty-headers", "--input-style=standard" ]
-startup_timeout_sec = 20
+startup_timeout_sec = 15
 
 [mcp_servers.gopls]
 enabled = false
 command = "gopls"
 args = [ "mcp" ]
-startup_timeout_sec = 20
+startup_timeout_sec = 15
 
 [mcp_servers.lldb]
 enabled = false
 command = "mcp-language-server"
 args = [ "--workspace", ".", "--lsp", "/opt/homebrew/opt/llvm/bin/lldb-mcp" ]
-startup_timeout_sec = 20
+startup_timeout_sec = 15
 
 [mcp_servers.lua_ls]
 enabled = false
 command = "mcp-language-server"
 args = [ "--workspace", ".", "--lsp", "lua-language-server" ]
-startup_timeout_sec = 20
+startup_timeout_sec = 15
 
 [mcp_servers.protols]
 enabled = false
 command = "mcp-language-server"
 args = [ "--workspace", ".", "--lsp", "protols", "--", "--include-paths=/Users/zchee/src/github.com/googleapis/googleapis,/Users/zchee/src/github.com/bufbuild/protovalidate/proto/protovalidate" ]
-startup_timeout_sec = 20
+startup_timeout_sec = 15
 
 [mcp_servers.ts_ls]
 enabled = false
 command = "mcp-language-server"
 args = [ "--workspace", ".", "--lsp", "typescript-language-server", "--", "--stdio" ]
-startup_timeout_sec = 20
+startup_timeout_sec = 15
 
 [mcp_servers.terraform]
 enabled = false
 command = "mcp-language-server"
 args = [ "--workspace", ".", "--lsp", "terraform-ls", "--", "serve", "-req-concurrency=16" ]
-startup_timeout_sec = 20
+startup_timeout_sec = 15
 
 [mcp_servers.rust-analyzer]
 enabled = false
 command = "rust-analyzer-mcp"
-startup_timeout_sec = 20
+startup_timeout_sec = 15
 
 [mcp_servers.zls]
 enabled = false
 command = "mcp-language-server"
 args = [ "--workspace", ".", "--lsp", "zls" ]
-startup_timeout_sec = 20
+startup_timeout_sec = 15
 
 [mcp_servers.pencil]
 command = "/Applications/Pencil.app/Contents/Resources/app.asar.unpacked/out/mcp-server-darwin-arm64"
