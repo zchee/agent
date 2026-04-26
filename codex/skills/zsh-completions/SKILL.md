@@ -1,6 +1,8 @@
 ---
 name: zsh-completions
-description: update, review, and debug native Zsh completion scripts built on the modern completion system (`compsys`). Use when Codex needs to create a new `_command` completion function, extend subcommand, option, or argument completion, fix completion parity against a CLI's current help output, migrate legacy `compctl` behavior to `#compdef` or `compdef`, or diagnose matcher, style, tag, or context issues in existing Zsh completion code.
+description: Guide for creating effective skills. This skill should be used when users want to create, update, review, and debug native Zsh completion scripts built on the modern completion system (`compsys`). Use when Codex needs to create a new `_command` completion function, extend subcommand, option, or argument completion, fix completion parity against a CLI's current help output, migrate legacy `compctl` behavior to `#compdef` or `compdef`, or diagnose matcher, style, tag, or context issues in existing Zsh completion code.
+metadata:
+  short-description: Create or update a Zsh completion script
 ---
 
 # Zsh Completions

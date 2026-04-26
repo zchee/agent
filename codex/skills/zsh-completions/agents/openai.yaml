@@ -1,4 +1,4 @@
 interface:
-  display_name: "Zsh Completion Scripts"
-  short_description: "Author and debug native Zsh completion scripts"
-  default_prompt: "Use $author-zsh-completions to create or fix a native Zsh completion script for this CLI."
+  display_name: "Zsh Completion"
+  short_description: "Create or update a Zsh completion script"
+  default_prompt: "Use $zsh-completions to create or fix a native Zsh completion script for this CLI."
