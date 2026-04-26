@@ -1,12 +1,8 @@
 #:schema https://raw.githubusercontent.com/openai/codex/refs/heads/main/codex-rs/core/config.schema.json
 
-# oh-my-codex top-level settings (must be before any [table])
-notify = ["node", "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/notify-hook.js"]
-model_reasoning_effort = "medium"
-developer_instructions = "You have oh-my-codex installed. AGENTS.md is your orchestration brain and the main orchestration surface. Use skill/keyword routing like $name plus spawned role-specialized subagents for specialized work. Codex native subagents are available via .codex/agents and may be used for independent parallel subtasks within a single session or team pane. Skills are loaded from installed SKILL.md files under .codex/skills, not from native agent TOMLs. Use workflow skills via $name when explicitly invoked or clearly routed by AGENTS.md. Treat installed prompts as narrower internal execution surfaces under AGENTS.md authority, even when user-facing docs prefer $name keywords."
-
 model = "gpt-5.5"
 review_model = "gpt-5.5"
+model_reasoning_effort = "medium"
 model_context_window = 1000000
 model_auto_compact_token_limit = 900000
 tool_output_token_limit = 40000
@@ -34,6 +30,7 @@ include_apps_instructions = true
 include_environment_context = true
 personality = "pragmatic"
 service_tier = "fast"
+developer_instructions = "You have oh-my-codex installed. AGENTS.md is your orchestration brain and the main orchestration surface. Use skill/keyword routing like $name plus spawned role-specialized subagents for specialized work. Codex native subagents are available via .codex/agents and may be used for independent parallel subtasks within a single session or team pane. Skills are loaded from installed SKILL.md files under .codex/skills, not from native agent TOMLs. Use workflow skills via $name when explicitly invoked or clearly routed by AGENTS.md. Treat installed prompts as narrower internal execution surfaces under AGENTS.md authority, even when user-facing docs prefer $name keywords."
 
 [model_providers.openrouter]
 name = "openrouter"
@@ -174,14 +171,8 @@ last_updated = "2026-04-25T08:02:23Z"
 source_type = "local"
 source = "/Users/zchee/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
-[marketplaces.omc]
-last_updated = "2026-04-26T07:14:40Z"
-last_revision = "c1cd5d08b5279c82d2d2d9057fb61473ceacead4"
-source_type = "git"
-source = "https://github.com/Yeachan-Heo/oh-my-claudecode.git"
-
 [marketplaces.memsearch-plugins]
-last_updated = "2026-04-26T07:14:34Z"
+last_updated = "2026-04-26T09:53:48Z"
 last_revision = "a3e621f63d52b65de2427cb5aadb65a6d95af3ab"
 source_type = "git"
 source = "https://github.com/zilliztech/memsearch.git"
@@ -219,6 +210,9 @@ enabled = false
 [plugins."memsearch@memsearch-plugins"]
 enabled = false
 
+[plugins."oh-my-codex@oh-my-codex-local"]
+enabled = true
+
 # [plugins."gh-fix-ci@openai-curated"]
 # enabled = true
 
@@ -249,7 +243,14 @@ CONTEXT7_API_KEY = "CONTEXT7_API_KEY"
 
 [mcp_servers.filesystem]
 command = "npx"
-args = [ "-y", "@modelcontextprotocol/server-filesystem@latest", "/Users/zchee/go", "/Users/zchee/src", "/Users/zchee/Downloads", "/opt" ]
+args = [
+  "-y",
+  "@modelcontextprotocol/server-filesystem@latest",
+  "/Users/zchee/go",
+  "/Users/zchee/src",
+  "/Users/zchee/Downloads",
+  "/opt"
+]
 startup_timeout_sec = 15
 
 [mcp_servers.filesystem.tools.write_file]
@@ -523,35 +524,35 @@ args = [ "--app", "desktop" ]
 # OMX State Management MCP Server
 [mcp_servers.omx_state]
 command = "node"
-args = ["/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/state-server.js"]
+args = [ "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/state-server.js" ]
 enabled = true
 startup_timeout_sec = 5
 
 # OMX Project Memory MCP Server
 [mcp_servers.omx_memory]
 command = "node"
-args = ["/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/memory-server.js"]
+args = [ "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/memory-server.js" ]
 enabled = true
 startup_timeout_sec = 5
 
 # OMX Code Intelligence MCP Server (LSP diagnostics, AST search)
 [mcp_servers.omx_code_intel]
 command = "node"
-args = ["/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/code-intel-server.js"]
+args = [ "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/code-intel-server.js" ]
 enabled = true
 startup_timeout_sec = 10
 
 # OMX Trace MCP Server (agent flow timeline & statistics)
 [mcp_servers.omx_trace]
 command = "node"
-args = ["/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/trace-server.js"]
+args = [ "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/trace-server.js" ]
 enabled = true
 startup_timeout_sec = 5
 
 # OMX Wiki MCP Server (persistent project knowledge base)
 [mcp_servers.omx_wiki]
 command = "node"
-args = ["/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/wiki-server.js"]
+args = [ "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/wiki-server.js" ]
 enabled = true
 startup_timeout_sec = 5
 # ============================================================
