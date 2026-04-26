@@ -131,11 +131,11 @@ exec_permission_approvals = true
 request_permissions_tool = true
 enable_fanout = true
 tool_search_always_defer_mcp_tools = true
-unavailable_dummy_tools = true
 remote_plugin = true
 external_migration = true
 skill_env_var_dependency_prompt = true
 default_mode_request_user_input = true
+goals = true
 realtime_conversation = true
 remote_control = true
 prevent_idle_sleep = true
@@ -175,13 +175,13 @@ source_type = "local"
 source = "/Users/zchee/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.omc]
-last_updated = "2026-04-25T10:27:22Z"
+last_updated = "2026-04-26T07:14:40Z"
 last_revision = "c1cd5d08b5279c82d2d2d9057fb61473ceacead4"
 source_type = "git"
 source = "https://github.com/Yeachan-Heo/oh-my-claudecode.git"
 
 [marketplaces.memsearch-plugins]
-last_updated = "2026-04-25T10:48:45Z"
+last_updated = "2026-04-26T07:14:34Z"
 last_revision = "a3e621f63d52b65de2427cb5aadb65a6d95af3ab"
 source_type = "git"
 source = "https://github.com/zilliztech/memsearch.git"
@@ -249,7 +249,7 @@ CONTEXT7_API_KEY = "CONTEXT7_API_KEY"
 
 [mcp_servers.filesystem]
 command = "npx"
-args = [ "-y", "@modelcontextprotocol/server-filesystem@latest", "/Users/zchee/go", "/Users/zchee/src", "/opt" ]
+args = [ "-y", "@modelcontextprotocol/server-filesystem@latest", "/Users/zchee/go", "/Users/zchee/src", "/Users/zchee/Downloads", "/opt" ]
 startup_timeout_sec = 15
 
 [mcp_servers.filesystem.tools.write_file]
