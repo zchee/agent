@@ -1,8 +1,6 @@
 #:schema https://raw.githubusercontent.com/openai/codex/refs/heads/main/codex-rs/core/config.schema.json
-
 model = "gpt-5.5"
 review_model = "gpt-5.5"
-model_reasoning_effort = "medium"
 model_context_window = 1000000
 model_auto_compact_token_limit = 900000
 tool_output_token_limit = 40000
@@ -21,7 +19,6 @@ sandbox_mode = "danger-full-access"
 cli_auth_credentials_store = "file"
 mcp_oauth_credentials_store = "file"
 web_search = "live"
-experimental_thread_store = { type = "local" }
 project_root_markers = [ ".git" ]
 suppress_unstable_features_warning = true
 approvals_reviewer = "guardian_subagent"
@@ -31,6 +28,9 @@ include_environment_context = true
 personality = "pragmatic"
 service_tier = "fast"
 developer_instructions = "You have oh-my-codex installed. AGENTS.md is your orchestration brain and the main orchestration surface. Use skill/keyword routing like $name plus spawned role-specialized subagents for specialized work. Codex native subagents are available via .codex/agents and may be used for independent parallel subtasks within a single session or team pane. Skills are loaded from installed SKILL.md files under .codex/skills, not from native agent TOMLs. Use workflow skills via $name when explicitly invoked or clearly routed by AGENTS.md. Treat installed prompts as narrower internal execution surfaces under AGENTS.md authority, even when user-facing docs prefer $name keywords."
+
+[experimental_thread_store]
+type = "local"
 
 [model_providers.openrouter]
 name = "openrouter"
@@ -72,7 +72,9 @@ type = "conversational"
 [shell_environment_policy]
 inherit = "all"
 experimental_use_profile = false
-set = { USE_OMX_EXPLORE_CMD = "1" }
+
+[shell_environment_policy.set]
+USE_OMX_EXPLORE_CMD = "1"
 
 [history]
 persistence = "save-all"
@@ -83,15 +85,7 @@ notifications = true
 animations = true
 alternate_screen = "always"
 # github.com/openai/codex/codex-rs/tui/src/bottom_pane/title_setup.rs#TerminalTitleItem
-status_line = [
-  "model-with-reasoning",
-  "git-branch",
-  "context-remaining",
-  "total-input-tokens",
-  "total-output-tokens",
-  "five-hour-limit",
-  "weekly-limit"
-]
+status_line = [ "model-with-reasoning", "git-branch", "context-remaining", "total-input-tokens", "total-output-tokens", "five-hour-limit", "weekly-limit" ]
 
 [tui.model_availability_nux]
 "gpt-5.5" = 4
@@ -138,6 +132,7 @@ remote_control = true
 prevent_idle_sleep = true
 workspace_owner_usage_nudge = true
 
+codex_hooks = true
 [features.multi_agent_v2]
 enabled = true
 usage_hint_enabled = false
@@ -172,8 +167,8 @@ source_type = "local"
 source = "/Users/zchee/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.memsearch-plugins]
-last_updated = "2026-04-26T09:53:48Z"
-last_revision = "a3e621f63d52b65de2427cb5aadb65a6d95af3ab"
+last_updated = "2026-04-27T08:05:31Z"
+last_revision = "4f0a2d7e6de5552da2c70082f52b9dc7de8e984e"
 source_type = "git"
 source = "https://github.com/zilliztech/memsearch.git"
 
@@ -213,27 +208,42 @@ enabled = false
 [plugins."oh-my-codex@oh-my-codex-local"]
 enabled = true
 
-# [plugins."gh-fix-ci@openai-curated"]
-# enabled = true
-
 [mcp_servers.alphaxiv]
-enabled = false
 url = "https://api.alphaxiv.org/mcp/v1"
-
-[mcp_servers.aws-knowledge]
 enabled = false
-url = "https://knowledge-mcp.global.api.aws"
-
-[mcp_servers.aws-documentation]
-enabled = false
-command = "uvx"
-args = [ "awslabs.aws-documentation-mcp-server@latest" ]
-startup_timeout_sec = 15
 
 [mcp_servers.apple-docs]
-enabled = false
 command = "uv"
 args = [ "run", "--directory=/Users/zchee/go/src/github.com/zchee/mcp-servers/apple-docs", "apple-docs" ]
+enabled = false
+
+[mcp_servers.aws-documentation]
+command = "uvx"
+args = [ "awslabs.aws-documentation-mcp-server@latest" ]
+enabled = false
+startup_timeout_sec = 15
+
+[mcp_servers.aws-knowledge]
+url = "https://knowledge-mcp.global.api.aws"
+enabled = false
+
+[mcp_servers.basedpyright]
+command = "mcp-language-server"
+args = [ "--workspace", ".", "--lsp", "basedpyright-langserver", "--", "--stdio" ]
+enabled = false
+startup_timeout_sec = 15
+
+[mcp_servers.bash-language-server]
+command = "mcp-language-server"
+args = [ "--workspace", ".", "--lsp", "bash-language-server", "--", "start" ]
+enabled = false
+startup_timeout_sec = 15
+
+[mcp_servers.clangd]
+command = "mcp-language-server"
+args = [ "--workspace", ".", "--lsp", "/opt/local/llvm/clangd/bin/clangd", "--", "--background-index", "--background-index-priority=normal", "--all-scopes-completion", "--background-index", "--background-index-priority=normal", "--clang-tidy", "--completion-parse=auto", "--completion-style=detailed", "--experimental-modules-support", "--function-arg-placeholders=1", "--header-insertion=iwyu", "--header-insertion-decorators", "--import-insertions", "--include-ineligible-results", "--limit-references=0", "--limit-results=0", "--ranking-model=heuristics", "--rename-file-limit=1000", "--enable-config", "-j=16", "--parse-forwarding-functions", "--pch-storage=memory", "--use-dirty-headers", "--input-style=standard" ]
+enabled = false
+startup_timeout_sec = 15
 
 [mcp_servers.context7]
 url = "https://mcp.context7.com/mcp"
@@ -241,319 +251,297 @@ url = "https://mcp.context7.com/mcp"
 [mcp_servers.context7.env_http_headers]
 CONTEXT7_API_KEY = "CONTEXT7_API_KEY"
 
+[mcp_servers.datadog]
+url = "https://mcp.us5.datadoghq.com/api/unstable/mcp-server/mcp"
+enabled = false
+
+[mcp_servers.datadog-code-security]
+command = "datadog-code-security-mcp"
+args = [ "start" ]
+enabled = false
+
+[mcp_servers.datadog-code-security.env]
+DD_AUTH_DOMAIN = "us5.datadoghq.com"
+
+[mcp_servers.exa-codesearch]
+url = "https://mcp.exa.ai/mcp?tools=get_code_context_exa"
+
+[mcp_servers.exa-research-paper]
+url = "https://mcp.exa.ai/mcp?tools=web_search_advanced_exa"
+enabled = false
+
 [mcp_servers.filesystem]
 command = "npx"
-args = [
-  "-y",
-  "@modelcontextprotocol/server-filesystem@latest",
-  "/Users/zchee/go",
-  "/Users/zchee/src",
-  "/Users/zchee/Downloads",
-  "/opt"
-]
+args = [ "-y", "@modelcontextprotocol/server-filesystem@latest", "/Users/zchee/go", "/Users/zchee/src", "/Users/zchee/Downloads", "/opt" ]
 startup_timeout_sec = 15
 
 [mcp_servers.filesystem.tools.write_file]
 approval_mode = "approve"
 
-[mcp_servers.datadog]
+[mcp_servers.gcp-aiplatform]
+url = "https://aiplatform.googleapis.com/mcp/generate"
 enabled = false
-url = "https://mcp.us5.datadoghq.com/api/unstable/mcp-server/mcp"
 
-[mcp_servers.datadog-code-security]
+[mcp_servers.gcp-aiplatform.http_headers]
+X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+
+[mcp_servers.gcp-apihub]
+url = "https://apihub.googleapis.com/mcp"
 enabled = false
-command = "datadog-code-security-mcp"
-args = [ "start" ]
-env = { DD_AUTH_DOMAIN = "us5.datadoghq.com" }
 
-[mcp_servers.exa]
-url = "https://mcp.exa.ai/mcp"
+[mcp_servers.gcp-apihub.http_headers]
+X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
-[mcp_servers.grep-app]
-url = "https://mcp.grep.app"
+[mcp_servers.gcp-bigquery]
+url = "https://bigquery.googleapis.com/mcp"
+enabled = false
+
+[mcp_servers.gcp-bigquery.http_headers]
+X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+
+[mcp_servers.gcp-bigquerydatatransfer]
+url = "https://bigquerydatatransfer.googleapis.com/mcp"
+enabled = false
+
+[mcp_servers.gcp-bigquerydatatransfer.http_headers]
+X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+
+[mcp_servers.gcp-bigquerymigration]
+url = "https://bigquerymigration.googleapis.com/mcp"
+enabled = false
+
+[mcp_servers.gcp-bigquerymigration.http_headers]
+X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+
+[mcp_servers.gcp-cloudresourcemanager]
+url = "https://cloudresourcemanager.googleapis.com/mcp"
+enabled = false
+
+[mcp_servers.gcp-cloudresourcemanager.http_headers]
+X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+
+[mcp_servers.gcp-cloudtrace]
+url = "https://cloudtrace.googleapis.com/mcp"
+enabled = false
+
+[mcp_servers.gcp-cloudtrace.http_headers]
+X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+
+[mcp_servers.gcp-compute]
+url = "https://compute.googleapis.com/mcp"
+enabled = false
+
+[mcp_servers.gcp-compute.http_headers]
+X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+
+[mcp_servers.gcp-container]
+url = "https://container.googleapis.com/mcp"
+enabled = false
+
+[mcp_servers.gcp-container.http_headers]
+X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+
+[mcp_servers.gcp-dataplex]
+url = "https://dataplex.googleapis.com/mcp"
+enabled = false
+
+[mcp_servers.gcp-dataplex.http_headers]
+X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+
+[mcp_servers.gcp-dataproc]
+url = "https://dataproc.googleapis.com/mcp"
+enabled = false
+
+[mcp_servers.gcp-dataproc.http_headers]
+X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+
+[mcp_servers.gcp-datastream]
+url = "https://datastream.googleapis.com/mcp"
+enabled = false
+
+[mcp_servers.gcp-datastream.http_headers]
+X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+
+[mcp_servers.gcp-discoveryengine]
+url = "https://discoveryengine.googleapis.com/mcp"
+enabled = false
+
+[mcp_servers.gcp-discoveryengine.http_headers]
+X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+
+[mcp_servers.gcp-firestore]
+url = "https://firestore.googleapis.com/mcp"
+enabled = false
+
+[mcp_servers.gcp-firestore.http_headers]
+X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+
+[mcp_servers.gcp-geminicloudassist]
+url = "https://geminicloudassist.googleapis.com/mcp"
+enabled = false
+
+[mcp_servers.gcp-geminicloudassist.http_headers]
+X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+
+[mcp_servers.gcp-logging]
+url = "https://logging.googleapis.com/mcp"
+enabled = false
+
+[mcp_servers.gcp-logging.http_headers]
+X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+
+[mcp_servers.gcp-monitoring]
+url = "https://monitoring.googleapis.com/mcp"
+enabled = false
+
+[mcp_servers.gcp-monitoring.http_headers]
+X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+
+[mcp_servers.gcp-pubsub]
+url = "https://pubsub.googleapis.com/mcp"
+enabled = false
+
+[mcp_servers.gcp-pubsub.http_headers]
+X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+
+[mcp_servers.gcp-run]
+url = "https://run.googleapis.com/mcp"
+enabled = false
+
+[mcp_servers.gcp-run.http_headers]
+X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+
+[mcp_servers.gcp-spanner]
+url = "https://spanner.googleapis.com/mcp"
+enabled = false
+
+[mcp_servers.gcp-spanner.http_headers]
+X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+
+[mcp_servers.gcp-sqladmin]
+url = "https://sqladmin.googleapis.com/mcp"
+enabled = false
+
+[mcp_servers.gcp-sqladmin.http_headers]
+X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+
+[mcp_servers.gcp-stitch]
+url = "https://stitch.googleapis.com/mcp"
+enabled = false
+
+[mcp_servers.gcp-stitch.http_headers]
+X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+
+[mcp_servers.gcp-storage]
+url = "https://storage.googleapis.com/storage/mcp"
+enabled = false
+
+[mcp_servers.gcp-storage.http_headers]
+X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
 [mcp_servers.gemini-google-search]
 command = "mcp-gemini-google-search"
 
 [mcp_servers.gemini-google-search.env]
-GEMINI_PROVIDER = "vertex"
-VERTEX_PROJECT_ID = "gaudiy-ai"
-VERTEX_LOCATION = "global"
 GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
+GEMINI_PROVIDER = "vertex"
+VERTEX_LOCATION = "global"
+VERTEX_PROJECT_ID = "gaudiy-ai"
 
 [mcp_servers.google-developer-knowledge]
-enabled = false
 url = "https://developerknowledge.googleapis.com/mcp"
-env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
-
-[mcp_servers.gcp-aiplatform]
 enabled = false
-url = "https://aiplatform.googleapis.com/mcp/generate"
-env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
 
-[mcp_servers.gcp-apihub]
-enabled = false
-url = "https://apihub.googleapis.com/mcp"
-env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
-
-[mcp_servers.gcp-bigquery]
-enabled = false
-url = "https://bigquery.googleapis.com/mcp"
-env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
-
-[mcp_servers.gcp-bigquerydatatransfer]
-enabled = false
-url = "https://bigquerydatatransfer.googleapis.com/mcp"
-env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
-
-[mcp_servers.gcp-bigquerymigration]
-enabled = false
-url = "https://bigquerymigration.googleapis.com/mcp"
-env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
-
-[mcp_servers.gcp-cloudresourcemanager]
-enabled = false
-url = "https://cloudresourcemanager.googleapis.com/mcp"
-env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
-
-[mcp_servers.gcp-cloudtrace]
-enabled = false
-url = "https://cloudtrace.googleapis.com/mcp"
-env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
-
-[mcp_servers.gcp-compute]
-enabled = false
-url = "https://compute.googleapis.com/mcp"
-env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
-
-[mcp_servers.gcp-container]
-enabled = false
-url = "https://container.googleapis.com/mcp"
-env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
-
-[mcp_servers.gcp-dataplex]
-enabled = false
-url = "https://dataplex.googleapis.com/mcp"
-env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
-
-[mcp_servers.gcp-dataproc]
-enabled = false
-url = "https://dataproc.googleapis.com/mcp"
-env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
-
-[mcp_servers.gcp-datastream]
-enabled = false
-url = "https://datastream.googleapis.com/mcp"
-env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
-
-[mcp_servers.gcp-discoveryengine]
-enabled = false
-url = "https://discoveryengine.googleapis.com/mcp"
-env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
-
-[mcp_servers.gcp-firestore]
-enabled = false
-url = "https://firestore.googleapis.com/mcp"
-env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
-
-[mcp_servers.gcp-geminicloudassist]
-enabled = false
-url = "https://geminicloudassist.googleapis.com/mcp"
-env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
-
-[mcp_servers.gcp-logging]
-enabled = false
-url = "https://logging.googleapis.com/mcp"
-env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
-
-[mcp_servers.gcp-monitoring]
-enabled = false
-url = "https://monitoring.googleapis.com/mcp"
-env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
-
-[mcp_servers.gcp-pubsub]
-enabled = false
-url = "https://pubsub.googleapis.com/mcp"
-env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
-
-[mcp_servers.gcp-run]
-enabled = false
-url = "https://run.googleapis.com/mcp"
-env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
-
-[mcp_servers.gcp-spanner]
-enabled = false
-url = "https://spanner.googleapis.com/mcp"
-env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
-
-[mcp_servers.gcp-sqladmin]
-enabled = false
-url = "https://sqladmin.googleapis.com/mcp"
-env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
-
-[mcp_servers.gcp-stitch]
-enabled = false
-url = "https://stitch.googleapis.com/mcp"
-env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
-
-[mcp_servers.gcp-storage]
-enabled = false
-url = "https://storage.googleapis.com/storage/mcp"
-env_http_headers = { X-Goog-Api-Key = "GAUDIY_GOOGLE_CLOUD_MCP_SERVER_API_KEY" }
-
-[mcp_servers.kubernetes]
-enabled = false
-command = "kubernetes-mcp-server"
-startup_timeout_sec = 15
-
-[mcp_servers.sequential-thinking]
-enabled = false
-command = "mcp-sequential-thinking"
-
-[mcp_servers.basedpyright]
-enabled = false
-command = "mcp-language-server"
-args = [ "--workspace", ".", "--lsp", "basedpyright-langserver", "--", "--stdio" ]
-startup_timeout_sec = 15
-
-[mcp_servers.bash-language-server]
-enabled = false
-command = "mcp-language-server"
-args = [ "--workspace", ".", "--lsp", "bash-language-server", "--", "start" ]
-startup_timeout_sec = 15
-
-[mcp_servers.clangd]
-enabled = false
-command = "mcp-language-server"
-args = [
-  "--workspace",
-  ".",
-  "--lsp",
-  "/opt/local/llvm/clangd/bin/clangd",
-  "--",
-  "--background-index",
-  "--background-index-priority=normal",
-  "--all-scopes-completion",
-  "--background-index",
-  "--background-index-priority=normal",
-  "--clang-tidy",
-  "--completion-parse=auto",
-  "--completion-style=detailed",
-  "--experimental-modules-support",
-  "--function-arg-placeholders=1",
-  "--header-insertion=iwyu",
-  "--header-insertion-decorators",
-  "--import-insertions",
-  "--include-ineligible-results",
-  "--limit-references=0",
-  "--limit-results=0",
-  "--ranking-model=heuristics",
-  "--rename-file-limit=1000",
-  "--enable-config",
-  "-j=16",
-  "--parse-forwarding-functions",
-  "--pch-storage=memory",
-  "--use-dirty-headers",
-  "--input-style=standard"
-]
-startup_timeout_sec = 15
+[mcp_servers.google-developer-knowledge.http_headers]
+X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
 [mcp_servers.gopls]
-enabled = false
 command = "gopls"
 args = [ "mcp" ]
+enabled = false
+startup_timeout_sec = 15
+
+[mcp_servers.grep-app]
+url = "https://mcp.grep.app"
+
+[mcp_servers.kubernetes]
+command = "kubernetes-mcp-server"
+enabled = false
 startup_timeout_sec = 15
 
 [mcp_servers.lldb]
-enabled = false
 command = "mcp-language-server"
 args = [ "--workspace", ".", "--lsp", "/opt/homebrew/opt/llvm/bin/lldb-mcp" ]
+enabled = false
 startup_timeout_sec = 15
 
 [mcp_servers.lua_ls]
-enabled = false
 command = "mcp-language-server"
 args = [ "--workspace", ".", "--lsp", "lua-language-server" ]
-startup_timeout_sec = 15
-
-[mcp_servers.protols]
 enabled = false
-command = "mcp-language-server"
-args = [
-  "--workspace",
-  ".",
-  "--lsp",
-  "protols",
-  "--",
-  "--include-paths=/Users/zchee/src/github.com/googleapis/googleapis,/Users/zchee/src/github.com/bufbuild/protovalidate/proto/protovalidate"
-]
 startup_timeout_sec = 15
 
-[mcp_servers.ts_ls]
-enabled = false
-command = "mcp-language-server"
-args = [ "--workspace", ".", "--lsp", "typescript-language-server", "--", "--stdio" ]
-startup_timeout_sec = 15
-
-[mcp_servers.terraform]
-enabled = false
-command = "mcp-language-server"
-args = [ "--workspace", ".", "--lsp", "terraform-ls", "--", "serve", "-req-concurrency=16" ]
-startup_timeout_sec = 15
-
-[mcp_servers.rust-analyzer]
-enabled = false
-command = "rust-analyzer-mcp"
-startup_timeout_sec = 15
-
-[mcp_servers.zls]
-enabled = false
-command = "mcp-language-server"
-args = [ "--workspace", ".", "--lsp", "zls" ]
-startup_timeout_sec = 15
-
-[mcp_servers.pencil]
-command = "/Applications/Pencil.app/Contents/Resources/app.asar.unpacked/out/mcp-server-darwin-arm64"
-args = [ "--app", "desktop" ]
-
-# ============================================================
-# oh-my-codex (OMX) Configuration
-# Managed by omx setup - manual edits preserved on next setup
-# ============================================================
-
-# OMX State Management MCP Server
-[mcp_servers.omx_state]
-command = "node"
-args = [ "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/state-server.js" ]
-enabled = true
-startup_timeout_sec = 5
-
-# OMX Project Memory MCP Server
-[mcp_servers.omx_memory]
-command = "node"
-args = [ "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/memory-server.js" ]
-enabled = true
-startup_timeout_sec = 5
-
-# OMX Code Intelligence MCP Server (LSP diagnostics, AST search)
 [mcp_servers.omx_code_intel]
 command = "node"
 args = [ "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/code-intel-server.js" ]
-enabled = true
 startup_timeout_sec = 10
 
-# OMX Trace MCP Server (agent flow timeline & statistics)
+[mcp_servers.omx_memory]
+command = "node"
+args = [ "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/memory-server.js" ]
+startup_timeout_sec = 5
+
+[mcp_servers.omx_state]
+command = "node"
+args = [ "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/state-server.js" ]
+startup_timeout_sec = 5
+
 [mcp_servers.omx_trace]
 command = "node"
 args = [ "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/trace-server.js" ]
-enabled = true
 startup_timeout_sec = 5
 
-# OMX Wiki MCP Server (persistent project knowledge base)
 [mcp_servers.omx_wiki]
 command = "node"
 args = [ "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/wiki-server.js" ]
-enabled = true
 startup_timeout_sec = 5
-# ============================================================
-# End oh-my-codex
+
+[mcp_servers.openaiDeveloperDocs]
+url = "https://developers.openai.com/mcp"
+
+[mcp_servers.protols]
+command = "mcp-language-server"
+args = [ "--workspace", ".", "--lsp", "protols", "--", "--include-paths=/Users/zchee/src/github.com/googleapis/googleapis,/Users/zchee/src/github.com/bufbuild/protovalidate/proto/protovalidate" ]
+enabled = false
+startup_timeout_sec = 15
+
+[mcp_servers.rust-analyzer]
+command = "rust-analyzer-mcp"
+enabled = false
+startup_timeout_sec = 15
+
+[mcp_servers.sequential-thinking]
+command = "mcp-sequential-thinking"
+enabled = false
+
+[mcp_servers.terraform]
+command = "mcp-language-server"
+args = [ "--workspace", ".", "--lsp", "terraform-ls", "--", "serve", "-req-concurrency=16" ]
+enabled = false
+startup_timeout_sec = 15
+
+[mcp_servers.ts_ls]
+command = "mcp-language-server"
+args = [ "--workspace", ".", "--lsp", "typescript-language-server", "--", "--stdio" ]
+enabled = false
+startup_timeout_sec = 15
+
+[mcp_servers.zls]
+command = "mcp-language-server"
+args = [ "--workspace", ".", "--lsp", "zls" ]
+enabled = false
+startup_timeout_sec = 15
+
+[mcp_servers.pencil]
+command = "/Users/zchee/.pencil/mcp/visual_studio_code_-_insiders/out/mcp-server-darwin-arm64"
+args = [ "--app", "visual_studio_code_-_insiders" ]
