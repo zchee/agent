@@ -167,7 +167,7 @@ source_type = "local"
 source = "/Users/zchee/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.memsearch-plugins]
-last_updated = "2026-04-27T08:05:31Z"
+last_updated = "2026-04-27T15:48:39Z"
 last_revision = "4f0a2d7e6de5552da2c70082f52b9dc7de8e984e"
 source_type = "git"
 source = "https://github.com/zilliztech/memsearch.git"
@@ -278,172 +278,172 @@ startup_timeout_sec = 15
 [mcp_servers.filesystem.tools.write_file]
 approval_mode = "approve"
 
-[mcp_servers.gcp-aiplatform]
+[mcp_servers.google-gcp-aiplatform]
 url = "https://aiplatform.googleapis.com/mcp/generate"
 enabled = false
 
-[mcp_servers.gcp-aiplatform.http_headers]
+[mcp_servers.google-gcp-aiplatform.http_headers]
 X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
-[mcp_servers.gcp-apihub]
+[mcp_servers.google-gcp-apihub]
 url = "https://apihub.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.gcp-apihub.http_headers]
+[mcp_servers.google-gcp-apihub.http_headers]
 X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
-[mcp_servers.gcp-bigquery]
+[mcp_servers.google-gcp-bigquery]
 url = "https://bigquery.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.gcp-bigquery.http_headers]
+[mcp_servers.google-gcp-bigquery.http_headers]
 X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
-[mcp_servers.gcp-bigquerydatatransfer]
+[mcp_servers.google-gcp-bigquerydatatransfer]
 url = "https://bigquerydatatransfer.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.gcp-bigquerydatatransfer.http_headers]
+[mcp_servers.google-gcp-bigquerydatatransfer.http_headers]
 X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
-[mcp_servers.gcp-bigquerymigration]
+[mcp_servers.google-gcp-bigquerymigration]
 url = "https://bigquerymigration.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.gcp-bigquerymigration.http_headers]
+[mcp_servers.google-gcp-bigquerymigration.http_headers]
 X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
-[mcp_servers.gcp-cloudresourcemanager]
+[mcp_servers.google-gcp-cloudresourcemanager]
 url = "https://cloudresourcemanager.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.gcp-cloudresourcemanager.http_headers]
+[mcp_servers.google-gcp-cloudresourcemanager.http_headers]
 X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
-[mcp_servers.gcp-cloudtrace]
+[mcp_servers.google-gcp-cloudtrace]
 url = "https://cloudtrace.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.gcp-cloudtrace.http_headers]
+[mcp_servers.google-gcp-cloudtrace.http_headers]
 X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
-[mcp_servers.gcp-compute]
+[mcp_servers.google-gcp-compute]
 url = "https://compute.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.gcp-compute.http_headers]
+[mcp_servers.google-gcp-compute.http_headers]
 X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
-[mcp_servers.gcp-container]
+[mcp_servers.google-gcp-container]
 url = "https://container.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.gcp-container.http_headers]
+[mcp_servers.google-gcp-container.http_headers]
 X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
-[mcp_servers.gcp-dataplex]
+[mcp_servers.google-gcp-dataplex]
 url = "https://dataplex.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.gcp-dataplex.http_headers]
+[mcp_servers.google-gcp-dataplex.http_headers]
 X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
-[mcp_servers.gcp-dataproc]
+[mcp_servers.google-gcp-dataproc]
 url = "https://dataproc.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.gcp-dataproc.http_headers]
+[mcp_servers.google-gcp-dataproc.http_headers]
 X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
-[mcp_servers.gcp-datastream]
+[mcp_servers.google-gcp-datastream]
 url = "https://datastream.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.gcp-datastream.http_headers]
+[mcp_servers.google-gcp-datastream.http_headers]
 X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
-[mcp_servers.gcp-discoveryengine]
+[mcp_servers.google-gcp-discoveryengine]
 url = "https://discoveryengine.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.gcp-discoveryengine.http_headers]
+[mcp_servers.google-gcp-discoveryengine.http_headers]
 X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
-[mcp_servers.gcp-firestore]
+[mcp_servers.google-gcp-firestore]
 url = "https://firestore.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.gcp-firestore.http_headers]
+[mcp_servers.google-gcp-firestore.http_headers]
 X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
-[mcp_servers.gcp-geminicloudassist]
+[mcp_servers.google-gcp-geminicloudassist]
 url = "https://geminicloudassist.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.gcp-geminicloudassist.http_headers]
+[mcp_servers.google-gcp-geminicloudassist.http_headers]
 X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
-[mcp_servers.gcp-logging]
+[mcp_servers.google-gcp-logging]
 url = "https://logging.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.gcp-logging.http_headers]
+[mcp_servers.google-gcp-logging.http_headers]
 X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
-[mcp_servers.gcp-monitoring]
+[mcp_servers.google-gcp-monitoring]
 url = "https://monitoring.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.gcp-monitoring.http_headers]
+[mcp_servers.google-gcp-monitoring.http_headers]
 X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
-[mcp_servers.gcp-pubsub]
+[mcp_servers.google-gcp-pubsub]
 url = "https://pubsub.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.gcp-pubsub.http_headers]
+[mcp_servers.google-gcp-pubsub.http_headers]
 X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
-[mcp_servers.gcp-run]
+[mcp_servers.google-gcp-run]
 url = "https://run.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.gcp-run.http_headers]
+[mcp_servers.google-gcp-run.http_headers]
 X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
-[mcp_servers.gcp-spanner]
+[mcp_servers.google-gcp-spanner]
 url = "https://spanner.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.gcp-spanner.http_headers]
+[mcp_servers.google-gcp-spanner.http_headers]
 X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
-[mcp_servers.gcp-sqladmin]
+[mcp_servers.google-gcp-sqladmin]
 url = "https://sqladmin.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.gcp-sqladmin.http_headers]
+[mcp_servers.google-gcp-sqladmin.http_headers]
 X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
-[mcp_servers.gcp-stitch]
+[mcp_servers.google-gcp-stitch]
 url = "https://stitch.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.gcp-stitch.http_headers]
+[mcp_servers.google-gcp-stitch.http_headers]
 X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
-[mcp_servers.gcp-storage]
+[mcp_servers.google-gcp-storage]
 url = "https://storage.googleapis.com/storage/mcp"
 enabled = false
 
-[mcp_servers.gcp-storage.http_headers]
+[mcp_servers.google-gcp-storage.http_headers]
 X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
-[mcp_servers.gemini-google-search]
+[mcp_servers.google-gemini-search]
 command = "mcp-gemini-google-search"
 
-[mcp_servers.gemini-google-search.env]
-GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
+[mcp_servers.google-gemini-search.env]
+GEMINI_MODEL = "deep-research-max-preview-04-2026"
 GEMINI_PROVIDER = "vertex"
 VERTEX_LOCATION = "global"
 VERTEX_PROJECT_ID = "gaudiy-ai"
@@ -522,7 +522,7 @@ startup_timeout_sec = 15
 
 [mcp_servers.sequential-thinking]
 command = "mcp-sequential-thinking"
-enabled = false
+enabled = true
 
 [mcp_servers.terraform]
 command = "mcp-language-server"
