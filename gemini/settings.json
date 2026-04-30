@@ -252,6 +252,8 @@
       "agentSessionInteractiveEnabled": true,
       "agentSessionNoninteractiveEnabled": true
     },
+    "worktrees": true,
+    "extensionRegistryURI": "https://geminicli.com/extensions.json",
     "memoryV2": true
   },
   "model": {
@@ -265,11 +267,10 @@
       "enabled": true
     },
     "enableConseca": true,
-    "autoAddToPolicyByDefault": true,
-    "blockGitExtensions": true
+    "autoAddToPolicyByDefault": false,
+    "blockGitExtensions": false
   },
   "agents": {
-    "overrides": {},
     "browser": {
       "blockFileUploads": true,
       "confirmSensitiveActions": true
