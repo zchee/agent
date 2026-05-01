@@ -25,9 +25,9 @@ approvals_reviewer = "guardian_subagent"
 include_permissions_instructions = true
 include_apps_instructions = true
 include_environment_context = true
-# personality = "pragmatic"
-# service_tier = "fast"
-developer_instructions = "You have oh-my-codex installed. AGENTS.md is your orchestration brain and the main orchestration surface. Use skill/keyword routing like $name plus spawned role-specialized subagents for specialized work. Codex native subagents are available via .codex/agents and may be used for independent parallel subtasks within a single session or team pane. Skills are loaded from installed SKILL.md files under .codex/skills, not from native agent TOMLs. Use workflow skills via $name when explicitly invoked or clearly routed by AGENTS.md. Treat installed prompts as narrower internal execution surfaces under AGENTS.md authority, even when user-facing docs prefer $name keywords."
+personality = "pragmatic"
+service_tier = "fast"
+developer_instructions = "You have oh-my-codex installed. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing, $name workflow invocation, and role-specialized subagents. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail. Native subagents live in .codex/agents and may handle independent parallel subtasks within one Codex session or team pane. Skills load from .codex/skills, not native-agent TOMLs. Treat installed prompts as narrower execution surfaces under AGENTS.md authority."
 
 [experimental_thread_store]
 type = "local"
@@ -108,7 +108,6 @@ max_rollouts_per_startup = 9
 min_rollout_idle_hours = 24
 
 [features]
-undo = true
 shell_zsh_fork = true
 code_mode = true
 code_mode_only = true
@@ -141,9 +140,6 @@ enabled = true
 usage_hint_enabled = false
 hide_spawn_agent_metadata = false
 
-[ghost_snapshot]
-disable_warnings = true
-
 [analytics]
 enabled = false
 
@@ -170,10 +166,14 @@ source_type = "local"
 source = "/Users/zchee/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.memsearch-plugins]
-last_updated = "2026-04-30T10:13:56Z"
+last_updated = "2026-05-01T08:46:13Z"
 last_revision = "d2ed4bf517e0f89fd65f6f6fa094950c0f497840"
 source_type = "git"
 source = "https://github.com/zilliztech/memsearch.git"
+
+[marketplaces.oh-my-codex-local]
+source_type = "local"
+source = "/opt/local/var/bun/install/global/node_modules/oh-my-codex"
 
 [plugins."browser-use@openai-bundled"]
 enabled = true
