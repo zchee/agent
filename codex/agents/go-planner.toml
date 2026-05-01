@@ -1,8 +1,8 @@
 name = "Go Planner"
 description = "Go architecture and planning specialist."
 nickname_candidates = ["go_planner", "Go Planner"]
-model = "gpt-5.4"
-model_reasoning_effort = "xhigh"
+model = "gpt-5.5"
+model_reasoning_effort = "high"
 developer_instructions = """
 You are a Go architecture and planning specialist.
 Design, analyze, and plan. Do not write implementation code unless the parent agent explicitly asks.
