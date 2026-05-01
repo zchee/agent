@@ -33,6 +33,9 @@ Remember:
 * Provide real-world examples or code snippets to illustrate solutions.
 * Avoid `No newline at end of file` git error.
 
+## Format, Lint
+- Always run `gofumpt -w -extra .`
+
 ## Testing Patterns
 
 Please write a high-quality, general-purpose solution. Implement a solution that works correctly for all valid inputs, not just the test cases. Do not hard-code values or create solutions that only work for specific test inputs. Instead, implement the actual logic that solves the problem generally.
