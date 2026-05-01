@@ -14,5 +14,6 @@ auth.json
 history.jsonl
 installation_id
 internal_storage.json
+models_cache.json
 session_index.jsonl
 version.json
