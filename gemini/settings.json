@@ -1,5 +1,36 @@
 {
   "$schema": "https://raw.githubusercontent.com/google-gemini/gemini-cli/refs/heads/main/schemas/settings.schema.json",
+  "model": {
+    "name": "gemini-3.1-pro-preview"
+  },
+  "mcp": {
+    "excluded": [
+      "google-gcp-agent-search",
+      "google-gcp-aiplatform",
+      "google-gcp-apihub",
+      "google-gcp-bigquery",
+      "google-gcp-bigquerydatatransfer",
+      "google-gcp-bigquerymigration",
+      "google-gcp-cloudresourcemanager",
+      "google-gcp-cloudtrace",
+      "google-gcp-compute",
+      "google-gcp-container",
+      "google-gcp-dataplex",
+      "google-gcp-dataproc",
+      "google-gcp-datastream",
+      "google-gcp-discoveryengine",
+      "google-gcp-firestore",
+      "google-gcp-geminicloudassist",
+      "google-gcp-logging",
+      "google-gcp-monitoring",
+      "google-gcp-pubsub",
+      "google-gcp-run",
+      "google-gcp-spanner",
+      "google-gcp-sqladmin",
+      "google-gcp-stitch",
+      "google-gcp-storage"
+    ]
+  },
   "mcpServers": {
     "sequential-thinking": {
       "command": "sequential-thinking"
@@ -12,7 +43,15 @@
         "/Users/zchee/src"
       ]
     },
-    "gcp-developer-knowledge": {
+    "google-gcloud": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@google-cloud/gcloud-mcp@latest"
+      ]
+    },
+    "google-developer-knowledge": {
       "httpUrl": "https://developerknowledge.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -22,88 +61,10 @@
       },
       "timeout": 30000,
       "headers": {
-        "x-goog-user-project": "gaudiy-develop-tokyo"
+        "x-goog-user-project": "${GOOGLE_CLOUD_PROJECT}"
       }
     },
-    "gcp-cloud-run": {
-      "httpUrl": "https://run.googleapis.com/mcp",
-      "authProviderType": "google_credentials",
-      "oauth": {
-        "scopes": [
-          "https://www.googleapis.com/auth/cloud-platform"
-        ]
-      },
-      "timeout": 30000,
-      "headers": {
-        "x-goog-user-project": "gaudiy-develop-tokyo"
-      }
-    },
-    "gcp-cloud-logging": {
-      "httpUrl": "https://logging.googleapis.com/mcp",
-      "authProviderType": "google_credentials",
-      "oauth": {
-        "scopes": [
-          "https://www.googleapis.com/auth/cloud-platform"
-        ]
-      },
-      "timeout": 30000,
-      "headers": {
-        "x-goog-user-project": "gaudiy-develop-tokyo"
-      }
-    },
-    "gcp-cloud-monitoring": {
-      "httpUrl": "https://monitoring.googleapis.com/mcp",
-      "authProviderType": "google_credentials",
-      "oauth": {
-        "scopes": [
-          "https://www.googleapis.com/auth/cloud-platform"
-        ]
-      },
-      "timeout": 30000,
-      "headers": {
-        "x-goog-user-project": "gaudiy-develop-tokyo"
-      }
-    },
-    "gcp-gke": {
-      "httpUrl": "https://container.googleapis.com/mcp",
-      "authProviderType": "google_credentials",
-      "oauth": {
-        "scopes": [
-          "https://www.googleapis.com/auth/cloud-platform"
-        ]
-      },
-      "timeout": 30000,
-      "headers": {
-        "x-goog-user-project": "gaudiy-develop-tokyo"
-      }
-    },
-    "gcp-resource-manager": {
-      "httpUrl": "https://cloudresourcemanager.googleapis.com/mcp",
-      "authProviderType": "google_credentials",
-      "oauth": {
-        "scopes": [
-          "https://www.googleapis.com/auth/cloud-platform"
-        ]
-      },
-      "timeout": 30000,
-      "headers": {
-        "x-goog-user-project": "gaudiy-develop-tokyo"
-      }
-    },
-    "gcp-spanner": {
-      "httpUrl": "https://spanner.googleapis.com/mcp",
-      "authProviderType": "google_credentials",
-      "oauth": {
-        "scopes": [
-          "https://www.googleapis.com/auth/cloud-platform"
-        ]
-      },
-      "timeout": 30000,
-      "headers": {
-        "x-goog-user-project": "gaudiy-develop-tokyo"
-      }
-    },
-    "gcp-vertexai-search": {
+    "google-gcp-agent-search": {
       "httpUrl": "https://discoveryengine.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -113,7 +74,7 @@
       },
       "timeout": 30000,
       "headers": {
-        "x-goog-user-project": "gaudiy-develop-tokyo"
+        "x-goog-user-project": "${GOOGLE_CLOUD_PROJECT}"
       }
     },
     "gopls": {
@@ -122,11 +83,311 @@
         "mcp"
       ]
     },
+    "google-gcp-aiplatform": {
+      "httpUrl": "https://aiplatform.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "${GOOGLE_CLOUD_PROJECT}"
+      }
+    },
+    "google-gcp-apihub": {
+      "httpUrl": "https://apihub.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "${GOOGLE_CLOUD_PROJECT}"
+      }
+    },
+    "google-gcp-bigquery": {
+      "httpUrl": "https://bigquery.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "${GOOGLE_CLOUD_PROJECT}"
+      }
+    },
+    "google-gcp-bigquerydatatransfer": {
+      "httpUrl": "https://bigquerydatatransfer.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "env": {},
+      "headers": {
+        "x-goog-user-project": "${GOOGLE_CLOUD_PROJECT}"
+      }
+    },
+    "google-gcp-bigquerymigration": {
+      "httpUrl": "https://bigquerymigration.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "${GOOGLE_CLOUD_PROJECT}"
+      }
+    },
+    "google-gcp-cloudresourcemanager": {
+      "httpUrl": "https://cloudresourcemanager.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "${GOOGLE_CLOUD_PROJECT}"
+      }
+    },
+    "google-gcp-cloudtrace": {
+      "httpUrl": "https://cloudtrace.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "${GOOGLE_CLOUD_PROJECT}"
+      }
+    },
+    "google-gcp-compute": {
+      "httpUrl": "https://compute.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "${GOOGLE_CLOUD_PROJECT}"
+      }
+    },
+    "google-gcp-container": {
+      "httpUrl": "https://container.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "${GOOGLE_CLOUD_PROJECT}"
+      }
+    },
+    "google-gcp-dataplex": {
+      "httpUrl": "https://dataplex.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "${GOOGLE_CLOUD_PROJECT}"
+      }
+    },
+    "google-gcp-dataproc": {
+      "httpUrl": "https://dataproc.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "${GOOGLE_CLOUD_PROJECT}"
+      }
+    },
+    "google-gcp-datastream": {
+      "httpUrl": "https://datastream.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "${GOOGLE_CLOUD_PROJECT}"
+      }
+    },
+    "google-gcp-discoveryengine": {
+      "httpUrl": "https://discoveryengine.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "${GOOGLE_CLOUD_PROJECT}"
+      }
+    },
+    "google-gcp-firestore": {
+      "httpUrl": "https://firestore.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "${GOOGLE_CLOUD_PROJECT}"
+      }
+    },
+    "google-gcp-geminicloudassist": {
+      "httpUrl": "https://geminicloudassist.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "${GOOGLE_CLOUD_PROJECT}"
+      }
+    },
+    "google-gcp-logging": {
+      "httpUrl": "https://logging.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "${GOOGLE_CLOUD_PROJECT}"
+      }
+    },
+    "google-gcp-monitoring": {
+      "httpUrl": "https://monitoring.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "${GOOGLE_CLOUD_PROJECT}"
+      }
+    },
+    "google-gcp-pubsub": {
+      "httpUrl": "https://pubsub.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "${GOOGLE_CLOUD_PROJECT}"
+      }
+    },
+    "google-gcp-run": {
+      "httpUrl": "https://run.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "${GOOGLE_CLOUD_PROJECT}"
+      }
+    },
+    "google-gcp-spanner": {
+      "httpUrl": "https://spanner.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "${GOOGLE_CLOUD_PROJECT}"
+      }
+    },
+    "google-gcp-sqladmin": {
+      "httpUrl": "https://sqladmin.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "${GOOGLE_CLOUD_PROJECT}"
+      }
+    },
+    "google-gcp-stitch": {
+      "httpUrl": "https://stitch.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "${GOOGLE_CLOUD_PROJECT}"
+      }
+    },
+    "google-gcp-storage": {
+      "httpUrl": "https://storage.googleapis.com/mcp",
+      "authProviderType": "google_credentials",
+      "oauth": {
+        "scopes": [
+          "https://www.googleapis.com/auth/cloud-platform"
+        ]
+      },
+      "timeout": 30000,
+      "headers": {
+        "x-goog-user-project": "${GOOGLE_CLOUD_PROJECT}"
+      }
+    },
     "pencil": {
-      "command": "/Applications/Pencil.app/Contents/Resources/app.asar.unpacked/out/mcp-server-darwin-arm64",
+      "command": "/Users/zchee/.pencil/mcp/visual_studio_code_-_insiders/out/mcp-server-darwin-arm64",
       "args": [
         "--app",
-        "desktop"
+        "visual_studio_code_-_insiders"
       ],
       "env": {}
     }
@@ -147,6 +408,7 @@
     "defaultApprovalMode": "auto_edit",
     "devtools": true,
     "enableNotifications": true,
+    "topicUpdateNarration": true,
     "plan": {
       "enabled": true
     },
@@ -182,30 +444,25 @@
     "showLineNumbers": false,
     "showCitations": true,
     "showModelInfoInChat": true,
-    "useAlternateBuffer": true,
+    "useAlternateBuffer": false,
     "incrementalRendering": true,
     "inlineThinkingMode": "full",
     "errorVerbosity": "full",
     "loadingPhrases": "off",
     "terminalBuffer": true
   },
-  "hooksConfig": {
-    "enabled": true
-  },
   "context": {
     "fileName": [
       "AGENTS.md",
       "GEMINI.md"
     ],
-    "includeDirectories": [
-      "~/.gemini/extensions/ralph"
-    ],
     "loadMemoryFromIncludeDirectories": true,
     "fileFiltering": {
-      "respectGitIgnore": true,
-      "respectGeminiIgnore": true,
+      "enableFileWatcher": true,
+      "enableFuzzySearch": true,
       "enableRecursiveFileSearch": true,
-      "enableFuzzySearch": true
+      "respectGeminiIgnore": true,
+      "respectGitIgnore": true
     }
   },
   "tools": {
@@ -216,20 +473,22 @@
       "inactivityTimeout": 300
     }
   },
-  "telemetry": {
-    "enabled": true,
-    "target": "local",
-    "otlpEndpoint": "https://ai-tool-otlp-collector.musubi-me.app/v1/otlp/$MUSUBI_API_KEY",
-    "otlpProtocol": "http",
-    "logPrompts": false
+  "agents": {
+    "browser": {
+      "blockFileUploads": false,
+      "confirmSensitiveActions": true
+    }
   },
-  "useWriteTodos": true,
-  "advanced": {
-    "autoConfigureMemory": true,
-    "excludedEnvVars": [
-      "DEBUG",
-      "DEBUG_MODE"
-    ]
+  "security": {
+    "auth": {
+      "selectedType": "oauth-personal"
+    },
+    "environmentVariableRedaction": {
+      "enabled": true
+    },
+    "enableConseca": true,
+    "autoAddToPolicyByDefault": false,
+    "blockGitExtensions": false
   },
   "experimental": {
     "directWebFetch": true,
@@ -245,35 +504,30 @@
     "taskTracker": true,
     "generalistProfile": true,
     "contextManagement": true,
-    "topicUpdateNarration": true,
     "dynamicModelConfiguration": true,
     "autoMemory": true,
-    "adk": {
-      "agentSessionInteractiveEnabled": true,
-      "agentSessionNoninteractiveEnabled": true
+    "memoryV2": true,
+    "extensionRegistryURI": "https://geminicli.com/extensions.json",
+    "gemma": true,
+    "gemmaModelRouter": {},
+    "voiceMode": true,
+    "voice": {
+      "backend": "gemini-live",
+      "whisperModel": "ggml-large-v3-turbo-q8_0.bin",
+      "activationMode": "push-to-talk",
+      "stopGracePeriodMs": 1000
     },
     "worktrees": true,
-    "extensionRegistryURI": "https://geminicli.com/extensions.json",
-    "memoryV2": true
-  },
-  "model": {
-    "name": "gemini-3.1-pro-preview"
-  },
-  "security": {
-    "auth": {
-      "selectedType": "vertex-ai"
-    },
-    "environmentVariableRedaction": {
-      "enabled": true
-    },
-    "enableConseca": true,
-    "autoAddToPolicyByDefault": false,
-    "blockGitExtensions": false
-  },
-  "agents": {
-    "browser": {
-      "blockFileUploads": true,
-      "confirmSensitiveActions": true
+    "adk": {
+      "agentSessionInteractiveEnabled": false,
+      "agentSessionNoninteractiveEnabled": true
     }
+  },
+  "telemetry": {
+    "enabled": true,
+    "target": "local",
+    "otlpEndpoint": "https://ai-tool-otlp-collector.musubi-me.app/v1/otlp/$MUSUBI_API_KEY",
+    "otlpProtocol": "http",
+    "logPrompts": false
   }
 }
