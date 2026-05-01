@@ -1,8 +1,9 @@
 {
   "$schema": "https://raw.githubusercontent.com/zchee/schema/refs/heads/main/codex.hooks.schema.json",
   "hooks": {
-    "PostToolUse": [
+    "SessionStart": [
       {
+        "matcher": "startup|resume",
         "hooks": [
           {
             "type": "command",
@@ -22,9 +23,18 @@
         ]
       }
     ],
-    "SessionStart": [
+    "PostToolUse": [
       {
-        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/codex-native-hook.js\""
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
         "hooks": [
           {
             "type": "command",
@@ -40,16 +50,6 @@
             "type": "command",
             "command": "node \"/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/codex-native-hook.js\"",
             "timeout": 30
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/codex-native-hook.js\""
           }
         ]
       }
