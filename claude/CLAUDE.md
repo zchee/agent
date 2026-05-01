@@ -158,4 +158,8 @@ When writing complex features or significant refactors, use an ExecPlan (see @~/
 
 ## Python
 
-@~/.claude/instructions/Python.m
+@~/.claude/instructions/Python.md
+
+## Rust
+
+@~/.claude/instructions/Rust.md
