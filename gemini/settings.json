@@ -33,14 +33,18 @@
   },
   "mcpServers": {
     "sequential-thinking": {
+      "type": "stdio",
       "command": "sequential-thinking"
     },
     "filesystem": {
-      "command": "rust-mcp-filesystem",
+      "type": "stdio",
+      "command": "npx",
       "args": [
-        "--allow-write",
+        "-y",
+        "@modelcontextprotocol/server-filesystem@latest",
         "/Users/zchee/go/src",
-        "/Users/zchee/src"
+        "/Users/zchee/src",
+        "/Users/zchee/Downloads"
       ]
     },
     "google-gcloud": {
@@ -52,6 +56,7 @@
       ]
     },
     "google-developer-knowledge": {
+      "type": "http",
       "httpUrl": "https://developerknowledge.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -59,12 +64,10 @@
           "https://www.googleapis.com/auth/cloud-platform"
         ]
       },
-      "timeout": 30000,
-      "headers": {
-        "x-goog-user-project": "${GOOGLE_CLOUD_PROJECT}"
-      }
+      "timeout": 30000
     },
     "google-gcp-agent-search": {
+      "type": "http",
       "httpUrl": "https://discoveryengine.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -84,6 +87,7 @@
       ]
     },
     "google-gcp-aiplatform": {
+      "type": "http",
       "httpUrl": "https://aiplatform.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -97,6 +101,7 @@
       }
     },
     "google-gcp-apihub": {
+      "type": "http",
       "httpUrl": "https://apihub.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -110,6 +115,7 @@
       }
     },
     "google-gcp-bigquery": {
+      "type": "http",
       "httpUrl": "https://bigquery.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -123,6 +129,7 @@
       }
     },
     "google-gcp-bigquerydatatransfer": {
+      "type": "http",
       "httpUrl": "https://bigquerydatatransfer.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -137,6 +144,7 @@
       }
     },
     "google-gcp-bigquerymigration": {
+      "type": "http",
       "httpUrl": "https://bigquerymigration.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -150,6 +158,7 @@
       }
     },
     "google-gcp-cloudresourcemanager": {
+      "type": "http",
       "httpUrl": "https://cloudresourcemanager.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -163,6 +172,7 @@
       }
     },
     "google-gcp-cloudtrace": {
+      "type": "http",
       "httpUrl": "https://cloudtrace.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -176,6 +186,7 @@
       }
     },
     "google-gcp-compute": {
+      "type": "http",
       "httpUrl": "https://compute.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -189,6 +200,7 @@
       }
     },
     "google-gcp-container": {
+      "type": "http",
       "httpUrl": "https://container.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -202,6 +214,7 @@
       }
     },
     "google-gcp-dataplex": {
+      "type": "http",
       "httpUrl": "https://dataplex.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -215,6 +228,7 @@
       }
     },
     "google-gcp-dataproc": {
+      "type": "http",
       "httpUrl": "https://dataproc.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -228,6 +242,7 @@
       }
     },
     "google-gcp-datastream": {
+      "type": "http",
       "httpUrl": "https://datastream.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -241,6 +256,7 @@
       }
     },
     "google-gcp-discoveryengine": {
+      "type": "http",
       "httpUrl": "https://discoveryengine.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -254,6 +270,7 @@
       }
     },
     "google-gcp-firestore": {
+      "type": "http",
       "httpUrl": "https://firestore.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -267,6 +284,7 @@
       }
     },
     "google-gcp-geminicloudassist": {
+      "type": "http",
       "httpUrl": "https://geminicloudassist.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -280,6 +298,7 @@
       }
     },
     "google-gcp-logging": {
+      "type": "http",
       "httpUrl": "https://logging.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -293,6 +312,7 @@
       }
     },
     "google-gcp-monitoring": {
+      "type": "http",
       "httpUrl": "https://monitoring.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -306,6 +326,7 @@
       }
     },
     "google-gcp-pubsub": {
+      "type": "http",
       "httpUrl": "https://pubsub.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -319,6 +340,7 @@
       }
     },
     "google-gcp-run": {
+      "type": "http",
       "httpUrl": "https://run.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -332,6 +354,7 @@
       }
     },
     "google-gcp-spanner": {
+      "type": "http",
       "httpUrl": "https://spanner.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -345,6 +368,7 @@
       }
     },
     "google-gcp-sqladmin": {
+      "type": "http",
       "httpUrl": "https://sqladmin.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -358,6 +382,7 @@
       }
     },
     "google-gcp-stitch": {
+      "type": "http",
       "httpUrl": "https://stitch.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -371,6 +396,7 @@
       }
     },
     "google-gcp-storage": {
+      "type": "http",
       "httpUrl": "https://storage.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -384,6 +410,7 @@
       }
     },
     "pencil": {
+      "type": "stdio",
       "command": "/Users/zchee/.pencil/mcp/visual_studio_code_-_insiders/out/mcp-server-darwin-arm64",
       "args": [
         "--app",
