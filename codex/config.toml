@@ -88,6 +88,7 @@ animations = true
 alternate_screen = "always"
 # github.com/openai/codex/codex-rs/tui/src/bottom_pane/title_setup.rs#TerminalTitleItem
 status_line = [ "model-with-reasoning", "git-branch", "context-remaining", "total-input-tokens", "total-output-tokens", "five-hour-limit", "weekly-limit" ]
+status_line_use_colors = true
 
 [tui.model_availability_nux]
 "gpt-5.5" = 4
@@ -167,7 +168,11 @@ hide_rate_limit_model_nudge = false
 hide_world_writable_warning = false
 
 [notice.external_config_migration_prompts]
-home_last_prompted_at = 1777068132
+home_last_prompted_at = 1777661006
+home = true
+
+[notice.external_config_migration_prompts.project_last_prompted_at]
+"/Users/zchee" = 1777661126
 
 [marketplaces.openai-bundled]
 last_updated = "2026-04-25T07:53:41Z"
@@ -180,7 +185,7 @@ source_type = "local"
 source = "/Users/zchee/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.memsearch-plugins]
-last_updated = "2026-05-01T16:48:22Z"
+last_updated = "2026-05-02T09:17:02Z"
 last_revision = "d2ed4bf517e0f89fd65f6f6fa094950c0f497840"
 source_type = "git"
 source = "https://github.com/zilliztech/memsearch.git"
