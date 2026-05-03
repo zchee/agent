@@ -1,22 +1,32 @@
 #:schema https://raw.githubusercontent.com/openai/codex/refs/heads/main/codex-rs/core/config.schema.json
+
+# oh-my-codex top-level settings (must be before any [table])
+notify = ["node", "--max-old-space-size=4096", "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/notify-hook.js"]
+model_reasoning_effort = "medium"
+developer_instructions = "You have oh-my-codex installed. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing, $name workflow invocation, and role-specialized subagents. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail. Native subagents live in .codex/agents and may handle independent parallel subtasks within one Codex session or team pane. Skills load from .codex/skills, not native-agent TOMLs. Treat installed prompts as narrower execution surfaces under AGENTS.md authority."
 model = "gpt-5.5"
+# oh-my-codex seeded behavioral defaults (uninstall removes unchanged defaults)
+model_context_window = 500000
+model_auto_compact_token_limit = 450000
+# End oh-my-codex seeded behavioral defaults
+
 review_model = "gpt-5.5"
+# model_context_window = 250000
+# model_auto_compact_token_limit = 200000
 # model_context_window = 1000000
 # model_auto_compact_token_limit = 900000
-model_context_window = 250000
-model_auto_compact_token_limit = 200000
+approval_policy = "never"
 tool_output_token_limit = 40000
 project_doc_max_bytes = 46080
 project_doc_fallback_filenames = [ "AGENTS.md", "CLAUDE.md", "GEMINI.md" ]
 zsh_path = "/opt/homebrew/bin/zsh"
 hide_agent_reasoning = false
 show_raw_agent_reasoning = true
-model_reasoning_summary = "detailed"
+model_reasoning_summary = "auto"
 plan_mode_reasoning_effort = "xhigh"
 model_verbosity = "high"
 model_supports_reasoning_summaries = true
 check_for_update_on_startup = false
-approval_policy = "never"
 sandbox_mode = "danger-full-access"
 cli_auth_credentials_store = "file"
 mcp_oauth_credentials_store = "file"
@@ -29,7 +39,6 @@ include_apps_instructions = true
 include_environment_context = true
 personality = "pragmatic"
 service_tier = "fast"
-developer_instructions = "You have oh-my-codex installed. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing, $name workflow invocation, and role-specialized subagents. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail. Native subagents live in .codex/agents and may handle independent parallel subtasks within one Codex session or team pane. Skills load from .codex/skills, not native-agent TOMLs. Treat installed prompts as narrower execution surfaces under AGENTS.md authority."
 
 [experimental_thread_store]
 type = "local"
@@ -80,14 +89,14 @@ USE_OMX_EXPLORE_CMD = "1"
 
 [history]
 persistence = "save-all"
-max_bytes = 104857600
 
 [tui]
 notifications = true
 animations = true
 alternate_screen = "always"
-# github.com/openai/codex/codex-rs/tui/src/bottom_pane/title_setup.rs#TerminalTitleItem
-status_line = [ "model-with-reasoning", "git-branch", "context-remaining", "total-input-tokens", "total-output-tokens", "five-hour-limit", "weekly-limit" ]
+# https://github.com/openai/codex/blob/main/codex-rs/tui/src/bottom_pane/title_setup.rs#TerminalTitleItem
+# status_line = [ "model-with-reasoning", "git-branch", "context-remaining", "total-input-tokens", "total-output-tokens", "five-hour-limit", "weekly-limit" ]
+status_line = [ "model-with-reasoning", "git-branch", "current-dir", "context-remaining", "total-input-tokens", "total-output-tokens", "five-hour-limit", "weekly-limit", "session-id" ]
 status_line_use_colors = true
 
 [tui.model_availability_nux]
@@ -100,7 +109,7 @@ view_image = true
 context_size = "high"
 
 [agents]
-max_depth = 5
+max_depth = 2
 
 [memories]
 generate_memories = true
@@ -109,6 +118,9 @@ max_unused_days = 21
 max_rollout_age_days = 42
 max_rollouts_per_startup = 9
 min_rollout_idle_hours = 24
+disable_on_external_context = true
+extract_model = "gpt-5.3-codex-spark"
+consolidation_model = "gpt-5.5"
 
 # [debug.config_lockfile]
 # /// Directory where Codex writes effective session config lock files.
@@ -140,7 +152,7 @@ apps_mcp_path_override = true
 tool_search_always_defer_mcp_tools = true
 plugin_hooks = true
 remote_plugin = true
-external_migration = true
+external_migration = false
 skill_env_var_dependency_prompt = true
 default_mode_request_user_input = true
 goals = true
@@ -185,14 +197,14 @@ source_type = "local"
 source = "/Users/zchee/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.memsearch-plugins]
-last_updated = "2026-05-02T09:17:02Z"
-last_revision = "d2ed4bf517e0f89fd65f6f6fa094950c0f497840"
+last_updated = "2026-05-03T08:20:39Z"
+last_revision = "ca94a43ac83db02f171ea366ca99ee888628d590"
 source_type = "git"
 source = "https://github.com/zilliztech/memsearch.git"
 
 [marketplaces.oh-my-codex-local]
 source_type = "local"
-source = "/opt/local/var/bun/install/global/node_modules/oh-my-codex"
+source = "/opt/local/var/bun/install/global/node_modules/oh-my-codex/plugins/oh-my-codex"
 
 [plugins."browser-use@openai-bundled"]
 enabled = true
@@ -507,32 +519,7 @@ startup_timeout_sec = 15
 command = "mcp-language-server"
 args = [ "--workspace", ".", "--lsp", "lua-language-server" ]
 enabled = false
-startup_timeout_sec = 15
-
-[mcp_servers.omx_code_intel]
-command = "node"
-args = [ "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/code-intel-server.js" ]
-startup_timeout_sec = 10
-
-[mcp_servers.omx_memory]
-command = "node"
-args = [ "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/memory-server.js" ]
-startup_timeout_sec = 5
-
-[mcp_servers.omx_state]
-command = "node"
-args = [ "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/state-server.js" ]
-startup_timeout_sec = 5
-
-[mcp_servers.omx_trace]
-command = "node"
-args = [ "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/trace-server.js" ]
-startup_timeout_sec = 5
-
-[mcp_servers.omx_wiki]
-command = "node"
-args = [ "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/wiki-server.js" ]
-startup_timeout_sec = 5
+startup_timeout_sec = 16
 
 [mcp_servers.openaiDeveloperDocs]
 url = "https://developers.openai.com/mcp"
@@ -573,3 +560,46 @@ startup_timeout_sec = 15
 [mcp_servers.pencil]
 command = "/Users/zchee/.pencil/mcp/visual_studio_code_-_insiders/out/mcp-server-darwin-arm64"
 args = [ "--app", "visual_studio_code_-_insiders" ]
+
+# ============================================================
+# oh-my-codex (OMX) Configuration
+# Managed by omx setup - manual edits preserved on next setup
+# ============================================================
+
+# OMX State Management MCP Server
+[mcp_servers.omx_state]
+command = "/opt/homebrew/bin/node"
+args = ["--max-old-space-size=4096", "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/state-server.js"]
+enabled = true
+startup_timeout_sec = 5
+
+# OMX Project Memory MCP Server
+[mcp_servers.omx_memory]
+command = "/opt/homebrew/bin/node"
+args = ["--max-old-space-size=4096", "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/memory-server.js"]
+enabled = true
+startup_timeout_sec = 5
+
+# OMX Code Intelligence MCP Server (LSP diagnostics, AST search)
+[mcp_servers.omx_code_intel]
+command = "/opt/homebrew/bin/node"
+args = ["--max-old-space-size=4096", "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/code-intel-server.js"]
+enabled = true
+startup_timeout_sec = 10
+
+# OMX Trace MCP Server (agent flow timeline & statistics)
+[mcp_servers.omx_trace]
+command = "/opt/homebrew/bin/node"
+args = ["--max-old-space-size=4096", "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/trace-server.js"]
+enabled = true
+startup_timeout_sec = 5
+
+# OMX Wiki MCP Server (persistent project knowledge base)
+[mcp_servers.omx_wiki]
+command = "/opt/homebrew/bin/node"
+args = ["--max-old-space-size=4096", "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/wiki-server.js"]
+enabled = true
+startup_timeout_sec = 5
+
+# ============================================================
+# End oh-my-codex
