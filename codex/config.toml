@@ -6,13 +6,13 @@ model_reasoning_effort = "medium"
 developer_instructions = "You have oh-my-codex installed. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing, $name workflow invocation, and role-specialized subagents. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail. Native subagents live in .codex/agents and may handle independent parallel subtasks within one Codex session or team pane. Skills load from .codex/skills, not native-agent TOMLs. Treat installed prompts as narrower execution surfaces under AGENTS.md authority."
 model = "gpt-5.5"
 # oh-my-codex seeded behavioral defaults (uninstall removes unchanged defaults)
-model_context_window = 500000
-model_auto_compact_token_limit = 450000
+# model_context_window = 500000
+# model_auto_compact_token_limit = 450000
 # End oh-my-codex seeded behavioral defaults
 
 review_model = "gpt-5.5"
-# model_context_window = 250000
-# model_auto_compact_token_limit = 200000
+model_context_window = 250000
+model_auto_compact_token_limit = 200000
 # model_context_window = 1000000
 # model_auto_compact_token_limit = 900000
 approval_policy = "never"
@@ -94,9 +94,9 @@ persistence = "save-all"
 notifications = true
 animations = true
 alternate_screen = "always"
-# https://github.com/openai/codex/blob/main/codex-rs/tui/src/bottom_pane/title_setup.rs#TerminalTitleItem
+# https://github.com/openai/codex/blob/main/codex-rs/tui/src/bottom_pane/status_line_setup.rs
 # status_line = [ "model-with-reasoning", "git-branch", "context-remaining", "total-input-tokens", "total-output-tokens", "five-hour-limit", "weekly-limit" ]
-status_line = [ "model-with-reasoning", "git-branch", "current-dir", "context-remaining", "total-input-tokens", "total-output-tokens", "five-hour-limit", "weekly-limit", "session-id" ]
+status_line = ["model-with-reasoning", "git-branch", "current-dir", "context-remaining", "total-input-tokens", "total-output-tokens", "context-window-size", "five-hour-limit", "weekly-limit"]
 status_line_use_colors = true
 
 [tui.model_availability_nux]
@@ -197,7 +197,7 @@ source_type = "local"
 source = "/Users/zchee/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.memsearch-plugins]
-last_updated = "2026-05-03T08:20:39Z"
+last_updated = "2026-05-03T16:15:37Z"
 last_revision = "ca94a43ac83db02f171ea366ca99ee888628d590"
 source_type = "git"
 source = "https://github.com/zilliztech/memsearch.git"
