@@ -1,0 +1,25 @@
+$autopilot "improve codex/scripts/history-compact.py to also remove text containing the words `OMX_TMUX_INJECT` and `OMX_TEAM_STATE_ROOT`. don't write testcase"
+
+---
+
+$autopilot "Fix to sort by `ts` timestamp in descending order"
+
+---
+
+$autopilot "Fix to sort by `ts` timestamp in ascending order"
+
+---
+
+q/
+
+---
+
+$autopilot "improve codex/scripts/history-compact.py to also remove text containing the words `.omx`. don't write testcase"
+
+---
+
+$autopilot "improve codex/scripts/history-compact.py to also remove text containing the words `.omx/`. don't write testcase"
+
+---
+
+$autopilot "improve codex/scripts/history-compact.py to also remove text containing the words `/.omx/`. don't write testcase"
