@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/codex-native-hook.js\""
+            "command": "/opt/homebrew/bin/node --max-old-space-size=4096 \"/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/codex-native-hook.js\""
           }
         ]
       }
@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/codex-native-hook.js\""
+            "command": "/opt/homebrew/bin/node --max-old-space-size=4096 \"/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/codex-native-hook.js\""
           }
         ]
       }
@@ -28,7 +28,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/codex-native-hook.js\""
+            "command": "/opt/homebrew/bin/node --max-old-space-size=4096 \"/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/codex-native-hook.js\""
           }
         ]
       }
@@ -38,7 +38,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/codex-native-hook.js\""
+            "command": "/opt/homebrew/bin/node --max-old-space-size=4096 \"/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/codex-native-hook.js\""
           }
         ]
       }
@@ -48,7 +48,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/codex-native-hook.js\"",
+            "command": "/opt/homebrew/bin/node --max-old-space-size=4096 \"/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/codex-native-hook.js\"",
             "timeout": 30
           }
         ]
