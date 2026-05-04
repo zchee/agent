@@ -1,20 +1,11 @@
 #:schema https://raw.githubusercontent.com/openai/codex/refs/heads/main/codex-rs/core/config.schema.json
 
-# oh-my-codex top-level settings (must be before any [table])
-notify = ["node", "--max-old-space-size=4096", "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/notify-hook.js"]
-model_reasoning_effort = "medium"
-developer_instructions = "You have oh-my-codex installed. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing, $name workflow invocation, and role-specialized subagents. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail. Native subagents live in .codex/agents and may handle independent parallel subtasks within one Codex session or team pane. Skills load from .codex/skills, not native-agent TOMLs. Treat installed prompts as narrower execution surfaces under AGENTS.md authority."
-model = "gpt-5.5"
-# oh-my-codex seeded behavioral defaults (uninstall removes unchanged defaults)
-# model_context_window = 500000
-# model_auto_compact_token_limit = 450000
-# End oh-my-codex seeded behavioral defaults
+# developer_instructions = "You have oh-my-codex installed through Codex plugin mode. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing and $name workflow invocation. Registered Codex plugin marketplace surfaces supply OMX workflows, prompts, and native-agent roles when the plugin is installed. User-installed skills may still live under ~/.codex/skills. Setup-owned prompt files and native-agent TOML defaults are intentionally omitted unless explicitly installed. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail."
 
+model = "gpt-5.5"
 review_model = "gpt-5.5"
-model_context_window = 250000
-model_auto_compact_token_limit = 200000
-# model_context_window = 1000000
-# model_auto_compact_token_limit = 900000
+model_context_window = 1000000
+model_auto_compact_token_limit = 900000
 approval_policy = "never"
 tool_output_token_limit = 40000
 project_doc_max_bytes = 46080
@@ -43,37 +34,54 @@ service_tier = "fast"
 [experimental_thread_store]
 type = "local"
 
+[model_providers.openai-api]
+name = "openai"
+base_url = "https://api.openai.com/v1"
+env_key = "OPENAI_API_KEY"
+wire_api = "responses"
+
+[model_providers.codex-responses-api-proxy]
+name = "codex-responses-api-proxy"
+base_url = "http://127.0.0.1:60001/v1"
+wire_api = "responses"
+
 [model_providers.openrouter]
 name = "openrouter"
 base_url = "https://openrouter.ai/api/v1"
-env_key = "OPENROUTER_CODEX_API_KEY"
-wire_api = "responses"
+env_key = "OPENROUTER_API_KEY"
 
 [model_providers.xai]
 name = "xai"
 base_url = "https://api.x.ai/v1"
 env_key = "XAI_API_KEY"
+# wire_api = "responses"
 
-[profiles.openai]
-model_provider = "openrouter"
-model = "openai/gpt-5.5-pro"
+[profiles.openai-api]
+model_provider = "openai-api"
+model = "gpt-5.5-pro-2026-04-23"
+model_reasoning_effort = "medium"
+service_tier = "fast"
+
+[profiles.proxy]
+model_provider = "codex-responses-api-proxy"
+model = "gpt-5.5-pro"
 service_tier = "fast"
 
 [profiles.openrouter]
 model_provider = "openrouter"
 model = "minimax/minimax-m2.7"
 
-[profiles.gemini]
+[profiles.or-gemini]
 model_provider = "openrouter"
 model = "google/gemini-3.1-pro-preview-customtools"
 
-[profiles.claude]
+[profiles.or-claude]
 model_provider = "openrouter"
 model = "anthropic/claude-opus-4.7"
 
 [profiles.xai]
 model_provider = "xai"
-model = "grok-4.20-multi-agent-beta-latest"
+model = "grok-4.3"
 
 [realtime]
 version = "v2"
@@ -84,9 +92,6 @@ type = "conversational"
 inherit = "all"
 experimental_use_profile = false
 
-[shell_environment_policy.set]
-USE_OMX_EXPLORE_CMD = "1"
-
 [history]
 persistence = "save-all"
 
@@ -95,7 +100,6 @@ notifications = true
 animations = true
 alternate_screen = "always"
 # https://github.com/openai/codex/blob/main/codex-rs/tui/src/bottom_pane/status_line_setup.rs
-# status_line = [ "model-with-reasoning", "git-branch", "context-remaining", "total-input-tokens", "total-output-tokens", "five-hour-limit", "weekly-limit" ]
 status_line = ["model-with-reasoning", "git-branch", "current-dir", "context-remaining", "total-input-tokens", "total-output-tokens", "context-window-size", "five-hour-limit", "weekly-limit"]
 status_line_use_colors = true
 
@@ -197,14 +201,14 @@ source_type = "local"
 source = "/Users/zchee/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.memsearch-plugins]
-last_updated = "2026-05-03T16:15:37Z"
+last_updated = "2026-05-04T19:18:27Z"
 last_revision = "ca94a43ac83db02f171ea366ca99ee888628d590"
 source_type = "git"
 source = "https://github.com/zilliztech/memsearch.git"
 
 [marketplaces.oh-my-codex-local]
 source_type = "local"
-source = "/opt/local/var/bun/install/global/node_modules/oh-my-codex/plugins/oh-my-codex"
+source = "/Users/zchee/src/github.com/Yeachan-Heo/oh-my-codex"
 
 [plugins."browser-use@openai-bundled"]
 enabled = true
@@ -240,7 +244,7 @@ enabled = false
 enabled = false
 
 [plugins."oh-my-codex@oh-my-codex-local"]
-enabled = true
+enabled = false
 
 [mcp_servers.alphaxiv]
 url = "https://api.alphaxiv.org/mcp/v1"
@@ -560,46 +564,3 @@ startup_timeout_sec = 15
 [mcp_servers.pencil]
 command = "/Users/zchee/.pencil/mcp/visual_studio_code_-_insiders/out/mcp-server-darwin-arm64"
 args = [ "--app", "visual_studio_code_-_insiders" ]
-
-# ============================================================
-# oh-my-codex (OMX) Configuration
-# Managed by omx setup - manual edits preserved on next setup
-# ============================================================
-
-# OMX State Management MCP Server
-[mcp_servers.omx_state]
-command = "/opt/homebrew/bin/node"
-args = ["--max-old-space-size=4096", "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/state-server.js"]
-enabled = true
-startup_timeout_sec = 5
-
-# OMX Project Memory MCP Server
-[mcp_servers.omx_memory]
-command = "/opt/homebrew/bin/node"
-args = ["--max-old-space-size=4096", "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/memory-server.js"]
-enabled = true
-startup_timeout_sec = 5
-
-# OMX Code Intelligence MCP Server (LSP diagnostics, AST search)
-[mcp_servers.omx_code_intel]
-command = "/opt/homebrew/bin/node"
-args = ["--max-old-space-size=4096", "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/code-intel-server.js"]
-enabled = true
-startup_timeout_sec = 10
-
-# OMX Trace MCP Server (agent flow timeline & statistics)
-[mcp_servers.omx_trace]
-command = "/opt/homebrew/bin/node"
-args = ["--max-old-space-size=4096", "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/trace-server.js"]
-enabled = true
-startup_timeout_sec = 5
-
-# OMX Wiki MCP Server (persistent project knowledge base)
-[mcp_servers.omx_wiki]
-command = "/opt/homebrew/bin/node"
-args = ["--max-old-space-size=4096", "/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/mcp/wiki-server.js"]
-enabled = true
-startup_timeout_sec = 5
-
-# ============================================================
-# End oh-my-codex
