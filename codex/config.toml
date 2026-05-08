@@ -1,7 +1,5 @@
 #:schema https://raw.githubusercontent.com/openai/codex/refs/heads/main/codex-rs/core/config.schema.json
 
-# developer_instructions = "You have oh-my-codex installed through Codex plugin mode. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing and $name workflow invocation. Registered Codex plugin marketplace surfaces supply OMX workflows, prompts, and native-agent roles when the plugin is installed. User-installed skills may still live under ~/.codex/skills. Setup-owned prompt files and native-agent TOML defaults are intentionally omitted unless explicitly installed. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail."
-
 model = "gpt-5.5"
 review_model = "gpt-5.5"
 model_context_window = 1000000
@@ -30,6 +28,7 @@ include_apps_instructions = true
 include_environment_context = true
 personality = "pragmatic"
 service_tier = "fast"
+developer_instructions = "You have oh-my-codex installed through Codex plugin mode. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing and $name workflow invocation. Registered Codex plugin marketplace surfaces supply OMX workflows, prompts, and native-agent roles when the plugin is installed. User-installed skills may still live under ~/.codex/skills. Setup-owned prompt files and native-agent TOML defaults are intentionally omitted unless explicitly installed. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail."
 
 [experimental_thread_store]
 type = "local"
@@ -92,6 +91,9 @@ type = "conversational"
 inherit = "all"
 experimental_use_profile = false
 
+[shell_environment_policy.set]
+OMX_LORE_COMMIT_GUARD = "0"
+
 [history]
 persistence = "save-all"
 
@@ -145,6 +147,7 @@ codex_git_commit = true
 runtime_metrics = true
 memories = true
 chronicle = true
+builtin_mcp = true
 child_agents_md = true
 apply_patch_freeform = true
 apply_patch_streaming_events = true
@@ -160,10 +163,13 @@ external_migration = false
 skill_env_var_dependency_prompt = true
 default_mode_request_user_input = true
 goals = true
+auth_elicitation = true
 realtime_conversation = true
 remote_control = true
 prevent_idle_sleep = true
 workspace_owner_usage_nudge = true
+responses_websocket_response_processed = true
+remote_compaction_v2 = true
 
 [features.multi_agent_v2]
 enabled = true
@@ -201,8 +207,8 @@ source_type = "local"
 source = "/Users/zchee/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.memsearch-plugins]
-last_updated = "2026-05-04T19:18:27Z"
-last_revision = "ca94a43ac83db02f171ea366ca99ee888628d590"
+last_updated = "2026-05-08T12:12:48Z"
+last_revision = "7a2f37bc6b2123aec8d43dc74b6c435456264259"
 source_type = "git"
 source = "https://github.com/zilliztech/memsearch.git"
 
@@ -244,7 +250,7 @@ enabled = false
 enabled = false
 
 [plugins."oh-my-codex@oh-my-codex-local"]
-enabled = false
+enabled = true
 
 [mcp_servers.alphaxiv]
 url = "https://api.alphaxiv.org/mcp/v1"
