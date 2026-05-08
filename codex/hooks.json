@@ -1,4 +1,78 @@
 {
   "$schema": "https://raw.githubusercontent.com/zchee/schema/refs/heads/main/codex.hooks.schema.json",
-  "hooks": {}
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/opt/homebrew/opt/node/bin/node\" \"/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/codex-native-hook.js\""
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/opt/homebrew/opt/node/bin/node\" \"/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/codex-native-hook.js\""
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/opt/homebrew/opt/node/bin/node\" \"/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/codex-native-hook.js\""
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/opt/homebrew/opt/node/bin/node\" \"/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/codex-native-hook.js\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/opt/homebrew/opt/node/bin/node\" \"/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/codex-native-hook.js\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/opt/homebrew/opt/node/bin/node\" \"/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/codex-native-hook.js\""
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/opt/homebrew/opt/node/bin/node\" \"/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/codex-native-hook.js\""
+          }
+        ]
+      }
+    ]
+  }
 }
