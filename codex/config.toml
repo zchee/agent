@@ -1,5 +1,3 @@
-#:schema https://raw.githubusercontent.com/openai/codex/refs/heads/main/codex-rs/core/config.schema.json
-
 model = "gpt-5.5"
 review_model = "gpt-5.5"
 model_context_window = 1000000
@@ -9,9 +7,10 @@ tool_output_token_limit = 40000
 project_doc_max_bytes = 46080
 project_doc_fallback_filenames = [ "AGENTS.md", "CLAUDE.md", "GEMINI.md" ]
 zsh_path = "/opt/homebrew/bin/zsh"
+allow_login_shell = true
 hide_agent_reasoning = false
 show_raw_agent_reasoning = true
-model_reasoning_summary = "auto"
+model_reasoning_summary = "detailed"
 plan_mode_reasoning_effort = "xhigh"
 model_verbosity = "high"
 model_supports_reasoning_summaries = true
@@ -27,8 +26,10 @@ include_permissions_instructions = true
 include_apps_instructions = true
 include_environment_context = true
 personality = "pragmatic"
-service_tier = "fast"
+service_tier = "priority"
 developer_instructions = "You have oh-my-codex installed through Codex plugin mode. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing and $name workflow invocation. Registered Codex plugin marketplace surfaces supply OMX workflows, prompts, and native-agent roles when the plugin is installed. User-installed skills may still live under ~/.codex/skills. Setup-owned prompt files and native-agent TOML defaults are intentionally omitted unless explicitly installed. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail."
+
+notify = ["/Users/zchee/src/github.com/zchee/agent/codex/plugins/cache/openai-bundled/computer-use/1.0.750/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 
 [experimental_thread_store]
 type = "local"
@@ -38,6 +39,7 @@ name = "openai"
 base_url = "https://api.openai.com/v1"
 env_key = "OPENAI_API_KEY"
 wire_api = "responses"
+supports_websockets = true
 
 [model_providers.codex-responses-api-proxy]
 name = "codex-responses-api-proxy"
@@ -57,14 +59,14 @@ env_key = "XAI_API_KEY"
 
 [profiles.openai-api]
 model_provider = "openai-api"
-model = "gpt-5.5-pro-2026-04-23"
+model = "gpt-5.5-pro"
 model_reasoning_effort = "medium"
-service_tier = "fast"
+service_tier = "priority"
 
 [profiles.proxy]
 model_provider = "codex-responses-api-proxy"
 model = "gpt-5.5-pro"
-service_tier = "fast"
+service_tier = "priority"
 
 [profiles.openrouter]
 model_provider = "openrouter"
@@ -149,7 +151,6 @@ memories = true
 chronicle = true
 builtin_mcp = true
 child_agents_md = true
-apply_patch_freeform = true
 apply_patch_streaming_events = true
 exec_permission_approvals = true
 request_permissions_tool = true
@@ -169,12 +170,12 @@ remote_control = true
 prevent_idle_sleep = true
 workspace_owner_usage_nudge = true
 responses_websocket_response_processed = true
-remote_compaction_v2 = true
+remote_compaction_v2 = false
 
 [features.multi_agent_v2]
 enabled = true
 max_concurrent_threads_per_session = 6
-usage_hint_enabled = true
+usage_hint_enabled = false
 hide_spawn_agent_metadata = false
 
 [analytics]
@@ -207,16 +208,19 @@ source_type = "local"
 source = "/Users/zchee/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.memsearch-plugins]
-last_updated = "2026-05-08T12:12:48Z"
-last_revision = "7a2f37bc6b2123aec8d43dc74b6c435456264259"
+last_updated = "2026-05-09T16:57:49Z"
+last_revision = "70cf8ab870cb3832f596c61c9495b7a77b497fe0"
 source_type = "git"
 source = "https://github.com/zilliztech/memsearch.git"
 
 [marketplaces.oh-my-codex-local]
 source_type = "local"
-source = "/Users/zchee/src/github.com/Yeachan-Heo/oh-my-codex"
+source = "/opt/local/var/bun/install/global/node_modules/oh-my-codex"
 
 [plugins."browser-use@openai-bundled"]
+enabled = true
+
+[plugins."chrome@openai-bundled"]
 enabled = true
 
 [plugins."computer-use@openai-bundled"]
@@ -225,8 +229,14 @@ enabled = true
 [plugins."figma@openai-curated"]
 enabled = false
 
+[plugins."build-ios-apps@openai-curated"]
+enabled = false
+
 [plugins."build-macos-apps@openai-curated"]
 enabled = false
+
+[plugins."github@openai-curated"]
+enabled = true
 
 [plugins."superpowers@openai-curated"]
 enabled = false
@@ -258,14 +268,14 @@ enabled = false
 
 [mcp_servers.apple-docs]
 command = "uv"
-args = [ "run", "--directory=/Users/zchee/go/src/github.com/zchee/mcp-servers/apple-docs", "apple-docs" ]
+args = ["run", "--directory=/Users/zchee/go/src/github.com/zchee/mcp-servers/apple-docs", "apple-docs"]
 enabled = false
 
 [mcp_servers.aws-documentation]
 command = "uvx"
-args = [ "awslabs.aws-documentation-mcp-server@latest" ]
+args = ["awslabs.aws-documentation-mcp-server@latest"]
 enabled = false
-startup_timeout_sec = 15
+startup_timeout_sec = 15.0
 
 [mcp_servers.aws-knowledge]
 url = "https://knowledge-mcp.global.api.aws"
@@ -273,21 +283,21 @@ enabled = false
 
 [mcp_servers.basedpyright]
 command = "mcp-language-server"
-args = [ "--workspace", ".", "--lsp", "basedpyright-langserver", "--", "--stdio" ]
+args = ["--workspace", ".", "--lsp", "basedpyright-langserver", "--", "--stdio"]
 enabled = false
-startup_timeout_sec = 15
+startup_timeout_sec = 15.0
 
 [mcp_servers.bash-language-server]
 command = "mcp-language-server"
-args = [ "--workspace", ".", "--lsp", "bash-language-server", "--", "start" ]
+args = ["--workspace", ".", "--lsp", "bash-language-server", "--", "start"]
 enabled = false
-startup_timeout_sec = 15
+startup_timeout_sec = 15.0
 
 [mcp_servers.clangd]
 command = "mcp-language-server"
-args = [ "--workspace", ".", "--lsp", "/opt/local/llvm/clangd/bin/clangd", "--", "--background-index", "--background-index-priority=normal", "--all-scopes-completion", "--background-index", "--background-index-priority=normal", "--clang-tidy", "--completion-parse=auto", "--completion-style=detailed", "--experimental-modules-support", "--function-arg-placeholders=1", "--header-insertion=iwyu", "--header-insertion-decorators", "--import-insertions", "--include-ineligible-results", "--limit-references=0", "--limit-results=0", "--ranking-model=heuristics", "--rename-file-limit=1000", "--enable-config", "-j=16", "--parse-forwarding-functions", "--pch-storage=memory", "--use-dirty-headers", "--input-style=standard" ]
+args = ["--workspace", ".", "--lsp", "/opt/local/llvm/clangd/bin/clangd", "--", "--background-index", "--background-index-priority=normal", "--all-scopes-completion", "--background-index", "--background-index-priority=normal", "--clang-tidy", "--completion-parse=auto", "--completion-style=detailed", "--experimental-modules-support", "--function-arg-placeholders=1", "--header-insertion=iwyu", "--header-insertion-decorators", "--import-insertions", "--include-ineligible-results", "--limit-references=0", "--limit-results=0", "--ranking-model=heuristics", "--rename-file-limit=1000", "--enable-config", "-j=16", "--parse-forwarding-functions", "--pch-storage=memory", "--use-dirty-headers", "--input-style=standard"]
 enabled = false
-startup_timeout_sec = 15
+startup_timeout_sec = 15.0
 
 [mcp_servers.context7]
 url = "https://mcp.context7.com/mcp"
@@ -301,7 +311,7 @@ enabled = false
 
 [mcp_servers.datadog-code-security]
 command = "datadog-code-security-mcp"
-args = [ "start" ]
+args = ["start"]
 enabled = false
 
 [mcp_servers.datadog-code-security.env]
@@ -309,6 +319,7 @@ DD_AUTH_DOMAIN = "us5.datadoghq.com"
 
 [mcp_servers.exa-codesearch]
 url = "https://mcp.exa.ai/mcp?tools=get_code_context_exa"
+enabled = false
 
 [mcp_servers.exa-research-paper]
 url = "https://mcp.exa.ai/mcp?tools=web_search_advanced_exa"
@@ -316,17 +327,17 @@ enabled = false
 
 [mcp_servers.filesystem]
 command = "npx"
-args = [ "-y", "@modelcontextprotocol/server-filesystem@latest", "/Users/zchee/go", "/Users/zchee/src", "/Users/zchee/Downloads", "/opt" ]
-startup_timeout_sec = 15
+args = ["-y", "@modelcontextprotocol/server-filesystem@latest", "/Users/zchee/go", "/Users/zchee/src", "/Users/zchee/Downloads", "/opt"]
+startup_timeout_sec = 15.0
 
 [mcp_servers.filesystem.tools.write_file]
 approval_mode = "approve"
 
 [mcp_servers.google-gcloud]
 command = "npx"
-args = [ "-y", "@google-cloud/gcloud-mcp@latest" ]
+args = ["-y", "@google-cloud/gcloud-mcp@latest"]
 enabled = false
-startup_timeout_sec = 15
+startup_timeout_sec = 15.0
 
 [mcp_servers.google-gcp-aiplatform]
 url = "https://aiplatform.googleapis.com/mcp/generate"
@@ -507,9 +518,9 @@ X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
 [mcp_servers.gopls]
 command = "gopls"
-args = [ "mcp" ]
+args = ["mcp"]
 enabled = false
-startup_timeout_sec = 15
+startup_timeout_sec = 15.0
 
 [mcp_servers.grep-app]
 url = "https://mcp.grep.app"
@@ -517,56 +528,80 @@ url = "https://mcp.grep.app"
 [mcp_servers.kubernetes]
 command = "kubernetes-mcp-server"
 enabled = false
-startup_timeout_sec = 15
+startup_timeout_sec = 15.0
 
 [mcp_servers.lldb]
 command = "mcp-language-server"
-args = [ "--workspace", ".", "--lsp", "/opt/homebrew/opt/llvm/bin/lldb-mcp" ]
+args = ["--workspace", ".", "--lsp", "/opt/homebrew/opt/llvm/bin/lldb-mcp"]
 enabled = false
-startup_timeout_sec = 15
+startup_timeout_sec = 15.0
 
 [mcp_servers.lua_ls]
 command = "mcp-language-server"
-args = [ "--workspace", ".", "--lsp", "lua-language-server" ]
+args = ["--workspace", ".", "--lsp", "lua-language-server"]
 enabled = false
-startup_timeout_sec = 16
+startup_timeout_sec = 16.0
 
 [mcp_servers.openaiDeveloperDocs]
 url = "https://developers.openai.com/mcp"
 
 [mcp_servers.protols]
 command = "mcp-language-server"
-args = [ "--workspace", ".", "--lsp", "protols", "--", "--include-paths=/Users/zchee/src/github.com/googleapis/googleapis,/Users/zchee/src/github.com/bufbuild/protovalidate/proto/protovalidate" ]
+args = ["--workspace", ".", "--lsp", "protols", "--", "--include-paths=/Users/zchee/src/github.com/googleapis/googleapis,/Users/zchee/src/github.com/bufbuild/protovalidate/proto/protovalidate"]
 enabled = false
-startup_timeout_sec = 15
+startup_timeout_sec = 15.0
 
 [mcp_servers.rust-analyzer]
 command = "rust-analyzer-mcp"
 enabled = false
-startup_timeout_sec = 15
+startup_timeout_sec = 15.0
 
 [mcp_servers.sequential-thinking]
 command = "mcp-sequential-thinking"
-enabled = true
+enabled = false
 
 [mcp_servers.terraform]
 command = "mcp-language-server"
-args = [ "--workspace", ".", "--lsp", "terraform-ls", "--", "serve", "-req-concurrency=16" ]
+args = ["--workspace", ".", "--lsp", "terraform-ls", "--", "serve", "-req-concurrency=16"]
 enabled = false
-startup_timeout_sec = 15
+startup_timeout_sec = 15.0
 
 [mcp_servers.ts_ls]
 command = "mcp-language-server"
-args = [ "--workspace", ".", "--lsp", "typescript-language-server", "--", "--stdio" ]
+args = ["--workspace", ".", "--lsp", "typescript-language-server", "--", "--stdio"]
 enabled = false
-startup_timeout_sec = 15
+startup_timeout_sec = 15.0
 
 [mcp_servers.zls]
 command = "mcp-language-server"
-args = [ "--workspace", ".", "--lsp", "zls" ]
+args = ["--workspace", ".", "--lsp", "zls"]
 enabled = false
-startup_timeout_sec = 15
+startup_timeout_sec = 15.0
 
 [mcp_servers.pencil]
 command = "/Users/zchee/.pencil/mcp/visual_studio_code_-_insiders/out/mcp-server-darwin-arm64"
-args = [ "--app", "visual_studio_code_-_insiders" ]
+args = ["--app", "visual_studio_code_-_insiders"]
+
+# OMX-owned Codex hook trust state
+# Trusts only setup-managed codex-native-hook.js wrappers.
+[hooks.state."/Users/zchee/.config/codex/hooks.json:post_compact:0:0"]
+trusted_hash = "sha256:1f95e7504219e914bf4170cb1322058227ec456daf8ce732802cf87dc6148a03"
+
+[hooks.state."/Users/zchee/.config/codex/hooks.json:post_tool_use:0:0"]
+trusted_hash = "sha256:ec05a17da65907cbefba092b005c41e98ef42ac7c07eabd830a55dca16e767ac"
+
+[hooks.state."/Users/zchee/.config/codex/hooks.json:pre_compact:0:0"]
+trusted_hash = "sha256:4d089f0e07c3c93906953645f5f5b278df394d139fbe51c94861a851e2ac487f"
+
+[hooks.state."/Users/zchee/.config/codex/hooks.json:pre_tool_use:0:0"]
+trusted_hash = "sha256:d61ac7a65b0ce3577330c88bdc806934688a4edfa0f07447fa95fec997994b12"
+
+[hooks.state."/Users/zchee/.config/codex/hooks.json:session_start:0:0"]
+trusted_hash = "sha256:3f6c5a3f4c05ff4b25e520cc64f6ad38692c6c19c3506ca05330f16ad6d747e9"
+
+[hooks.state."/Users/zchee/.config/codex/hooks.json:stop:0:0"]
+trusted_hash = "sha256:e6527f2378388617eb71360d753176f40e02fa54807f5f310abd8e742beb4274"
+
+[hooks.state."/Users/zchee/.config/codex/hooks.json:user_prompt_submit:0:0"]
+trusted_hash = "sha256:ec918f1f1d37c60a6f017e1045fd7378eea633e34f45536e641fcdf22b8ef0e8"
+# End OMX-owned Codex hook trust state
