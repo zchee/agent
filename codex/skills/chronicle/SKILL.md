@@ -33,7 +33,7 @@ $TMPDIR/chronicle/screen_recording/
          └── frame-<frame_index>-<minute_bucket>Z.jpg - historical privacy-filtered frames from segment start to end
 
 # Memories (persisted indefinitely; referenced in Codex Memories; see original implementation at https://github.com/openai/codex for more info)
-~/.codex/memories_extensions/chronicle/
+~/.codex/memories/extensions/chronicle/
   ├── instructions.md - instructions for how to use the Chronicle memories
   └── resources/
     ├── <utc_timestamp>-<4_alpha_chars>-10min-<slug_description>.md - markdown summary of the last 10 minutes of screen recordings, updated every minute
