@@ -1,5 +1,4 @@
 {
-  "$schema": "https://raw.githubusercontent.com/zchee/schema/refs/heads/main/codex.hooks.schema.json",
   "hooks": {
     "SessionStart": [
       {
@@ -74,5 +73,28 @@
         ]
       }
     ]
+  },
+  "state": {
+    "/Users/zchee/.config/codex/hooks.json:session_start:0:0": {
+      "trusted_hash": "sha256:3f6c5a3f4c05ff4b25e520cc64f6ad38692c6c19c3506ca05330f16ad6d747e9"
+    },
+    "/Users/zchee/.config/codex/hooks.json:pre_tool_use:0:0": {
+      "trusted_hash": "sha256:d61ac7a65b0ce3577330c88bdc806934688a4edfa0f07447fa95fec997994b12"
+    },
+    "/Users/zchee/.config/codex/hooks.json:post_tool_use:0:0": {
+      "trusted_hash": "sha256:ec05a17da65907cbefba092b005c41e98ef42ac7c07eabd830a55dca16e767ac"
+    },
+    "/Users/zchee/.config/codex/hooks.json:user_prompt_submit:0:0": {
+      "trusted_hash": "sha256:ec918f1f1d37c60a6f017e1045fd7378eea633e34f45536e641fcdf22b8ef0e8"
+    },
+    "/Users/zchee/.config/codex/hooks.json:pre_compact:0:0": {
+      "trusted_hash": "sha256:4d089f0e07c3c93906953645f5f5b278df394d139fbe51c94861a851e2ac487f"
+    },
+    "/Users/zchee/.config/codex/hooks.json:post_compact:0:0": {
+      "trusted_hash": "sha256:1f95e7504219e914bf4170cb1322058227ec456daf8ce732802cf87dc6148a03"
+    },
+    "/Users/zchee/.config/codex/hooks.json:stop:0:0": {
+      "trusted_hash": "sha256:e6527f2378388617eb71360d753176f40e02fa54807f5f310abd8e742beb4274"
+    }
   }
 }
