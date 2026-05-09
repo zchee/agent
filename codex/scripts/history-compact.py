@@ -69,8 +69,7 @@ def resolve_path_argument(value: str) -> Path:
 
 
 def default_history_path() -> Path:
-    configured_codex_home = os.environ.get("CODEX_HOME", "").strip()
-    codex_home = configured_codex_home or DEFAULT_CODEX_HOME
+    codex_home = os.environ.get("CODEX_HOME", DEFAULT_CODEX_HOME).strip()
     return resolve_path_argument(codex_home) / "history.jsonl"
 
 
