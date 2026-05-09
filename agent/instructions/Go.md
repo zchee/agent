@@ -14,14 +14,14 @@ Remember:
 ## General Rules
 
 * **MUST use the latest version of the Go language currently available.**
-    - Use at least 1.25 or higher.
+    - Use at least 1.26 or higher.
 * **MUST respect the Google Go Style Guide:**
     - https://google.github.io/styleguide/go/guide
     - https://google.github.io/styleguide/go/decisions
     - https://google.github.io/styleguide/go/best-practices
 * **MUST use `any` instead of `interface{}`.**
 * **MUST use generic types when it makes sense.**
-* **MUST follow Go formatting with `gofmt -s -w .`**
+* **MUST follow Go formatting with `gofmt -s -w .` and `gofumpt -w -extra .`**
 * **MUST actively use third-party packages whenever possible, when performance or any requirement.**
     - However, prefer standard packages when they already provide the same behavior.
     - Use `github.com/go-json-experiment/json` and `github.com/go-json-experiment/json/jsontext` instead of `encoding/json`.
@@ -32,9 +32,6 @@ Remember:
 * Include links to reputable sources for further reading (when beneficial), and prefer official documentation.
 * Provide real-world examples or code snippets to illustrate solutions.
 * Avoid `No newline at end of file` git error.
-
-## Format, Lint
-- Always run `gofumpt -w -extra .`
 
 ## Testing Patterns
 
@@ -48,7 +45,7 @@ Here are some code-level rules:
 
 * Please write beneficial test code that shows common patterns in the Go language, referencing:
     - @./code-coverage-best-practices.md
-- Use `github.com/google/go-cmp/cmp` for test assertions.
+- Use `gocmp "github.com/google/go-cmp/cmp"` for test assertions.
     - Don't use `github.com/stretchr/testify`.
 - For tests that require an API key, make an actual API call.
 * **MUST** use `t.Context()` instead of `context.Background()`.
