@@ -174,6 +174,7 @@ Registered Codex plugin marketplace surfaces supply OMX workflows, prompts, and 
 User-installed skills may still live under `~/.codex/skills`. Setup-owned prompt files and native-agent TOML defaults are intentionally omitted in plugin mode unless explicitly installed.
 
 <guidance_schema_contract>
+
 Canonical guidance schema for this template is defined in `docs/guidance-schema.md`.
 
 Required schema sections and this template's mapping:
@@ -187,9 +188,11 @@ Required schema sections and this template's mapping:
 Keep runtime marker contracts stable and non-destructive when overlays are applied:
 - `<!-- OMX:RUNTIME:START --> ... <!-- OMX:RUNTIME:END -->`
 - `<!-- OMX:TEAM:WORKER:START --> ... <!-- OMX:TEAM:WORKER:END -->`
+
 </guidance_schema_contract>
 
 <operating_principles>
+
 - Solve the task directly when you can do so safely and well.
 - Delegate only when it materially improves quality, speed, or correctness.
 - Keep progress short, concrete, and useful.
@@ -215,18 +218,21 @@ Keep runtime marker contracts stable and non-destructive when overlays are appli
 - Persist with retrieval, inspection, diagnostics, tests, or tool use only while they materially improve correctness, required citations, validation, or safe execution; stop once the core request is answerable with sufficient evidence.
 - More effort does not mean reflexive web/tool escalation; re-evaluate low/medium effort and the smallest useful tool loop before escalating reasoning or retrieval.
 <!-- OMX:GUIDANCE:OPERATING:END -->
+
 </operating_principles>
 
 ## Working agreements
+
 - For cleanup/refactor/deslop work, write a cleanup plan and lock behavior with regression tests before editing when coverage is missing.
 - Prefer deletion, existing utilities, and existing patterns before new abstractions; add dependencies only when explicitly requested.
 - Keep diffs small, reviewable, and reversible.
 - Verify with lint, typecheck, tests, and static analysis after changes; final reports include changed files, simplifications, and remaining risks.
 
-<lore_commit_protocol>
-## Lore Commit Protocol
+<git_commit_protocol>
 
-Every commit message must follow the Lore protocol: a concise decision record using git-native trailers.
+## Git Commit Protocol
+
+Every commit message must follow the Git protocol.
 
 ### Format
 
@@ -235,31 +241,23 @@ Every commit message must follow the Lore protocol: a concise decision record us
 
 <optional concise body: constraints and approach rationale>
 
-Constraint: <external constraint that shaped the decision>
-Rejected: <alternative considered> | <reason for rejection>
-Confidence: <low|medium|high>
-Scope-risk: <narrow|moderate|broad>
-Directive: <forward-looking warning for future modifiers>
-Tested: <what was verified>
-Not-tested: <known gaps in verification>
+Co-authored-by: Codex <noreply@openai.com>
 ```
 
 ### Rules
 
 - Intent line first; describe why, not what.
-- Use trailers only when they add decision context.
-- Use `Rejected:` for alternatives future agents should not re-explore.
-- Use `Directive:` for warnings, `Constraint:` for external forces, and `Not-tested:` for known verification gaps.
-- Teams may introduce domain-specific trailers without breaking compatibility.
 - The 72 Rule
     - 72-character subject line: The subject line of a commit message should be no more than 72 characters long. This is to ensure that the message is concise and easy to read. The subject should provide a brief summary of the changes made in the commit.
     - 72-character body lines: If the commit message includes a body (which is optional but recommended for more detailed explanations), each line in the body should not exceed 72 characters. This helps maintain readability, especially when the commit messages are viewed in the terminal or other tools that may wrap text.
     - All trailers are exempt from this rule.
-</lore_commit_protocol>
+
+</git_commit_protocol>
 
 ---
 
 <delegation_rules>
+
 Default posture: work directly.
 
 Choose the lane before acting:
@@ -274,9 +272,11 @@ For substantive code changes, `executor` is the default implementation role.
 Outside active `team`/`swarm` mode, use `executor` (or another standard role prompt) for implementation work; do not invoke `worker` or spawn Worker-labeled helpers in non-team mode.
 Reserve `worker` strictly for active `team`/`swarm` sessions and team-runtime bootstrap flows.
 Switch modes only for a concrete reason: unresolved ambiguity, coordination load, or a blocked current lane.
+
 </delegation_rules>
 
 <child_agent_protocol>
+
 Leader responsibilities:
 1. Pick the mode and keep the user-facing brief current.
 2. Delegate only bounded, verifiable subtasks with clear ownership.
@@ -296,15 +296,19 @@ Rules:
 - Prefer inheriting the leader model by omitting `spawn_agent.model` unless a task truly requires a different model.
 - Do not hardcode stale frontier-model overrides for Codex native child agents. If an explicit frontier override is necessary, use the current frontier default from `OMX_DEFAULT_FRONTIER_MODEL` / the repo model contract (currently `gpt-5.5`), not older values such as `gpt-5.2`.
 - Prefer role-appropriate `reasoning_effort` over explicit `model` overrides when the only goal is to make a child think harder or lighter.
+
 </child_agent_protocol>
 
 <invocation_conventions>
+
 - `$name` — invoke a workflow skill
 - `/skills` — browse available skills
 - Prefer skill invocation and keyword routing as the primary user-facing workflow surface
+
 </invocation_conventions>
 
 <model_routing>
+
 Match role to task shape:
 - Low complexity: `explore`, `style-reviewer`, `writer`
 - Research/discovery: `explore` for repo lookup, `researcher` for official docs/reference gathering, `dependency-expert` for SDK/API/package evaluation
@@ -312,9 +316,11 @@ Match role to task shape:
 - High complexity: `architect`, `executor`, `critic`
 
 For Codex native child agents, model routing defaults to inheritance/current repo defaults unless the caller has a concrete reason to override it.
+
 </model_routing>
 
 <specialist_routing>
+
 Leader/workflow routing contract:
 <!-- OMX:GUIDANCE:SPECIALIST-ROUTING:START -->
 - Route to `explore` for repo-local file / symbol / pattern / relationship lookup, current implementation discovery, or mapping how this repo currently uses a dependency. `explore` owns facts about this repo, not external docs or dependency recommendations.
@@ -324,11 +330,13 @@ Leader/workflow routing contract:
 - Specialists should report boundary crossings upward instead of silently absorbing adjacent work.
 - When external evidence materially affects the answer, do not keep the leader in the main lane on recall alone; route to the relevant specialist first, then return to planning or execution.
 <!-- OMX:GUIDANCE:SPECIALIST-ROUTING:END -->
+
 </specialist_routing>
 
 ---
 
 <agent_catalog>
+
 Key roles: `explore` (repo search/mapping), `planner` (plans/sequencing), `architect` (read-only design/diagnosis), `debugger` (root cause), `executor` (implementation/refactoring), and `verifier` (completion evidence).
 
 Research/discovery specialists:
@@ -337,11 +345,13 @@ Research/discovery specialists:
 - `dependency-expert` — SDK/API/package evaluation before adopting or changing dependencies
 
 Specialists remain available through the role catalog and native child-agent surfaces when the task clearly benefits from them.
+
 </agent_catalog>
 
 ---
 
 <keyword_detection>
+
 Keyword routing is implemented primarily by native `UserPromptSubmit` hooks and the generated keyword registry. Treat hook-injected routing context as authoritative for the current turn, then load the named `SKILL.md` or prompt file as instructed.
 
 Fallback behavior when hook context is unavailable:
@@ -356,6 +366,7 @@ Runtime availability gate:
 - When deep-interview is active in attached-tmux OMX CLI/runtime, ask each interview round via `omx question` as a temporary popup-style renderer over the leader pane; after launching `omx question` in a background terminal, wait for that terminal to finish and read the JSON answer before continuing; preserve the leader pane with `OMX_QUESTION_RETURN_PANE=$TMUX_PANE` (or an explicit `%pane` value) when invoking it through Bash/tool paths, prefer `answers[0].answer` / `answers[]` from the response and use legacy `answer` only as fallback, and respect Stop-hook blocking while a deep-interview question obligation is pending. Deep-interview remains one question per round; do not batch multiple interview rounds into one `questions[]` form. Outside tmux or native surfaces that cannot render `omx question` should use the native structured question path when available, otherwise ask exactly one concise plain-text question and wait for the answer.
 
 <triage_routing>
+
 ## Triage: advisory prompt-routing context
 
 The keyword detector is the first and deterministic routing surface. Triage runs only when no keyword matches.
@@ -367,29 +378,36 @@ Note: `explore`, `executor`, `designer`, and `researcher` are agent role-prompt 
 Explicit keywords remain the deterministic control surface when you want explicit, guaranteed routing — use them whenever exact behavior matters.
 
 To opt out per prompt with phrases such as `no workflow`, `just chat`, or `plain answer` — the triage layer will suppress context injection for that prompt.
+
 </triage_routing>
 
 Ralph / Ralplan execution gate:
 - Enforce **ralplan-first** when ralph is active and planning is not complete.
 - Planning is complete only after both `.omx/plans/prd-*.md` and `.omx/plans/test-spec-*.md` exist.
 - Until complete, do not begin implementation or execute implementation-focused tools.
+
 </keyword_detection>
 
 ---
 
 <skills>
+
 Skills are workflow commands. Core workflows include `autopilot`, `ralph`, `ultrawork`, `visual-verdict`, `visual-ralph`, `ecomode`, `team`, `swarm`, `ultraqa`, `plan`, `deep-interview`, and `ralplan`; utilities include `cancel`, `note`, `doctor`, `help`, and `trace`.
+
 </skills>
 
 ---
 
 <team_compositions>
+
 Use explicit team orchestration for feature development, bug investigation, code review, UX audit, and similar multi-lane work when coordination value outweighs overhead.
+
 </team_compositions>
 
 ---
 
 <team_pipeline>
+
 Team mode is the structured multi-agent surface.
 Canonical pipeline:
 `team-plan -> team-prd -> team-exec -> team-verify -> team-fix (loop)`
@@ -399,11 +417,13 @@ Terminal states: `complete`, `failed`, `cancelled`.
 
 After teams mode, organize each worker's `omx(team): auto-checkpoint ...` commits by task context.
 If file changes are different contexts, do commit split.
+
 </team_pipeline>
 
 ---
 
 <team_model_resolution>
+
 Team/Swarm workers currently share one `agentType` and one launch-arg set.
 Model precedence:
 1. Explicit model in `OMX_TEAM_WORKER_LAUNCH_ARGS`
@@ -412,6 +432,7 @@ Model precedence:
 
 Normalize model flags to one canonical `--model <value>` entry.
 Do not guess frontier/spark defaults from model-family recency; use `OMX_DEFAULT_FRONTIER_MODEL` and `OMX_DEFAULT_SPARK_MODEL`.
+
 </team_model_resolution>
 
 <!-- OMX:MODELS:START -->
@@ -422,31 +443,32 @@ Auto-generated by `omx setup` from the current `config.toml` plus OMX model over
 | Role | Model | Reasoning Effort | Use Case |
 | --- | --- | --- | --- |
 | Frontier (leader) | `gpt-5.5` | xhigh | Primary leader/orchestrator for planning, coordination, and frontier-class reasoning. |
-| Spark (explorer/fast) | `gpt-5.3-codex-spark` | high | Fast triage, explore, lightweight synthesis, and high-latency routing. |
-| Standard (subagent default) | `gpt-5.5` | xhigh | Default standard-capability model for installable specialists and secondary worker lanes unless a role is explicitly frontier or spark. |
-| `explore` | `gpt-5.3-codex-spark` | high | Fast codebase search and file/symbol mapping (fast-lane, fast) |
-| `analyst` | `gpt-5.5` | high | Requirements clarity, acceptance criteria, hidden constraints (frontier-orchestrator, frontier) |
-| `planner` | `gpt-5.5` | high | Task sequencing, execution plans, risk flags (frontier-orchestrator, frontier) |
+| Spark (explorer/fast) | `gpt-5.3-codex-spark` | low | Fast triage, explore, lightweight synthesis, and low-latency routing. |
+| Standard (subagent default) | `gpt-5.5` | high | Default standard-capability model for installable specialists and secondary worker lanes unless a role is explicitly frontier or spark. |
+| `explore` | `gpt-5.3-codex-spark` | low | Fast codebase search and file/symbol mapping (fast-lane, fast) |
+| `analyst` | `gpt-5.5` | medium | Requirements clarity, acceptance criteria, hidden constraints (frontier-orchestrator, frontier) |
+| `planner` | `gpt-5.5` | medium | Task sequencing, execution plans, risk flags (frontier-orchestrator, frontier) |
 | `architect` | `gpt-5.5` | xhigh | System design, boundaries, interfaces, long-horizon tradeoffs (frontier-orchestrator, frontier) |
-| `debugger` | `gpt-5.5` | xhigh | Root-cause analysis, regression isolation, failure diagnosis (deep-worker, standard) |
-| `executor` | `gpt-5.5` | high | Code implementation, refactoring, feature work (deep-worker, standard) |
-| `team-executor` | `gpt-5.5` | high | Supervised team execution for conservative delivery lanes (deep-worker, frontier) |
-| `verifier` | `gpt-5.5` | xhigh | Completion evidence, claim validation, test adequacy (frontier-orchestrator, standard) |
+| `debugger` | `gpt-5.5` | high | Root-cause analysis, regression isolation, failure diagnosis (deep-worker, standard) |
+| `executor` | `gpt-5.5` | medium | Code implementation, refactoring, feature work (deep-worker, standard) |
+| `team-executor` | `gpt-5.5` | medium | Supervised team execution for conservative delivery lanes (deep-worker, frontier) |
+| `verifier` | `gpt-5.5` | high | Completion evidence, claim validation, test adequacy (frontier-orchestrator, standard) |
 | `code-reviewer` | `gpt-5.5` | xhigh | Comprehensive review across all concerns (frontier-orchestrator, frontier) |
-| `dependency-expert` | `gpt-5.5` | xhigh | External SDK/API/package evaluation (frontier-orchestrator, standard) |
-| `test-engineer` | `gpt-5.5` | high | Test strategy, coverage, flaky-test hardening (deep-worker, frontier) |
-| `designer` | `gpt-5.5` | xhigh | UX/UI architecture, interaction design (deep-worker, standard) |
-| `writer` | `gpt-5.5` | xhigh | Documentation, migration notes, user guidance (fast-lane, standard) |
-| `git-master` | `gpt-5.5` | xhigh | Commit strategy, history hygiene, rebasing (deep-worker, standard) |
+| `dependency-expert` | `gpt-5.5` | high | External SDK/API/package evaluation (frontier-orchestrator, standard) |
+| `test-engineer` | `gpt-5.5` | medium | Test strategy, coverage, flaky-test hardening (deep-worker, frontier) |
+| `designer` | `gpt-5.5` | high | UX/UI architecture, interaction design (deep-worker, standard) |
+| `writer` | `gpt-5.5` | high | Documentation, migration notes, user guidance (fast-lane, standard) |
+| `git-master` | `gpt-5.5` | high | Commit strategy, history hygiene, rebasing (deep-worker, standard) |
 | `code-simplifier` | `gpt-5.5` | xhigh | Simplifies recently modified code for clarity and consistency without changing behavior (deep-worker, frontier) |
-| `researcher` | `gpt-5.5` | xhigh | External documentation and reference research (fast-lane, standard) |
+| `researcher` | `gpt-5.5` | high | External documentation and reference research (fast-lane, standard) |
 | `critic` | `gpt-5.5` | xhigh | Plan/design critical challenge and review (frontier-orchestrator, frontier) |
-| `vision` | `gpt-5.5` | high | Image/screenshot/diagram analysis (fast-lane, frontier) |
+| `vision` | `gpt-5.5` | low | Image/screenshot/diagram analysis (fast-lane, frontier) |
 <!-- OMX:MODELS:END -->
 
 ---
 
 <verification>
+
 Verify before claiming completion.
 
 Sizing guidance:
@@ -462,9 +484,11 @@ Verification loop: define the claim and success criteria, run the smallest valid
 - For coding work, prefer targeted tests for changed behavior, then typecheck/lint/build/smoke checks when applicable; do not claim completion without fresh evidence or an explicit validation gap.
 - When correctness depends on retrieval, diagnostics, tests, or other tools, continue only until the task is grounded and verified; avoid extra loops that only improve phrasing or gather nonessential evidence.
 <!-- OMX:GUIDANCE:VERIFYSEQ:END -->
+
 </verification>
 
 <execution_protocols>
+
 Mode selection: use `$deep-interview` for unclear intent/boundaries; `$ralplan` for consensus on architecture, tradeoffs, or tests; `$team` for approved multi-lane work; `$ralph` for persistent single-owner completion/verification loops; otherwise execute directly in solo mode. Switch modes only when evidence shows the current lane is mismatched or blocked.
 
 Command routing:
@@ -508,17 +532,21 @@ Before concluding, confirm: no pending work, features working, tests passing, ze
 
 Ralph planning gate:
 If ralph is active, verify PRD + test spec artifacts exist before implementation work.
+
 </execution_protocols>
 
 <cancellation>
+
 Use the `cancel` skill to end execution modes.
 Cancel when work is done and verified, when the user says stop, or when a hard blocker prevents meaningful progress.
 Do not cancel while recoverable work remains.
+
 </cancellation>
 
 ---
 
 <state_management>
+
 Hooks own normal skill-active and workflow-state persistence under `.omx/state/`.
 
 OMX persists runtime state under `.omx/`:
@@ -532,6 +560,7 @@ Available MCP groups include state/memory tools, code-intel tools, and trace too
 
 Agents may use OMX state/MCP tools for explicit lifecycle transitions, recovery, checkpointing, cancellation cleanup, or compaction resilience.
 Do not manually duplicate hook-owned activation state unless recovering from missing or stale state.
+
 </state_management>
 
 ---
