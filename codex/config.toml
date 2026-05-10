@@ -26,7 +26,7 @@ include_permissions_instructions = true
 include_apps_instructions = true
 include_environment_context = true
 personality = "pragmatic"
-service_tier = "priority"
+service_tier = "ultrafast"
 developer_instructions = "You have oh-my-codex installed through Codex plugin mode. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing and $name workflow invocation. Registered Codex plugin marketplace surfaces supply OMX workflows, prompts, and native-agent roles when the plugin is installed. User-installed skills may still live under ~/.codex/skills. Setup-owned prompt files and native-agent TOML defaults are intentionally omitted unless explicitly installed. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail."
 
 notify = ["/Users/zchee/src/github.com/zchee/agent/codex/plugins/cache/openai-bundled/computer-use/1.0.750/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
@@ -163,7 +163,6 @@ remote_plugin = true
 external_migration = false
 skill_env_var_dependency_prompt = true
 default_mode_request_user_input = true
-goals = true
 auth_elicitation = true
 realtime_conversation = true
 remote_control = true
@@ -171,6 +170,8 @@ prevent_idle_sleep = true
 workspace_owner_usage_nudge = true
 responses_websocket_response_processed = true
 remote_compaction_v2 = false
+hooks = true
+goals = true
 
 [features.multi_agent_v2]
 enabled = true
@@ -208,7 +209,7 @@ source_type = "local"
 source = "/Users/zchee/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.memsearch-plugins]
-last_updated = "2026-05-09T16:57:49Z"
+last_updated = "2026-05-10T01:53:40Z"
 last_revision = "70cf8ab870cb3832f596c61c9495b7a77b497fe0"
 source_type = "git"
 source = "https://github.com/zilliztech/memsearch.git"
@@ -216,36 +217,6 @@ source = "https://github.com/zilliztech/memsearch.git"
 [marketplaces.oh-my-codex-local]
 source_type = "local"
 source = "/opt/local/var/bun/install/global/node_modules/oh-my-codex"
-
-[plugins."browser-use@openai-bundled"]
-enabled = true
-
-[plugins."chrome@openai-bundled"]
-enabled = true
-
-[plugins."computer-use@openai-bundled"]
-enabled = true
-
-[plugins."figma@openai-curated"]
-enabled = false
-
-[plugins."build-ios-apps@openai-curated"]
-enabled = false
-
-[plugins."build-macos-apps@openai-curated"]
-enabled = false
-
-[plugins."github@openai-curated"]
-enabled = true
-
-[plugins."superpowers@openai-curated"]
-enabled = false
-
-[plugins."cloudflare@openai-curated"]
-enabled = false
-
-[plugins."plugin-eval@openai-curated"]
-enabled = true
 
 [plugins."documents@openai-primary-runtime"]
 enabled = false
@@ -256,11 +227,54 @@ enabled = false
 [plugins."presentations@openai-primary-runtime"]
 enabled = false
 
+[plugins."browser-use@openai-bundled"]
+enabled = false
+
+[plugins."computer-use@openai-bundled"]
+enabled = true
+
+[plugins."figma@openai-curated"]
+enabled = false
+
+[plugins."plugin-eval@openai-curated"]
+enabled = true
+
+[plugins."build-ios-apps@openai-curated"]
+enabled = false
+
+[plugins."build-macos-apps@openai-curated"]
+enabled = false
+
+[plugins."github@openai-curated"]
+enabled = false
+
+[plugins."cloudflare@openai-curated"]
+enabled = false
+
+[plugins."superpowers@openai-curated"]
+enabled = false
+
 [plugins."memsearch@memsearch-plugins"]
 enabled = false
 
 [plugins."oh-my-codex@oh-my-codex-local"]
 enabled = true
+
+[[skills.config]]
+path = "/Users/zchee/src/github.com/zchee/agent/codex/skills/execplan/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/zchee/src/github.com/zchee/agent/codex/skills/cli-creator/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/zchee/src/github.com/zchee/agent/codex/skills/exa-codesearch/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/zchee/src/github.com/zchee/agent/codex/skills/exa-research-paper/SKILL.md"
+enabled = false
 
 [mcp_servers.alphaxiv]
 url = "https://api.alphaxiv.org/mcp/v1"
@@ -581,27 +595,3 @@ startup_timeout_sec = 15.0
 [mcp_servers.pencil]
 command = "/Users/zchee/.pencil/mcp/visual_studio_code_-_insiders/out/mcp-server-darwin-arm64"
 args = ["--app", "visual_studio_code_-_insiders"]
-
-# OMX-owned Codex hook trust state
-# Trusts only setup-managed codex-native-hook.js wrappers.
-[hooks.state."/Users/zchee/.config/codex/hooks.json:post_compact:0:0"]
-trusted_hash = "sha256:1f95e7504219e914bf4170cb1322058227ec456daf8ce732802cf87dc6148a03"
-
-[hooks.state."/Users/zchee/.config/codex/hooks.json:post_tool_use:0:0"]
-trusted_hash = "sha256:ec05a17da65907cbefba092b005c41e98ef42ac7c07eabd830a55dca16e767ac"
-
-[hooks.state."/Users/zchee/.config/codex/hooks.json:pre_compact:0:0"]
-trusted_hash = "sha256:4d089f0e07c3c93906953645f5f5b278df394d139fbe51c94861a851e2ac487f"
-
-[hooks.state."/Users/zchee/.config/codex/hooks.json:pre_tool_use:0:0"]
-trusted_hash = "sha256:d61ac7a65b0ce3577330c88bdc806934688a4edfa0f07447fa95fec997994b12"
-
-[hooks.state."/Users/zchee/.config/codex/hooks.json:session_start:0:0"]
-trusted_hash = "sha256:3f6c5a3f4c05ff4b25e520cc64f6ad38692c6c19c3506ca05330f16ad6d747e9"
-
-[hooks.state."/Users/zchee/.config/codex/hooks.json:stop:0:0"]
-trusted_hash = "sha256:e6527f2378388617eb71360d753176f40e02fa54807f5f310abd8e742beb4274"
-
-[hooks.state."/Users/zchee/.config/codex/hooks.json:user_prompt_submit:0:0"]
-trusted_hash = "sha256:ec918f1f1d37c60a6f017e1045fd7378eea633e34f45536e641fcdf22b8ef0e8"
-# End OMX-owned Codex hook trust state
