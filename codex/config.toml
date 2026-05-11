@@ -29,10 +29,7 @@ include_environment_context = true
 personality = "pragmatic"
 service_tier = "fast"
 developer_instructions = "You have oh-my-codex installed through Codex plugin mode. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing and $name workflow invocation. Registered Codex plugin marketplace surfaces supply OMX workflows, prompts, and native-agent roles when the plugin is installed. User-installed skills may still live under ~/.codex/skills. Setup-owned prompt files and native-agent TOML defaults are intentionally omitted unless explicitly installed. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail."
-notify = [
-  "/Users/zchee/src/github.com/zchee/agent/codex/plugins/cache/openai-bundled/computer-use/1.0.750/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient",
-  "turn-ended"
-]
+notify = ["/Users/zchee/src/github.com/zchee/agent/codex/plugins/cache/openai-bundled/computer-use/1.0.750/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 
 [model_providers.oai]
 name = "openai"
@@ -98,7 +95,7 @@ type = "conversational"
 
 [shell_environment_policy]
 inherit = "core"
-# set = { OMX_LORE_COMMIT_GUARD = "false" }
+set = { OMX_LORE_COMMIT_GUARD = "false" }
 ignore_default_excludes = false
 experimental_use_profile = false
 
@@ -263,6 +260,21 @@ enabled = false
 enabled = false
 
 [plugins."oh-my-codex@oh-my-codex-local"]
+enabled = true
+
+[plugins."oh-my-codex@oh-my-codex-local".mcp_servers.omx_state]
+enabled = true
+
+[plugins."oh-my-codex@oh-my-codex-local".mcp_servers.omx_memory]
+enabled = true
+
+[plugins."oh-my-codex@oh-my-codex-local".mcp_servers.omx_code_intel]
+enabled = true
+
+[plugins."oh-my-codex@oh-my-codex-local".mcp_servers.omx_trace]
+enabled = true
+
+[plugins."oh-my-codex@oh-my-codex-local".mcp_servers.omx_wiki]
 enabled = true
 
 [plugins."tracing@langsmith-codex-plugins"]
