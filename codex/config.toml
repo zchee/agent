@@ -1,6 +1,5 @@
 model = "gpt-5.5"
 review_model = "gpt-5.5"
-model_reasoning_effort = "high"
 model_context_window = 250000
 model_auto_compact_token_limit = 200000
 approval_policy = "never"
@@ -8,7 +7,7 @@ tool_output_token_limit = 40000
 project_doc_max_bytes = 46080
 project_doc_fallback_filenames = ["AGENTS.md", "CLAUDE.md", "GEMINI.md"]
 zsh_path = "/opt/homebrew/bin/zsh"
-allow_login_shell = false
+allow_login_shell = true
 hide_agent_reasoning = false
 show_raw_agent_reasoning = true
 model_reasoning_summary = "detailed"
@@ -29,7 +28,10 @@ include_environment_context = true
 personality = "pragmatic"
 service_tier = "fast"
 developer_instructions = "You have oh-my-codex installed through Codex plugin mode. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing and $name workflow invocation. Registered Codex plugin marketplace surfaces supply OMX workflows, prompts, and native-agent roles when the plugin is installed. User-installed skills may still live under ~/.codex/skills. Setup-owned prompt files and native-agent TOML defaults are intentionally omitted unless explicitly installed. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail."
-notify = ["/Users/zchee/src/github.com/zchee/agent/codex/plugins/cache/openai-bundled/computer-use/1.0.750/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+notify = [
+  "/Users/zchee/src/github.com/zchee/agent/codex/plugins/cache/openai-bundled/computer-use/1.0.750/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient",
+  "turn-ended"
+]
 
 [model_providers.oai]
 name = "openai"
@@ -111,7 +113,17 @@ animations = true
 alternate_screen = "always"
 show_tooltips = true
 # https://github.com/openai/codex/blob/main/codex-rs/tui/src/bottom_pane/status_line_setup.rs
-status_line = ["model-with-reasoning", "git-branch", "current-dir", "context-remaining", "total-input-tokens", "total-output-tokens", "context-window-size", "five-hour-limit", "weekly-limit"]
+status_line = [
+  "model-with-reasoning",
+  "git-branch",
+  "current-dir",
+  "context-remaining",
+  "total-input-tokens",
+  "total-output-tokens",
+  "context-window-size",
+  "five-hour-limit",
+  "weekly-limit"
+]
 status_line_use_colors = true
 
 [tui.model_availability_nux]
@@ -205,8 +217,8 @@ source_type = "local"
 source = "/Users/zchee/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.memsearch-plugins]
-last_updated = "2026-05-10T22:41:05Z"
-last_revision = "70cf8ab870cb3832f596c61c9495b7a77b497fe0"
+last_updated = "2026-05-11T16:25:02Z"
+last_revision = "03b0d0263aea22efc378591a1e021c92193a2398"
 source_type = "git"
 source = "https://github.com/zilliztech/memsearch.git"
 
@@ -275,6 +287,9 @@ enabled = true
 enabled = true
 
 [plugins."oh-my-codex@oh-my-codex-local".mcp_servers.omx_wiki]
+enabled = true
+
+[plugins."oh-my-codex@oh-my-codex-local".mcp_servers.omx_hermes]
 enabled = true
 
 [plugins."tracing@langsmith-codex-plugins"]
@@ -391,8 +406,15 @@ enabled = false
 
 [mcp_servers.filesystem]
 command = "npx"
-args = ["-y", "@modelcontextprotocol/server-filesystem@latest", "/Users/zchee/go", "/Users/zchee/src", "/Users/zchee/Downloads", "/opt"]
-startup_timeout_sec = 15
+args = [
+  "-y",
+  "@modelcontextprotocol/server-filesystem@latest",
+  "/Users/zchee/go",
+  "/Users/zchee/src",
+  "/Users/zchee/Downloads",
+  "/opt"
+]
+startup_timeout_sec = 30
 
 [mcp_servers.filesystem.tools.write_file]
 approval_mode = "approve"
@@ -403,182 +425,180 @@ args = ["-y", "@google-cloud/gcloud-mcp@latest"]
 enabled = false
 startup_timeout_sec = 15
 
+[mcp_servers.google-developer-knowledge]
+url = "https://developerknowledge.googleapis.com/mcp"
+enabled = false
+
+[mcp_servers.google-developer-knowledge.env_http_headers]
+X-Goog-Api-Key = "GOOGLE_CLOUD_MCP_SERVER_API_KEY"
+
 [mcp_servers.google-gcp-aiplatform]
 url = "https://aiplatform.googleapis.com/mcp/generate"
 enabled = false
 
-[mcp_servers.google-gcp-aiplatform.http_headers]
-X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+[mcp_servers.google-gcp-aiplatform.env_http_headers]
+X-Goog-Api-Key = "GOOGLE_CLOUD_MCP_SERVER_API_KEY"
 
 [mcp_servers.google-gcp-apihub]
 url = "https://apihub.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.google-gcp-apihub.http_headers]
-X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+[mcp_servers.google-gcp-apihub.env_http_headers]
+X-Goog-Api-Key = "GOOGLE_CLOUD_MCP_SERVER_API_KEY"
 
 [mcp_servers.google-gcp-bigquery]
 url = "https://bigquery.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.google-gcp-bigquery.http_headers]
-X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+[mcp_servers.google-gcp-bigquery.env_http_headers]
+X-Goog-Api-Key = "GOOGLE_CLOUD_MCP_SERVER_API_KEY"
 
 [mcp_servers.google-gcp-bigquerydatatransfer]
 url = "https://bigquerydatatransfer.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.google-gcp-bigquerydatatransfer.http_headers]
-X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+[mcp_servers.google-gcp-bigquerydatatransfer.env_http_headers]
+X-Goog-Api-Key = "GOOGLE_CLOUD_MCP_SERVER_API_KEY"
 
 [mcp_servers.google-gcp-bigquerymigration]
 url = "https://bigquerymigration.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.google-gcp-bigquerymigration.http_headers]
-X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+[mcp_servers.google-gcp-bigquerymigration.env_http_headers]
+X-Goog-Api-Key = "GOOGLE_CLOUD_MCP_SERVER_API_KEY"
 
 [mcp_servers.google-gcp-cloudresourcemanager]
 url = "https://cloudresourcemanager.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.google-gcp-cloudresourcemanager.http_headers]
-X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+[mcp_servers.google-gcp-cloudresourcemanager.env_http_headers]
+X-Goog-Api-Key = "GOOGLE_CLOUD_MCP_SERVER_API_KEY"
 
 [mcp_servers.google-gcp-cloudtrace]
 url = "https://cloudtrace.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.google-gcp-cloudtrace.http_headers]
-X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+[mcp_servers.google-gcp-cloudtrace.env_http_headers]
+X-Goog-Api-Key = "GOOGLE_CLOUD_MCP_SERVER_API_KEY"
 
 [mcp_servers.google-gcp-compute]
 url = "https://compute.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.google-gcp-compute.http_headers]
-X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+[mcp_servers.google-gcp-compute.env_http_headers]
+X-Goog-Api-Key = "GOOGLE_CLOUD_MCP_SERVER_API_KEY"
 
 [mcp_servers.google-gcp-container]
 url = "https://container.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.google-gcp-container.http_headers]
-X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+[mcp_servers.google-gcp-container.env_http_headers]
+X-Goog-Api-Key = "GOOGLE_CLOUD_MCP_SERVER_API_KEY"
 
 [mcp_servers.google-gcp-dataplex]
 url = "https://dataplex.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.google-gcp-dataplex.http_headers]
-X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+[mcp_servers.google-gcp-dataplex.env_http_headers]
+X-Goog-Api-Key = "GOOGLE_CLOUD_MCP_SERVER_API_KEY"
 
 [mcp_servers.google-gcp-dataproc]
 url = "https://dataproc.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.google-gcp-dataproc.http_headers]
-X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+[mcp_servers.google-gcp-dataproc.env_http_headers]
+X-Goog-Api-Key = "GOOGLE_CLOUD_MCP_SERVER_API_KEY"
 
 [mcp_servers.google-gcp-datastream]
 url = "https://datastream.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.google-gcp-datastream.http_headers]
-X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+[mcp_servers.google-gcp-datastream.env_http_headers]
+X-Goog-Api-Key = "GOOGLE_CLOUD_MCP_SERVER_API_KEY"
 
 [mcp_servers.google-gcp-discoveryengine]
 url = "https://discoveryengine.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.google-gcp-discoveryengine.http_headers]
-X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+[mcp_servers.google-gcp-discoveryengine.env_http_headers]
+X-Goog-Api-Key = "GOOGLE_CLOUD_MCP_SERVER_API_KEY"
 
 [mcp_servers.google-gcp-firestore]
 url = "https://firestore.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.google-gcp-firestore.http_headers]
-X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+[mcp_servers.google-gcp-firestore.env_http_headers]
+X-Goog-Api-Key = "GOOGLE_CLOUD_MCP_SERVER_API_KEY"
 
 [mcp_servers.google-gcp-geminicloudassist]
 url = "https://geminicloudassist.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.google-gcp-geminicloudassist.http_headers]
-X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+[mcp_servers.google-gcp-geminicloudassist.env_http_headers]
+X-Goog-Api-Key = "GOOGLE_CLOUD_MCP_SERVER_API_KEY"
 
 [mcp_servers.google-gcp-logging]
 url = "https://logging.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.google-gcp-logging.http_headers]
-X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+[mcp_servers.google-gcp-logging.env_http_headers]
+X-Goog-Api-Key = "GOOGLE_CLOUD_MCP_SERVER_API_KEY"
 
 [mcp_servers.google-gcp-monitoring]
 url = "https://monitoring.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.google-gcp-monitoring.http_headers]
-X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+[mcp_servers.google-gcp-monitoring.env_http_headers]
+X-Goog-Api-Key = "GOOGLE_CLOUD_MCP_SERVER_API_KEY"
 
 [mcp_servers.google-gcp-pubsub]
 url = "https://pubsub.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.google-gcp-pubsub.http_headers]
-X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+[mcp_servers.google-gcp-pubsub.env_http_headers]
+X-Goog-Api-Key = "GOOGLE_CLOUD_MCP_SERVER_API_KEY"
 
 [mcp_servers.google-gcp-run]
 url = "https://run.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.google-gcp-run.http_headers]
-X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+[mcp_servers.google-gcp-run.env_http_headers]
+X-Goog-Api-Key = "GOOGLE_CLOUD_MCP_SERVER_API_KEY"
 
 [mcp_servers.google-gcp-spanner]
 url = "https://spanner.googleapis.com/mcp"
 enabled = false
-
-[mcp_servers.google-gcp-spanner.http_headers]
-X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+bearer_token_env_var = "GCLOUD_ACCESS_TOKEN"
 
 [mcp_servers.google-gcp-sqladmin]
 url = "https://sqladmin.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.google-gcp-sqladmin.http_headers]
-X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+[mcp_servers.google-gcp-sqladmin.env_http_headers]
+X-Goog-Api-Key = "GOOGLE_CLOUD_MCP_SERVER_API_KEY"
 
 [mcp_servers.google-gcp-stitch]
 url = "https://stitch.googleapis.com/mcp"
 enabled = false
 
-[mcp_servers.google-gcp-stitch.http_headers]
-X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+[mcp_servers.google-gcp-stitch.env_http_headers]
+X-Goog-Api-Key = "GOOGLE_CLOUD_MCP_SERVER_API_KEY"
 
 [mcp_servers.google-gcp-storage]
 url = "https://storage.googleapis.com/storage/mcp"
 enabled = false
 
-[mcp_servers.google-gcp-storage.http_headers]
-X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
+[mcp_servers.google-gcp-storage.env_http_headers]
+X-Goog-Api-Key = "GOOGLE_CLOUD_MCP_SERVER_API_KEY"
 
 [mcp_servers.google-gemini-search]
 command = "mcp-gemini-google-search"
 
 [mcp_servers.google-gemini-search.env]
-GEMINI_MODEL = "deep-research-max-preview-04-2026"
+GEMINI_MODEL = "gemini-3.1-flash-lite"
 GEMINI_PROVIDER = "vertex"
 VERTEX_LOCATION = "global"
 VERTEX_PROJECT_ID = "gaudiy-ai"
-
-[mcp_servers.google-developer-knowledge]
-url = "https://developerknowledge.googleapis.com/mcp"
-enabled = false
-
-[mcp_servers.google-developer-knowledge.http_headers]
-X-Goog-Api-Key = "${GOOGLE_CLOUD_MCP_SERVER_API_KEY}"
 
 [mcp_servers.gopls]
 command = "gopls"
@@ -609,12 +629,6 @@ startup_timeout_sec = 16
 [mcp_servers.openaiDeveloperDocs]
 url = "https://developers.openai.com/mcp"
 
-[mcp_servers.protols]
-command = "mcp-language-server"
-args = ["--workspace", ".", "--lsp", "protols", "--", "--include-paths=/Users/zchee/src/github.com/googleapis/googleapis,/Users/zchee/src/github.com/bufbuild/protovalidate/proto/protovalidate"]
-enabled = false
-startup_timeout_sec = 15
-
 [mcp_servers.rust-analyzer]
 command = "rust-analyzer-mcp"
 enabled = false
@@ -623,6 +637,12 @@ startup_timeout_sec = 15
 [mcp_servers.sequential-thinking]
 command = "mcp-sequential-thinking"
 enabled = false
+
+[mcp_servers.helm]
+command = "mcp-language-server"
+args = ["--workspace", ".", "--lsp", "helm_ls", "--", "serve", "--stdio"]
+enabled = false
+startup_timeout_sec = 15
 
 [mcp_servers.terraform]
 command = "mcp-language-server"
@@ -645,3 +665,4 @@ startup_timeout_sec = 15
 [mcp_servers.pencil]
 command = "/Users/zchee/.pencil/mcp/visual_studio_code_-_insiders/out/mcp-server-darwin-arm64"
 args = ["--app", "visual_studio_code_-_insiders"]
+
