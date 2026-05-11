@@ -2,7 +2,25 @@
   "hooks": {
     "SessionStart": [
       {
-        "matcher": "startup|resume|clear",
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/opt/homebrew/opt/node/bin/node\" \"/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/codex-native-hook.js\""
+          }
+        ]
+      },
+      {
+        "matcher": "resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/opt/homebrew/opt/node/bin/node\" \"/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/codex-native-hook.js\""
+          }
+        ]
+      },
+      {
+        "matcher": "clear",
         "hooks": [
           {
             "type": "command",
@@ -76,7 +94,7 @@
   },
   "state": {
     "/Users/zchee/.config/codex/hooks.json:session_start:0:0": {
-      "trusted_hash": "sha256:3f6c5a3f4c05ff4b25e520cc64f6ad38692c6c19c3506ca05330f16ad6d747e9"
+      "trusted_hash": "sha256:5c417f760725c0b7d18b08c6446f823031113b6d6346bf6d2435aec95510c348"
     },
     "/Users/zchee/.config/codex/hooks.json:pre_tool_use:0:0": {
       "trusted_hash": "sha256:d61ac7a65b0ce3577330c88bdc806934688a4edfa0f07447fa95fec997994b12"
