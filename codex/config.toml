@@ -1,7 +1,7 @@
 model = "gpt-5.5"
 review_model = "gpt-5.5"
-model_context_window = 250000
-model_auto_compact_token_limit = 200000
+model_context_window = 500000
+model_auto_compact_token_limit = 450000
 approval_policy = "never"
 tool_output_token_limit = 40000
 project_doc_max_bytes = 46080
@@ -58,12 +58,12 @@ env_key = "XAI_API_KEY"
 [profiles.oai]
 model_provider = "oai"
 model = "gpt-5.5-pro"
-service_tier = "priority"
+service_tier = "fast"
 
 [profiles.proxy]
 model_provider = "codex-responses-api-proxy"
 model = "gpt-5.5-pro"
-service_tier = "priority"
+service_tier = "fast"
 
 [profiles.openrouter]
 model_provider = "openrouter"
@@ -97,9 +97,11 @@ type = "conversational"
 
 [shell_environment_policy]
 inherit = "core"
-set = { OMX_LORE_COMMIT_GUARD = "false" }
-ignore_default_excludes = false
+ignore_default_excludes = true
 experimental_use_profile = false
+
+[shell_environment_policy.set]
+OMX_LORE_COMMIT_GUARD = "0"
 
 [history]
 persistence = "save-all"
@@ -129,9 +131,6 @@ status_line_use_colors = true
 [tui.model_availability_nux]
 "gpt-5.5" = 4
 
-[tools]
-view_image = true
-
 [tools.web_search]
 context_size = "high"
 
@@ -157,11 +156,11 @@ codex_git_commit = true
 runtime_metrics = true
 memories = true
 chronicle = true
-builtin_mcp = true
 child_agents_md = true
 apply_patch_streaming_events = true
 exec_permission_approvals = true
 request_permissions_tool = true
+network_proxy = true
 enable_fanout = true
 enable_mcp_apps = true
 apps_mcp_path_override = true
@@ -170,6 +169,7 @@ plugin_hooks = true
 remote_plugin = true
 external_migration = false
 skill_env_var_dependency_prompt = true
+mentions_v2 = true
 default_mode_request_user_input = true
 auth_elicitation = true
 realtime_conversation = true
@@ -198,6 +198,7 @@ hide_full_access_warning = true
 hide_gpt5_1_migration_prompt = true
 hide_rate_limit_model_nudge = false
 hide_world_writable_warning = false
+fast_default_opt_out = true
 
 [notice.external_config_migration_prompts]
 home_last_prompted_at = 1777661006
@@ -212,12 +213,12 @@ source_type = "local"
 source = "/Applications/Codex.app/Contents/Resources/plugins/openai-bundled"
 
 [marketplaces.openai-primary-runtime]
-last_updated = "2026-04-25T08:02:23Z"
+last_updated = "2026-05-12T05:02:20Z"
 source_type = "local"
 source = "/Users/zchee/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.memsearch-plugins]
-last_updated = "2026-05-11T16:25:02Z"
+last_updated = "2026-05-14T10:31:16Z"
 last_revision = "03b0d0263aea22efc378591a1e021c92193a2398"
 source_type = "git"
 source = "https://github.com/zilliztech/memsearch.git"
@@ -251,7 +252,7 @@ enabled = true
 enabled = false
 
 [plugins."plugin-eval@openai-curated"]
-enabled = true
+enabled = false
 
 [plugins."build-ios-apps@openai-curated"]
 enabled = false
@@ -293,7 +294,16 @@ enabled = true
 enabled = true
 
 [plugins."tracing@langsmith-codex-plugins"]
-enabled = true
+enabled = false
+
+[plugins."codex-security@openai-curated"]
+enabled = false
+
+[plugins."google-drive@openai-curated"]
+enabled = false
+
+[plugins."chrome@openai-bundled"]
+enabled = false
 
 [[skills.config]]
 path = "/Users/zchee/src/github.com/zchee/agent/codex/skills/execplan/SKILL.md"
@@ -665,4 +675,3 @@ startup_timeout_sec = 15
 [mcp_servers.pencil]
 command = "/Users/zchee/.pencil/mcp/visual_studio_code_-_insiders/out/mcp-server-darwin-arm64"
 args = ["--app", "visual_studio_code_-_insiders"]
-
