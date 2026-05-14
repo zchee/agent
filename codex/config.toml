@@ -96,8 +96,7 @@ transport = "webrtc"
 type = "conversational"
 
 [shell_environment_policy]
-inherit = "core"
-ignore_default_excludes = true
+inherit = "all"
 experimental_use_profile = false
 
 [shell_environment_policy.set]
@@ -218,7 +217,7 @@ source_type = "local"
 source = "/Users/zchee/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.memsearch-plugins]
-last_updated = "2026-05-14T10:31:16Z"
+last_updated = "2026-05-14T10:39:19Z"
 last_revision = "03b0d0263aea22efc378591a1e021c92193a2398"
 source_type = "git"
 source = "https://github.com/zilliztech/memsearch.git"
