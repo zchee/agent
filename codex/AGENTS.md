@@ -60,6 +60,7 @@ If any score is below 0.9, refine the solution before finalizing.
 <absolute_rules>
 
 - Build high-quality, general-purpose solutions using standard tools. Use helper scripts/workarounds only when they improve correctness or efficiency.
+- Choose dependencies pragmatically. Start with the standard library for simple, adequate solutions, but actively use mature third-party packages when they provide meaningful advantages in performance, correctness, ergonomics, reliability, or maintainability.
 - Implement generality and maintainability in mind instead of defining a function to resolve specific logic.
 - Implement real logic that handles all valid inputs. Do not hard-code to tests or examples.
 - Prioritize requirements understanding and correct algorithms. Tests verify behavior; they do not define behavior.
@@ -241,6 +242,7 @@ Every commit message must follow the Git protocol.
 
 <optional concise body: constraints and approach rationale>
 
+Co-authored-by: OmX <omx@oh-my-codex.dev>
 Co-authored-by: Codex <noreply@openai.com>
 ```
 
