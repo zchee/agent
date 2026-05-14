@@ -1,10 +1,11 @@
 {
-  "$schema": "https://raw.githubusercontent.com/google-gemini/gemini-cli/refs/heads/main/schemas/settings.schema.json",
   "model": {
-    "name": "gemini-3.1-pro-preview"
+    "name": "gemini-3.1-pro-preview-customtools"
   },
   "mcp": {
     "excluded": [
+      "binary_ninja_mcp",
+      "pencil",
       "google-gcp-agent-search",
       "google-gcp-aiplatform",
       "google-gcp-apihub",
@@ -32,6 +33,43 @@
     ]
   },
   "mcpServers": {
+    "binary_ninja_mcp": {
+      "command": "/Users/zchee/Library/Application Support/Binary Ninja/channels/community/plugins/fosdickio_binary_ninja_mcp/.venv/bin/python3",
+      "args": [
+        "/Users/zchee/Library/Application Support/Binary Ninja/channels/community/plugins/fosdickio_binary_ninja_mcp/bridge/binja_mcp_bridge.py"
+      ],
+      "timeout": 1800
+    },
+    "exa": {
+      "type": "http",
+      "url": "https://mcp.exa.ai/mcp"
+    },
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "httpUrl": "https://mcp.context7.com/mcp",
+      "headers": {
+        "CONTEXT7_API_KEY": "CONTEXT7_API_KEY",
+        "Accept": "application/json, text/event-stream"
+      }
+    },
+    "datadog": {
+      "type": "http",
+      "url": "https://mcp.us5.datadoghq.com/api/unstable/mcp-server/mcp"
+    },
+    "datadog-code-security": {
+      "command": "datadog-code-security-mcp",
+      "args": [
+        "start"
+      ],
+      "env": {
+        "DD_AUTH_DOMAIN": "us5.datadoghq.com"
+      }
+    },
+    "grep-app": {
+      "type": "http",
+      "url": "https://mcp.grep.app"
+    },
     "sequential-thinking": {
       "type": "stdio",
       "command": "sequential-thinking"
@@ -57,6 +95,7 @@
     },
     "google-developer-knowledge": {
       "type": "http",
+      "url": "https://developerknowledge.googleapis.com/mcp",
       "httpUrl": "https://developerknowledge.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -68,6 +107,7 @@
     },
     "google-gcp-agent-search": {
       "type": "http",
+      "url": "https://discoveryengine.googleapis.com/mcp",
       "httpUrl": "https://discoveryengine.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -88,6 +128,7 @@
     },
     "google-gcp-aiplatform": {
       "type": "http",
+      "url": "https://aiplatform.googleapis.com/mcp",
       "httpUrl": "https://aiplatform.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -102,6 +143,7 @@
     },
     "google-gcp-apihub": {
       "type": "http",
+      "url": "https://apihub.googleapis.com/mcp",
       "httpUrl": "https://apihub.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -116,6 +158,7 @@
     },
     "google-gcp-bigquery": {
       "type": "http",
+      "url": "https://bigquery.googleapis.com/mcp",
       "httpUrl": "https://bigquery.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -130,6 +173,7 @@
     },
     "google-gcp-bigquerydatatransfer": {
       "type": "http",
+      "url": "https://bigquerydatatransfer.googleapis.com/mcp",
       "httpUrl": "https://bigquerydatatransfer.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -145,6 +189,7 @@
     },
     "google-gcp-bigquerymigration": {
       "type": "http",
+      "url": "https://bigquerymigration.googleapis.com/mcp",
       "httpUrl": "https://bigquerymigration.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -159,6 +204,7 @@
     },
     "google-gcp-cloudresourcemanager": {
       "type": "http",
+      "url": "https://cloudresourcemanager.googleapis.com/mcp",
       "httpUrl": "https://cloudresourcemanager.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -173,6 +219,7 @@
     },
     "google-gcp-cloudtrace": {
       "type": "http",
+      "url": "https://cloudtrace.googleapis.com/mcp",
       "httpUrl": "https://cloudtrace.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -187,6 +234,7 @@
     },
     "google-gcp-compute": {
       "type": "http",
+      "url": "https://compute.googleapis.com/mcp",
       "httpUrl": "https://compute.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -201,6 +249,7 @@
     },
     "google-gcp-container": {
       "type": "http",
+      "url": "https://container.googleapis.com/mcp",
       "httpUrl": "https://container.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -215,6 +264,7 @@
     },
     "google-gcp-dataplex": {
       "type": "http",
+      "url": "https://dataplex.googleapis.com/mcp",
       "httpUrl": "https://dataplex.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -229,6 +279,7 @@
     },
     "google-gcp-dataproc": {
       "type": "http",
+      "url": "https://dataproc.googleapis.com/mcp",
       "httpUrl": "https://dataproc.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -243,6 +294,7 @@
     },
     "google-gcp-datastream": {
       "type": "http",
+      "url": "https://datastream.googleapis.com/mcp",
       "httpUrl": "https://datastream.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -257,6 +309,7 @@
     },
     "google-gcp-discoveryengine": {
       "type": "http",
+      "url": "https://discoveryengine.googleapis.com/mcp",
       "httpUrl": "https://discoveryengine.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -271,6 +324,7 @@
     },
     "google-gcp-firestore": {
       "type": "http",
+      "url": "https://firestore.googleapis.com/mcp",
       "httpUrl": "https://firestore.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -285,6 +339,7 @@
     },
     "google-gcp-geminicloudassist": {
       "type": "http",
+      "url": "https://geminicloudassist.googleapis.com/mcp",
       "httpUrl": "https://geminicloudassist.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -299,6 +354,7 @@
     },
     "google-gcp-logging": {
       "type": "http",
+      "url": "https://logging.googleapis.com/mcp",
       "httpUrl": "https://logging.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -313,6 +369,7 @@
     },
     "google-gcp-monitoring": {
       "type": "http",
+      "url": "https://monitoring.googleapis.com/mcp",
       "httpUrl": "https://monitoring.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -327,6 +384,7 @@
     },
     "google-gcp-pubsub": {
       "type": "http",
+      "url": "https://pubsub.googleapis.com/mcp",
       "httpUrl": "https://pubsub.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -341,6 +399,7 @@
     },
     "google-gcp-run": {
       "type": "http",
+      "url": "https://run.googleapis.com/mcp",
       "httpUrl": "https://run.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -355,6 +414,7 @@
     },
     "google-gcp-spanner": {
       "type": "http",
+      "url": "https://spanner.googleapis.com/mcp",
       "httpUrl": "https://spanner.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -369,6 +429,7 @@
     },
     "google-gcp-sqladmin": {
       "type": "http",
+      "url": "https://sqladmin.googleapis.com/mcp",
       "httpUrl": "https://sqladmin.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -383,6 +444,7 @@
     },
     "google-gcp-stitch": {
       "type": "http",
+      "url": "https://stitch.googleapis.com/mcp",
       "httpUrl": "https://stitch.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -397,6 +459,7 @@
     },
     "google-gcp-storage": {
       "type": "http",
+      "url": "https://storage.googleapis.com/mcp",
       "httpUrl": "https://storage.googleapis.com/mcp",
       "authProviderType": "google_credentials",
       "oauth": {
@@ -410,7 +473,6 @@
       }
     },
     "pencil": {
-      "type": "stdio",
       "command": "/Users/zchee/.pencil/mcp/visual_studio_code_-_insiders/out/mcp-server-darwin-arm64",
       "args": [
         "--app",
@@ -419,6 +481,7 @@
       "env": {}
     }
   },
+  "hooks": {},
   "general": {
     "preferredEditor": "neovim",
     "vimMode": false,
@@ -468,14 +531,14 @@
     },
     "hideFooter": false,
     "showMemoryUsage": true,
-    "showLineNumbers": false,
+    "showLineNumbers": true,
     "showCitations": true,
     "showModelInfoInChat": true,
-    "useAlternateBuffer": false,
+    "useAlternateBuffer": true,
     "incrementalRendering": true,
     "inlineThinkingMode": "full",
     "errorVerbosity": "full",
-    "loadingPhrases": "off",
+    "loadingPhrases": "all",
     "terminalBuffer": true
   },
   "context": {
@@ -502,41 +565,40 @@
   },
   "agents": {
     "browser": {
-      "blockFileUploads": false,
+      "sessionMode": "persistent",
+      "blockFileUploads": true,
       "confirmSensitiveActions": true
     }
   },
   "security": {
     "auth": {
-      "selectedType": "oauth-personal"
-    },
-    "environmentVariableRedaction": {
-      "enabled": true
-    },
-    "enableConseca": true,
-    "autoAddToPolicyByDefault": false,
-    "blockGitExtensions": false
+      "selectedType": "gemini-api-key"
+    }
   },
   "experimental": {
+    "adk": {
+      "agentSessionInteractiveEnabled": false,
+      "agentSessionNoninteractiveEnabled": false
+    },
+    "autoMemory": true,
+    "contextManagement": true,
     "directWebFetch": true,
-    "extensionConfig": true,
-    "extensionManagement": true,
+    "dynamicModelConfiguration": false,
     "enableAgents": true,
-    "extensionReloading": true,
+    "extensionConfig": true,
+    "extensionManagement": false,
+    "extensionRegistry": false,
+    "extensionRegistryURI": "https://geminicli.com/extensions.json",
+    "extensionReloading": false,
+    "gemma": false,
+    "gemmaModelRouter": {},
+    "generalistProfile": true,
     "jitContext": true,
+    "memoryV2": true,
+    "modelSteering": true,
+    "taskTracker": true,
     "useOSC52Copy": true,
     "useOSC52Paste": true,
-    "modelSteering": true,
-    "extensionRegistry": true,
-    "taskTracker": true,
-    "generalistProfile": true,
-    "contextManagement": true,
-    "dynamicModelConfiguration": true,
-    "autoMemory": true,
-    "memoryV2": true,
-    "extensionRegistryURI": "https://geminicli.com/extensions.json",
-    "gemma": true,
-    "gemmaModelRouter": {},
     "voiceMode": true,
     "voice": {
       "backend": "gemini-live",
@@ -544,10 +606,26 @@
       "activationMode": "push-to-talk",
       "stopGracePeriodMs": 1000
     },
-    "worktrees": true,
-    "adk": {
-      "agentSessionInteractiveEnabled": false,
-      "agentSessionNoninteractiveEnabled": true
+    "worktrees": true
+  },
+  "privacy": {
+    "usageStatisticsEnabled": false
+  },
+  "contextManagement": {
+    "historyWindow": {
+      "maxTokens": 200000
+    }
+  },
+  "advanced": {
+    "excludedEnvVars": [
+      "DEBUG",
+      "DEBUG_MODE"
+    ]
+  },
+  "billing": {
+    "vertexAi": {
+      "requestType": "shared",
+      "sharedRequestType": "priority"
     }
   },
   "telemetry": {
