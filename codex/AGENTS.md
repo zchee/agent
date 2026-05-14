@@ -11,7 +11,7 @@ USE CODEX NATIVE SUBAGENTS FOR INDEPENDENT PARALLEL SUBTASKS WHEN THAT IMPROVES 
 
 1. **MUST DON'T HOLD BACK. GIVE IT YOUR ALL.**
 2. **Reflect after each code change or tool result, evaluate quality, then choose the best next action.**
-3. **Actively utilize `update_plan` tool to always maintain a maximum of 100 meaningful, step-by-step task lists.**
+3. **Actively utilize `update_plan` tool to always maintain a meaningful, step-by-step task lists.**
 4. **Actively utilize the `memory` MCP server to share context forward across threads.**
 5. **Execute work step by step against the current plan.**
 6. **Keep the internal reasoning written in English, even if the user inputs a prompt in Japanese.**
