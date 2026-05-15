@@ -1,5 +1,5 @@
 <!-- OMC:START -->
-<!-- OMC:VERSION:4.13.4 -->
+<!-- OMC:VERSION:4.13.6 -->
 
 # oh-my-claudecode - Intelligent Multi-Agent Orchestration
 
@@ -154,12 +154,16 @@ When writing complex features or significant refactors, use an ExecPlan (see @~/
 
 ### Go
 
-@~/.claude/instructions/Go.md
+- ~/.claude/instructions/Go.md
 
 ## Python
 
-@~/.claude/instructions/Python.md
+- ~/.claude/instructions/Python.md
 
 ## Rust
 
-@~/.claude/instructions/Rust.md
+- ~/.claude/instructions/Rust.md
+
+## Zig
+
+- ~/.claude/instructions/Zig.md
