@@ -1,6 +1,10 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "cleanupPeriodDays": 99999,
+  "env": {
+    "TRACE_TO_LANGSMITH": "true",
+    "CC_LANGSMITH_PROJECT": "pandaemonium"
+  },
   "includeCoAuthoredBy": true,
   "permissions": {
     "allow": [
@@ -37,6 +41,16 @@
           }
         ]
       }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node $HOME/.claude/hooks/stop-continuation.mjs"
+          }
+        ]
+      }
     ]
   },
   "statusLine": {
@@ -48,7 +62,8 @@
     "oh-my-claudecode@omc": true,
     "rust-analyzer-lsp@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": true,
-    "codex@openai-codex": true
+    "codex@openai-codex": true,
+    "langsmith-tracing@langsmith-claude-code-plugins": true
   },
   "extraKnownMarketplaces": {
     "claude-hud": {
@@ -73,6 +88,12 @@
       "source": {
         "source": "github",
         "repo": "openai/codex-plugin-cc"
+      }
+    },
+    "langsmith-claude-code-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "langchain-ai/langsmith-claude-code-plugins"
       }
     }
   },
