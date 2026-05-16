@@ -1,6 +1,6 @@
-# Claude Code Environment Variables (v2.1.113)
+# Claude Code Environment Variables (v2.1.142)
 
-Reverse-engineered from `cli.unpack.js` at tag `2.1.113` (last updated 2026-05-15). This catalog includes first-party Claude Code knobs plus ambient/dependency environment variables that are read somewhere in the bundled runtime.
+Reverse-engineered from `cli.unpack.js` at tag `2.1.142` (last updated 2026-05-16). This catalog includes first-party Claude Code knobs plus ambient/dependency environment variables that are read somewhere in the bundled runtime.
 
 ## Authentication & API
 
@@ -27,6 +27,13 @@ Reverse-engineered from `cli.unpack.js` at tag `2.1.113` (last updated 2026-05-1
 | `CLAUDE_CODE_USER_EMAIL` | — | User email for telemetry |
 | `CLAUDE_CODE_ORGANIZATION_UUID` | — | Organization UUID |
 | `CLAUDE_TRUSTED_DEVICE_TOKEN` | — | Trusted device token for authentication |
+| `ANTHROPIC_CONFIG_DIR` | — | Overrides the directory used to read/write the Anthropic SDK profile config |
+| `ANTHROPIC_PROFILE` | `default` | Selects which named Anthropic SDK profile to load from the config file |
+| `ANTHROPIC_ORGANIZATION_ID` | — | Anthropic organization ID for workload-identity / federation authentication |
+| `ANTHROPIC_WORKSPACE_ID` | — | Workspace ID used for workload-identity authentication when a federation rule is scoped to multiple workspaces |
+| `ANTHROPIC_FEDERATION_RULE_ID` | — | OIDC federation rule ID for workload-identity auth; required for `oidc_federation` configs unless set in the profile |
+| `CLAUDE_CODE_RATE_LIMIT_TIER` | — | Rate-limit tier label reported with each request; populated from the auth snapshot |
+| `CLAUDE_CODE_SUBSCRIPTION_TYPE` | — | Subscription type reported with each request; populated from the auth snapshot |
 
 ## Model Configuration
 
@@ -58,6 +65,8 @@ Reverse-engineered from `cli.unpack.js` at tag `2.1.113` (last updated 2026-05-1
 | `ANTHROPIC_CUSTOM_MODEL_OPTION_DESCRIPTION` | `Custom model (<id>)` | Display description for `ANTHROPIC_CUSTOM_MODEL_OPTION` |
 | `ANTHROPIC_CUSTOM_MODEL_OPTION_SUPPORTED_CAPABILITIES` | — | Comma-separated capability list advertised for `ANTHROPIC_CUSTOM_MODEL_OPTION` |
 | `CLAUDE_CODE_MAX_CONTEXT_TOKENS` | — | Override the per-model context window limit (only honored when `DISABLE_COMPACT` is set) |
+| `CLAUDE_CODE_MAX_TURNS` | — | Hard cap on conversation turns; must be a positive integer or startup fails |
+| `CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE` | — | Truthy forces the "Opus 4.6 fast mode" override label/model selection |
 
 ## AWS Bedrock
 
@@ -75,6 +84,7 @@ Reverse-engineered from `cli.unpack.js` at tag `2.1.113` (last updated 2026-05-1
 | `AWS_SESSION_TOKEN` | — | Temporary AWS session token |
 | `AWS_PROFILE` | — | Named AWS profile |
 | `AWS_LOGIN_CACHE_DIRECTORY` | — | Directory for AWS login cache |
+| `ANTHROPIC_BEDROCK_SERVICE_TIER` | — | Value sent as the `X-Amzn-Bedrock-Service-Tier` header when calling Bedrock-hosted Claude models |
 
 ## AWS SDK Credential Chain
 
@@ -211,6 +221,7 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `MCP_TRUNCATION_PROMPT_OVERRIDE` | — | Override the truncation prompt used for MCP output |
 | `ENABLE_MCP_LARGE_OUTPUT_FILES` | `false` | Enable large file output for MCP |
 | `ENABLE_CLAUDEAI_MCP_SERVERS` | `false` | Enable claude.ai MCP proxy servers |
+| `MCP_CONNECT_TIMEOUT_MS` | — | Override (ms) for the MCP server connection timeout; parsed as an integer |
 
 ## Feature Disable Flags
 
@@ -260,6 +271,11 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `DISABLE_UPGRADE_COMMAND` | `false` | Disable the `/upgrade` command |
 | `DISABLE_INSTALL_GITHUB_APP_COMMAND` | `false` | Disable the GitHub App install command |
 | `DISABLE_EXTRA_USAGE_COMMAND` | `false` | Disable extra usage display |
+| `CLAUDE_CODE_DISABLE_AGENT_VIEW` | — | Truthy disables the agent view (`claude agents`, `--bg`, `/background`, on-demand daemon); mirrors the `disableAgentView` setting |
+| `CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN` | — | Truthy disables the terminal alternate-screen buffer (same effect as `CLAUDE_CODE_NO_FLICKER`) |
+| `DISABLE_GROWTHBOOK` | — | Truthy disables GrowthBook feature-flag lookups |
+| `DISABLE_UPDATES` | — | Truthy disables auto-update checks and installs |
+| `DISABLE_BRIEF_MODE_STOP_HOOK` | — | Truthy suppresses the Brief-mode stop hook in SDK/REPL sessions that have the Brief tool |
 
 ## Feature Enable Flags
 
@@ -285,6 +301,8 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `FORCE_PROMPT_CACHING_5M` | `false` | Force 5-minute prompt caching |
 | `EMBEDDED_SEARCH_TOOLS` | `false` | Enable embedded search tools |
 | `USE_API_CONTEXT_MANAGEMENT` | `false` | Use API context management |
+| `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL` | — | Truthy enables the in-product feedback survey for OTEL-instrumented installations |
+| `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY` | — | Truthy enables gateway-side model discovery (first-party provider only) |
 
 ## Compaction & Context
 
@@ -293,6 +311,8 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_CODE_AUTO_COMPACT_WINDOW` | — | Auto-compact window size |
 | `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` | — | Override auto-compact percentage threshold |
 | `CLAUDE_CODE_BLOCKING_LIMIT_OVERRIDE` | — | Override blocking limit for compaction |
+| `CLAUDE_CODE_COLD_COMPACT` | — | Truthy forces the "cold compact" conversation-compaction path |
+| `CLAUDE_CODE_CLASSIFIER_SUMMARY` | — | Overrides summary classifier mode: truthy = `llm`, falsy = `heuristic`; unset falls back to the default selector |
 
 ## Debug & Logging
 
@@ -313,6 +333,12 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `DEBUG_AUTH` | — | Enable authentication debug logging |
 | `CLAUDE_DEBUG` | `false` | Enable Claude debug logging |
 | `ANTHROPIC_LOG` | library default | Anthropic SDK log-level override used by the bundled client logger |
+| `CLAUDE_CODE_BENCH_LIVE_COUNTS` | — | Truthy enables live Yoga/DOM/Fiber node-count sampling in the renderer for benchmark instrumentation |
+| `CLAUDE_CODE_RETRY_WATCHDOG` | — | Truthy enables the API retry watchdog that surfaces stalled retry loops |
+| `CLAUDE_CODE_TEE_SDK_STDOUT` | — | Truthy tees SDK stdout to the parent process for debugging |
+| `CLAUDE_PTY_RECORD` | — | Path to write a PTY session recording for the current terminal session |
+| `DEBUG_CLAUDE_AGENT_SDK` | — | Truthy enables verbose debug logging and pipes stderr from the Claude Agent SDK helper process |
+| `CLAUDE_CODE_BYOC_ENABLE_DATADOG` | — | When `CLAUDE_CODE_ENVIRONMENT_KIND=byoc`, truthy re-enables Datadog telemetry (off by default in BYOC) |
 
 ## OpenTelemetry
 
@@ -404,6 +430,10 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_CODE_PROXY_AUTH_HELPER_TTL_MS` | helper default | Cache TTL (ms) for credentials produced by the proxy-auth helper |
 | `CLAUDE_SLOW_FIRST_BYTE_MS` | `30000` | Timeout threshold for first byte from API (ms) |
 | `CLAUDE_ENABLE_BYTE_WATCHDOG` | — | Enable byte-level stream watchdog |
+| `API_FORCE_IDLE_TIMEOUT` | — | Truthy keeps the default idle timeout on Anthropic API requests; otherwise the request timeout is disabled |
+| `AGENT_PROXY_URL` | — | Upstream proxy URL used by the remote agent egress gateway; consumed and deleted at startup |
+| `AGENT_PROXY_AUTH_TOKEN` | — | Bearer token paired with `AGENT_PROXY_URL` for the remote agent egress proxy; consumed and deleted at startup |
+| `CCR_EGRESS_GATEWAY_ENABLED` | — | Enables the Claude Code Remote egress proxy gateway (paired with `CCR_UPSTREAM_PROXY_ENABLED`) |
 
 ## Remote / Headless Mode
 
@@ -429,6 +459,8 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_CODE_RESUME_FROM_SESSION` | — | Resume from a specific session ID |
 | `CLAUDE_ENABLE_STREAM_WATCHDOG` | `false` | Enable stream watchdog |
 | `CLAUDE_CODE_SYSTEM_PROMPT_GB_FEATURE` | — | When running in remote mode, selects a Growthbook/feature-flag key whose evaluated string value is used to override the Agent SDK `systemPrompt` option |
+| `CLAUDE_BRIDGE_REATTACH_SEQ` | — | Sequence number passed when the TUI bridge reattaches to an existing session; consumed and deleted on read |
+| `CLAUDE_BRIDGE_REATTACH_SESSION` | — | Session ID used to reattach the TUI bridge to an existing session; consumed and deleted on read |
 
 ## IDE Integration
 
@@ -443,6 +475,8 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `VSCODE_GIT_ASKPASS_MAIN` | ambient | Detect VS Code terminal environment |
 | `CURSOR_TRACE_ID` | ambient | Detect Cursor editor environment |
 | `VisualStudioVersion` | ambient | Detect Visual Studio environment |
+| `INTELLIJ_TERMINAL_COMMAND_BLOCKS` | — | Presence (any value) indicates the JetBrains IntelliJ terminal command-blocks integration is active |
+| `INTELLIJ_TERMINAL_COMMAND_BLOCKS_REWORKED` | — | Presence (any value) indicates the reworked JetBrains terminal command-blocks integration is active |
 
 ## UI & Display
 
@@ -462,6 +496,9 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_CODE_FORCE_FULLSCREEN_UPSELL` | `false` | Force fullscreen upsell display |
 | `CLAUDE_CODE_TUI_JUST_SWITCHED` | — | Internal: track TUI mode switch state (set/dropped across process restarts) |
 | `CLAUDE_CODE_DECSTBM` | — | When truthy, force-enable DECSTBM (top/bottom-margin) scroll-region rendering; bypasses the `tengu_marlin_porch` feature-flag gate |
+| `CLAUDE_CODE_HIDE_CWD` | — | Truthy hides the current working directory from the TUI footer/status line |
+| `CLAUDE_CODE_NATIVE_CURSOR` | — | Truthy enables native terminal cursor rendering instead of the simulated one |
+| `CLAUDE_CODE_FORCE_SYNC_OUTPUT` | — | Truthy forces synchronous TTY output, bypassing terminal-based auto-detection |
 
 ## Sandbox
 
@@ -492,6 +529,12 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_CODE_AGENT_COST_STEER` | — | Enable agent cost steering (`true` to enable, `false` to disable) |
 | `CLAUDE_CODE_SDK_HAS_OAUTH_REFRESH` | `false` | Signal that the SDK host can refresh OAuth tokens on behalf of Claude Code (gated to specific entry points) |
 | `CLAUDE_CODE_ENABLE_APPEND_SUBAGENT_PROMPT` | `false` | Gate for opting-in to appending `appendSubagentSystemPrompt` (from the Agent SDK options) onto every Task-tool subagent's system prompt (propagates to nested subagents) |
+| `AI_AGENT` | `claude-code/harness` | Identifier of the AI agent harness running the CLI; auto-set if missing or already a `claude-code` value, and re-set to `claude-code/agent` inside spawned subagents |
+| `SDK_NATIVE_BIN` | `claude` | Path/name of the native Claude binary the Agent SDK spawns |
+| `CLAUDE_AGENTS_SELECT` | — | Pre-selected agent name(s) passed through to a spawned `claude agents` invocation; consumed and re-injected per child |
+| `CLAUDE_CODE_AGENT` | — | Agent name recorded on the session metadata (alongside `CLAUDE_CODE_SESSION_NAME`/`_LOG`) |
+| `CLAUDE_CODE_FORK_SUBAGENT` | — | Truthy forces the fork-based subagent execution path (otherwise governed by the `tengu_copper_fox` flag) |
+| `CLAUDE_SUBAGENT_BG_SHELL_MAX_MS` | — | Max milliseconds a subagent background shell may run; falls back to the built-in `o53` default |
 
 ## Teams / Teammates
 
@@ -525,6 +568,7 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `FORCE_AUTOUPDATE_PLUGINS` | `false` | Force auto-update plugins |
 | `CLAUDE_PLUGIN_ROOT` | injected for plugin execution | Absolute path to the active plugin root, exposed to plugin commands and templated config expansion |
 | `CLAUDE_PLUGIN_DATA` | injected for plugin execution | Per-plugin data directory, exposed to plugin commands and templated config expansion |
+| `CLAUDE_CODE_PLUGIN_PREFER_HTTPS` | — | Truthy makes plugin git operations prefer HTTPS over SSH (also implied by `CLAUDE_CODE_REMOTE`) |
 
 ## Memory & Prompt History
 
@@ -534,6 +578,8 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_COWORK_MEMORY_EXTRA_GUIDELINES` | — | Extra guidelines for cowork memory |
 | `CLAUDE_CODE_SKIP_PROMPT_HISTORY` | `false` | Skip saving prompt history |
 | `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD` | `false` | Scan additional directories for CLAUDE.md |
+| `CLAUDE_COWORK_MEMORY_GUIDELINES` | — | Extra guideline text inserted into the cowork memory system prompt |
+| `CLAUDE_COWORK_MEMORY_INDEX_CONTENT` | — | Override content for the cowork auto-memory index; empty string disables the index, otherwise parsed in place of the file |
 
 ## Idle, Resume & Background
 
@@ -547,6 +593,19 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_AUTO_BACKGROUND_TASKS` | `false` | Auto-spawn background tasks |
 | `CLAUDE_BG_BACKEND` | — | Set to `daemon` to run background tasks via the daemon backend (ignores SIGHUP so the daemon survives terminal disconnects) |
 | `CLAUDE_ASYNC_AGENT_STALL_TIMEOUT_MS` | `600000` | Stall timeout (ms) for async-agent turns; turns with no progress for this long are considered stalled |
+| `CLAUDE_CODE_RESUME_PROMPT` | `Continue from where you left off.` | Prompt text injected when a session is resumed via `--resume` |
+| `CLAUDE_CODE_LOOP_PERSISTENT` | — | Truthy enables persistent loop behavior in long-running session loops |
+| `CLAUDE_CODE_DAEMON_COLD_START` | — | Overrides daemon cold-start behavior; accepts `transient` (spawn for this login) or `ask` (prompt to install persistently) |
+| `CLAUDE_CODE_SESSION_ID` | — | Current session UUID; re-randomized on `/clear`-style resets and propagated to child processes |
+| `CLAUDE_CODE_SESSION_KIND` | — | Session classification; `bg` marks a background-agent session and forces full-screen / bg-specific code paths |
+| `CLAUDE_CODE_SESSION_LOG` | — | Path to write the session log file for the current session |
+| `CLAUDE_CODE_SESSION_NAME` | — | Human-readable session label recorded on session metadata |
+| `CLAUDE_JOB_DIR` | — | Directory representing the current background job; basename is used as the `jobId` in session metadata |
+| `CLAUDE_BG_SOURCE` | `shell` | Origin label for a background session (e.g. `shell`); stripped before passing env to children |
+| `CLAUDE_BG_ISOLATION` | — | Background-session isolation mode; `worktree` instructs the subagent to call `EnterWorktree` before any file or command action |
+| `CLAUDE_BG_AUTH_SNAPSHOT_PATH` | — | Path to an auth snapshot file used to seed a background job's credentials; consumed and deleted on read |
+| `CLAUDE_BG_RENDEZVOUS_SOCK` | — | Unix socket path used by background jobs to rendezvous with the parent daemon; consumed and deleted on read |
+| `CLAUDE_BG_STARTUP_WEDGE_MS` | `45000` | Milliseconds to delay (`unref`'d timer) before the background job's startup wedge fires |
 
 ## Miscellaneous
 
@@ -617,6 +676,15 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `SWE_BENCH_TASK_ID` | — | SWE-bench task identifier for telemetry |
 | `VCR_RECORD` | — | VCR recording mode for CI test replays |
 | `TEST_ENABLE_SESSION_PERSISTENCE` | `false` | Enable session persistence in test mode |
+| `CLAUDE_CODE_PROACTIVE` | — | Truthy turns on the proactive/Kairos assistant mode in the TUI |
+| `CLAUDE_CODE_INVESTIGATE_FIRST` | — | Controls the "investigate first" prelude mode; accepts `additive`, `compact`, or a boolean-style toggle |
+| `CLAUDE_CODE_MID_CONVERSATION_SYSTEM` | — | Marker string used to detect (and inject) a mid-conversation system prompt; falls back to the `tengu_fennel_kite_model` GrowthBook flag |
+| `CLAUDE_CODE_SIMPLE_SYSTEM_PROMPT` | — | Truthy forces the simplified system prompt; falsy explicitly disables it |
+| `CLAUDE_CODE_VERIFY_PROMPT` | — | Truthy enables verifier-style prompt validation before sending |
+| `CLAUDE_CODE_SUPERVISED` | — | Truthy marks the process as supervised; uncaught exceptions/rejections exit instead of being swallowed |
+| `CLAUDE_CODE_VOICE_FORWARD_INTERIMS_TYPED` | — | Truthy forwards interim voice transcription results as typed input |
+| `CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE` | — | Truthy opts the installer into automatic package-manager-driven self-updates |
+| `BUGHUNTER_FLEET_SIZE` | `5` | Number of parallel Bug Hunter subagents to launch; default sourced from GrowthBook (`fleet_size`, capped 5–20) |
 
 ## GitHub Actions
 
@@ -637,6 +705,9 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `GITHUB_TOKEN` | ambient | GitHub token used by actions; also redacted when scrubbing subprocess environments |
 | `GH_TOKEN` | ambient | Alternative GitHub token name; scrubbed alongside `GITHUB_TOKEN` when `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB` is enabled |
 | `GITHUB_WORKSPACE` | ambient | GitHub Actions workspace directory |
+| `GH_HOST` | — | Hostname for GitHub Enterprise; enterprise-token vars are only honored for hosts matching this value |
+| `GH_ENTERPRISE_TOKEN` | — | Token used for GitHub Enterprise hosts that match `GH_HOST` (preferred over `GITHUB_ENTERPRISE_TOKEN`) |
+| `GITHUB_ENTERPRISE_TOKEN` | — | Fallback token used for GitHub Enterprise hosts when `GH_ENTERPRISE_TOKEN` is unset |
 
 ## CI / Hosted Environment Detection
 
@@ -655,6 +726,7 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `DEVPOD_WORKSPACE_UID` | ambient | Detect DevPod workspace UID |
 | `DAYTONA_WS_ID` | ambient | Detect Daytona environments |
 | `CLOUD_WORKSTATIONS_CLUSTER_ID` | ambient | Detect Google Cloud Workstations |
+| `GOOGLE_CLOUD_WORKSTATIONS` | — | Truthy presence flags the session as running inside a Google Cloud Workstation |
 | `C9_PID` | ambient | Detect Cloud9 environments |
 | `C9_USER` | ambient | Detect Cloud9 user |
 | `GITPOD_WORKSPACE_ID` | ambient | Detect Gitpod |
@@ -796,6 +868,9 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `FORCE_COLOR` | ambient | Force color output (value: level 0-3) |
 | `GRACEFUL_FS_PLATFORM` | ambient | Override platform for graceful-fs |
 | `TEST_GRACEFUL_FS_GLOBAL_PATCH` | ambient | Test flag for graceful-fs global patching |
+| `COMSPEC` | ambient | Windows shell path fallback when `SHELL` is unset |
+| `PREFIX` | — | Termux install prefix; combined with `TERMUX_VERSION` to derive the tmp directory (`$PREFIX/tmp`) |
+| `TERMUX_VERSION` | — | Termux version string; presence (together with `PREFIX`) switches the tmp directory to `$PREFIX/tmp` |
 
 ## gRPC (Bundled SDK)
 
@@ -870,4 +945,3 @@ These variables were documented in prior revisions of this file but are no longe
 | `GITHUB_OUTPUT` | — | GitHub Actions step output file path — no matching `process.env` read in v2.1.112 |
 | `GITHUB_STATE` | — | GitHub Actions step state file path — no matching `process.env` read in v2.1.112 |
 | `GITHUB_STEP_SUMMARY` | — | GitHub Actions step summary file path — no matching `process.env` read in v2.1.112 |
-
