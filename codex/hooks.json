@@ -2,25 +2,7 @@
   "hooks": {
     "SessionStart": [
       {
-        "matcher": "startup",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"/opt/homebrew/opt/node/bin/node\" \"/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/codex-native-hook.js\""
-          }
-        ]
-      },
-      {
-        "matcher": "resume",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"/opt/homebrew/opt/node/bin/node\" \"/opt/local/var/bun/install/global/node_modules/oh-my-codex/dist/scripts/codex-native-hook.js\""
-          }
-        ]
-      },
-      {
-        "matcher": "clear",
+        "matcher": "startup|resume|clear",
         "hooks": [
           {
             "type": "command",
