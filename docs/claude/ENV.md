@@ -1,6 +1,8 @@
-# Claude Code Environment Variables (v2.1.142)
+# Claude Code Environment Variables (v2.1.145)
 
-Reverse-engineered from `cli.unpack.js` at tag `2.1.142` (last updated 2026-05-16). This catalog includes first-party Claude Code knobs plus ambient/dependency environment variables that are read somewhere in the bundled runtime.
+Reverse-engineered from `cli.unpack.js` at tag `2.1.145` (last updated 2026-05-20). This catalog includes first-party Claude Code knobs plus ambient/dependency environment variables that are read somewhere in the bundled runtime.
+
+> **v2.1.145 refresh:** 16 environment variables newly read in the bundle since `2.1.142` were added (each tagged `(v2.1.145)` in its row), covering host-managed auth (`CLAUDE_CODE_HOST_AUTH_*`, `CLAUDE_CODE_SDK_HAS_HOST_AUTH_REFRESH`), self-hosted agent environments (`ANTHROPIC_ENVIRONMENT_ID`/`_KEY`), and assorted runtime knobs. The existing rows below were carried forward from the `2.1.142` revision; a small number of pre-existing entries (e.g. `CLAUDE_CODE_USE_NATIVE_FILE_SEARCH`, `TEAM_MEMORY_SYNC_URL`, `EMBEDDED_SEARCH_TOOLS`, the `*_NODE_PATH` modules) were already absent as literal `process.env` reads at `2.1.142` and have not been re-verified against `2.1.145`; they are retained pending a separate full-table audit.
 
 ## Authentication & API
 
@@ -34,6 +36,11 @@ Reverse-engineered from `cli.unpack.js` at tag `2.1.142` (last updated 2026-05-1
 | `ANTHROPIC_FEDERATION_RULE_ID` | — | OIDC federation rule ID for workload-identity auth; required for `oidc_federation` configs unless set in the profile |
 | `CLAUDE_CODE_RATE_LIMIT_TIER` | — | Rate-limit tier label reported with each request; populated from the auth snapshot |
 | `CLAUDE_CODE_SUBSCRIPTION_TYPE` | — | Subscription type reported with each request; populated from the auth snapshot |
+| `CLAUDE_CODE_HOST_AUTH_ENV_VAR` | `ANTHROPIC_AUTH_TOKEN` | Names which environment variable the host process exposes the auth token in; read when the host manages authentication (v2.1.145) |
+| `CLAUDE_CODE_HOST_AUTH_REFRESH_TIMEOUT_MS` | — | Timeout in ms to wait for the host to refresh the auth token before giving up; coerced via `Number()` (v2.1.145) |
+| `CLAUDE_CODE_SDK_HAS_HOST_AUTH_REFRESH` | — | Set to `"1"` by the runtime to signal that the SDK host can refresh host-managed auth tokens on behalf of Claude Code (v2.1.145) |
+| `ANTHROPIC_ENVIRONMENT_ID` | — | Self-hosted agent environment ID read by the agent-environment worker runtime (`config:{type:self_hosted}`) (v2.1.145) |
+| `ANTHROPIC_ENVIRONMENT_KEY` | — | Self-hosted agent environment key paired with `ANTHROPIC_ENVIRONMENT_ID` for `EnvironmentWorker.run` / `ant beta:worker poll` flows (v2.1.145) |
 
 ## Model Configuration
 
@@ -76,6 +83,7 @@ Reverse-engineered from `cli.unpack.js` at tag `2.1.142` (last updated 2026-05-1
 | `CLAUDE_CODE_SKIP_BEDROCK_AUTH` | `false` | Skip Bedrock authentication setup |
 | `ANTHROPIC_BEDROCK_BASE_URL` | `https://bedrock-runtime.{region}.amazonaws.com` | Custom Bedrock endpoint |
 | `BEDROCK_BASE_URL` | — | Alternative Bedrock endpoint URL (checked in addition to `ANTHROPIC_BEDROCK_BASE_URL`) |
+| `CLAUDE_ENABLE_BYTE_WATCHDOG_BEDROCK` | — | Truthy enables the byte-level stream watchdog for Bedrock `vnd.amazon.eventstream` responses (v2.1.145) |
 | `AWS_BEARER_TOKEN_BEDROCK` | — | Bearer token for Bedrock authentication |
 | `AWS_REGION` | `us-east-1` | AWS region |
 | `AWS_DEFAULT_REGION` | `us-east-1` | Fallback AWS region |
@@ -180,6 +188,7 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_CONFIG_DIR` | `~/.claude` | Claude configuration directory |
 | `CLAUDE_CODE_TMPDIR` | `/tmp` | Temporary directory for Claude Code |
 | `CLAUDE_TMPDIR` | `/tmp/claude` | Temporary directory used in sandbox |
+| `CLAUDE_SECURESTORAGE_CONFIG_DIR` | — | Override the directory used by the secure-storage backend for its config (v2.1.145) |
 | `CLAUDE_ENV_FILE` | — | Path to environment file to load at session start |
 | `CLAUDE_CODE_SHELL` | — | Override shell used for Bash tool |
 | `CLAUDE_CODE_SHELL_PREFIX` | — | Prefix command for shell executions |
@@ -457,6 +466,7 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CCR_FORCE_BUNDLE` | `false` | Force the CCR bundle path even when normal preflight heuristics would not select it |
 | `CLAUDE_CODE_ENVIRONMENT_RUNNER_VERSION` | — | Attach an environment-runner version header in remote bridge mode |
 | `CLAUDE_CODE_RESUME_FROM_SESSION` | — | Resume from a specific session ID |
+| `CCR_SPAWN_TIMESTAMP_MS` | — | Unix spawn timestamp (ms) injected by the Claude Code Remote launcher; used to compute `spawn_to_first_checkpoint_ms` / `spawn_to_exec_ms` startup-performance telemetry (v2.1.145) |
 | `CLAUDE_ENABLE_STREAM_WATCHDOG` | `false` | Enable stream watchdog |
 | `CLAUDE_CODE_SYSTEM_PROMPT_GB_FEATURE` | — | When running in remote mode, selects a Growthbook/feature-flag key whose evaluated string value is used to override the Agent SDK `systemPrompt` option |
 | `CLAUDE_BRIDGE_REATTACH_SEQ` | — | Sequence number passed when the TUI bridge reattaches to an existing session; consumed and deleted on read |
@@ -499,6 +509,7 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_CODE_HIDE_CWD` | — | Truthy hides the current working directory from the TUI footer/status line |
 | `CLAUDE_CODE_NATIVE_CURSOR` | — | Truthy enables native terminal cursor rendering instead of the simulated one |
 | `CLAUDE_CODE_FORCE_SYNC_OUTPUT` | — | Truthy forces synchronous TTY output, bypassing terminal-based auto-detection |
+| `CLAUDE_CODE_ALT_SCREEN_FULL_REPAINT` | — | Truthy forces a full repaint of the alternate screen buffer on each render instead of incremental updates (v2.1.145) |
 
 ## Sandbox
 
@@ -510,6 +521,7 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_CODE_HOST_SOCKS_PROXY_PORT` | — | Host SOCKS proxy port for sandbox |
 | `CLAUDE_CODE_HOST_PLATFORM` | — | Host platform when running in sandbox |
 | `CLAUDE_CODE_BASH_SANDBOX_SHOW_INDICATOR` | `false` | Show sandbox indicator in bash |
+| `CLAUDE_BG_TCC_DISCLAIMED` | — | Set by the parent and consumed (then deleted from env) to signal that a background process has been disclaimed from the macOS TCC privacy prompt (v2.1.145) |
 | `CLAUDE_CODE_SCRIPT_CAPS` | — | Override the sandbox script capability set for bash-tool executions |
 | `CLAUDE_CODE_MCP_ALLOWLIST_ENV` | — | Override the sandbox environment allowlist forwarded to MCP server subprocesses |
 | `IS_SANDBOX` | — | Set to `1` inside sandbox |
@@ -580,6 +592,7 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD` | `false` | Scan additional directories for CLAUDE.md |
 | `CLAUDE_COWORK_MEMORY_GUIDELINES` | — | Extra guideline text inserted into the cowork memory system prompt |
 | `CLAUDE_COWORK_MEMORY_INDEX_CONTENT` | — | Override content for the cowork auto-memory index; empty string disables the index, otherwise parsed in place of the file |
+| `CLAUDE_MEMORY_STORES` | — | JSON-encoded memory-store configuration; parsed at load time and rejected with an error if it is not valid JSON (v2.1.145) |
 
 ## Idle, Resume & Background
 
@@ -622,6 +635,8 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_CODE_TAGS` | — | Tags for telemetry |
 | `CLAUDE_CODE_WORKER_EPOCH` | — | Worker epoch for process management |
 | `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS` | — | Timeout for session-end hooks (ms) |
+| `CLAUDE_CODE_STOP_HOOK_BLOCK_CAP` | — | Raises the cap on how many consecutive times a Stop/SubagentStop hook may block a turn before Claude Code overrides it and ends the turn; parsed as an integer (v2.1.145) |
+| `SCREENSHOT_DIR` | `/tmp/shots` | Output directory for screenshots captured by bundled helper/skill code (v2.1.145) |
 | `CLAUDE_CODE_DONT_INHERIT_ENV` | `false` | Don't inherit env vars in spawned processes |
 | `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS` | `false` | Skip network errors in fast mode |
 | `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` | `false` | Skip organization check for fast mode eligibility |
@@ -849,6 +864,9 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `ProgramData` | ambient | Program data directory (Windows) |
 | `ProgramFiles` | ambient | Program files directory (Windows) |
 | `comspec` | `cmd.exe` | Windows command processor |
+| `CLAUDE_CODE_POWERSHELL_RESPECT_EXECUTION_POLICY` | — | When unset/falsy, Claude Code bypasses the PowerShell execution policy when invoking `powershell`; set truthy to respect the configured policy instead (v2.1.145) |
+| `CLAUDE_PTY_HOST_EXEC` | — | When set to `"1"`, routes command execution through the PTY host; consumed and deleted from the environment after it is read (v2.1.145) |
+| `DISPLAY` | `:99` | X11 display read by bundled helper code; falls back to `:99` (v2.1.145) |
 | `XDG_CONFIG_HOME` | ambient | XDG configuration home |
 | `XDG_RUNTIME_DIR` | ambient | XDG runtime directory |
 | `SESSIONNAME` | ambient | Session name (Windows) |
