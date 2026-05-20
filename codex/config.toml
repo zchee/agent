@@ -28,10 +28,7 @@ include_environment_context = true
 personality = "pragmatic"
 service_tier = "fast"
 developer_instructions = "You have oh-my-codex installed through Codex plugin mode. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing and $name workflow invocation. Registered Codex plugin marketplace surfaces supply OMX workflows, prompts, and native-agent roles when the plugin is installed. User-installed skills may still live under ~/.codex/skills. Setup-owned prompt files and native-agent TOML defaults are intentionally omitted unless explicitly installed. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail."
-notify = [
-  "/Users/zchee/src/github.com/zchee/agent/codex/plugins/cache/openai-bundled/computer-use/1.0.750/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient",
-  "turn-ended",
-]
+notify = ["/Users/zchee/src/github.com/zchee/agent/codex/plugins/cache/openai-bundled/computer-use/1.0.750/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 
 [model_providers.oai]
 name = "openai"
@@ -114,17 +111,7 @@ animations = true
 alternate_screen = "always"
 show_tooltips = true
 # https://github.com/openai/codex/blob/main/codex-rs/tui/src/bottom_pane/status_line_setup.rs
-status_line = [
-  "model-with-reasoning",
-  "git-branch",
-  "current-dir",
-  "context-remaining",
-  "total-input-tokens",
-  "total-output-tokens",
-  "context-window-size",
-  "five-hour-limit",
-  "weekly-limit",
-]
+status_line = ["model-with-reasoning", "git-branch", "current-dir", "context-remaining", "total-input-tokens", "total-output-tokens", "context-window-size", "five-hour-limit", "weekly-limit"]
 status_line_use_colors = true
 
 [tui.model_availability_nux]
@@ -172,7 +159,6 @@ mentions_v2 = true
 default_mode_request_user_input = true
 auth_elicitation = true
 realtime_conversation = true
-remote_control = true
 prevent_idle_sleep = true
 workspace_owner_usage_nudge = true
 responses_websocket_response_processed = true
@@ -217,7 +203,7 @@ source_type = "local"
 source = "/Users/zchee/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.memsearch-plugins]
-last_updated = "2026-05-18T15:26:24Z"
+last_updated = "2026-05-20T05:07:10Z"
 last_revision = "45ac2a274175b0cbec77e11b47b84b92cabea410"
 source_type = "git"
 source = "https://github.com/zilliztech/memsearch.git"
@@ -341,30 +327,7 @@ startup_timeout_sec = 15
 
 [mcp_servers.clangd]
 command = "mcp-language-server"
-args = [
-  "--workspace",
-  ".",
-  "--lsp",
-  "/opt/local/llvm/clangd/bin/clangd",
-  "--",
-  "--background-index",
-  "--background-index-priority=normal",
-  "--clang-tidy",
-  "--experimental-modules-support",
-  "--function-arg-placeholders=1",
-  "--header-insertion=iwyu",
-  "--header-insertion-decorators",
-  "--import-insertions",
-  "--include-ineligible-results",
-  "--limit-references=0",
-  "--limit-results=0",
-  "--rename-file-limit=1000",
-  "--enable-config",
-  "-j=16",
-  "--parse-forwarding-functions",
-  "--skip-preamble-build",
-  "--use-dirty-headers",
-]
+args = ["--workspace", ".", "--lsp", "/opt/local/llvm/clangd/bin/clangd", "--", "--background-index", "--background-index-priority=normal", "--clang-tidy", "--experimental-modules-support", "--function-arg-placeholders=1", "--header-insertion=iwyu", "--header-insertion-decorators", "--import-insertions", "--include-ineligible-results", "--limit-references=0", "--limit-results=0", "--rename-file-limit=1000", "--enable-config", "-j=16", "--parse-forwarding-functions", "--skip-preamble-build", "--use-dirty-headers"]
 enabled = false
 startup_timeout_sec = 15
 
@@ -396,14 +359,7 @@ enabled = false
 
 [mcp_servers.filesystem]
 command = "npx"
-args = [
-  "-y",
-  "@modelcontextprotocol/server-filesystem@latest",
-  "/Users/zchee/go",
-  "/Users/zchee/src",
-  "/Users/zchee/Downloads",
-  "/opt",
-]
+args = ["-y", "@modelcontextprotocol/server-filesystem@latest", "/Users/zchee/go", "/Users/zchee/src", "/Users/zchee/Downloads", "/opt"]
 startup_timeout_sec = 30
 
 [mcp_servers.filesystem.tools.write_file]
