@@ -1,6 +1,8 @@
-# Claude Code Environment Variables (v2.1.145)
+# Claude Code Environment Variables (v2.1.146)
 
-Reverse-engineered from `cli.unpack.js` at tag `2.1.145` (last updated 2026-05-20). This catalog includes first-party Claude Code knobs plus ambient/dependency environment variables that are read somewhere in the bundled runtime.
+Reverse-engineered from `cli.unpack.js` at tag `2.1.146` (last updated 2026-05-21). This catalog includes first-party Claude Code knobs plus ambient/dependency environment variables that are read somewhere in the bundled runtime.
+
+> **v2.1.146 refresh:** 2 environment variables newly read in the bundle since `2.1.145` were added (each tagged `(v2.1.146)` in its row): `CLAUDE_BG_SESSION_PERMISSION_RULES` (JSON permission overrides for background sessions) and `CLAUDE_CODE_WORKFLOWS` (gate for the workflows feature). The remainder of the `v2.1.145→v2.1.146` bundle diff is internal minified-identifier churn (e.g. `xH→mH`, `f6→R6`) and does not change which env vars are read.
 
 > **v2.1.145 refresh:** 16 environment variables newly read in the bundle since `2.1.142` were added (each tagged `(v2.1.145)` in its row), covering host-managed auth (`CLAUDE_CODE_HOST_AUTH_*`, `CLAUDE_CODE_SDK_HAS_HOST_AUTH_REFRESH`), self-hosted agent environments (`ANTHROPIC_ENVIRONMENT_ID`/`_KEY`), and assorted runtime knobs. The existing rows below were carried forward from the `2.1.142` revision; a small number of pre-existing entries (e.g. `CLAUDE_CODE_USE_NATIVE_FILE_SEARCH`, `TEAM_MEMORY_SYNC_URL`, `EMBEDDED_SEARCH_TOOLS`, the `*_NODE_PATH` modules) were already absent as literal `process.env` reads at `2.1.142` and have not been re-verified against `2.1.145`; they are retained pending a separate full-table audit.
 
@@ -312,6 +314,7 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `USE_API_CONTEXT_MANAGEMENT` | `false` | Use API context management |
 | `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL` | — | Truthy enables the in-product feedback survey for OTEL-instrumented installations |
 | `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY` | — | Truthy enables gateway-side model discovery (first-party provider only) |
+| `CLAUDE_CODE_WORKFLOWS` | — | Truthy gates the workflows feature; combined with the `tengu_workflows_enabled` Statsig gate to decide whether workflows are available (v2.1.146) |
 
 ## Compaction & Context
 
@@ -619,6 +622,7 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_BG_AUTH_SNAPSHOT_PATH` | — | Path to an auth snapshot file used to seed a background job's credentials; consumed and deleted on read |
 | `CLAUDE_BG_RENDEZVOUS_SOCK` | — | Unix socket path used by background jobs to rendezvous with the parent daemon; consumed and deleted on read |
 | `CLAUDE_BG_STARTUP_WEDGE_MS` | `45000` | Milliseconds to delay (`unref`'d timer) before the background job's startup wedge fires |
+| `CLAUDE_BG_SESSION_PERMISSION_RULES` | — | JSON-encoded permission rule overrides applied to a background session (`CLAUDE_CODE_SESSION_KIND=bg`); the parent injects it via `JSON.stringify(...)` and the worker consumes and deletes it from `process.env` on read (v2.1.146) |
 
 ## Miscellaneous
 
