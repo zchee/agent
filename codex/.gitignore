@@ -17,3 +17,6 @@ internal_storage.json
 models_cache.json
 session_index.jsonl
 version.json
+
+# https://github.com/ndycode/codex-multi-auth
+multi-auth/
