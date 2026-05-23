@@ -3,7 +3,8 @@
   "cleanupPeriodDays": 99999,
   "env": {
     "TRACE_TO_LANGSMITH": "true",
-    "CC_LANGSMITH_PROJECT": "pandaemonium"
+    "CC_LANGSMITH_PROJECT": "pandaemonium",
+    "CLAUDE_CODE_SCROLL_SPEED": "3"
   },
   "includeCoAuthoredBy": true,
   "permissions": {
@@ -63,7 +64,8 @@
     "rust-analyzer-lsp@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": true,
     "codex@openai-codex": true,
-    "langsmith-tracing@langsmith-claude-code-plugins": true
+    "langsmith-tracing@langsmith-claude-code-plugins": true,
+    "rust-reverse-engineering@jingjing2222-plugins": true
   },
   "extraKnownMarketplaces": {
     "claude-hud": {
@@ -95,17 +97,27 @@
         "source": "github",
         "repo": "langchain-ai/langsmith-claude-code-plugins"
       }
+    },
+    "jingjing2222-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "jingjing2222/rust-reverse-engineering-skill"
+      }
     }
   },
   "outputStyle": "default",
   "spinnerTipsEnabled": true,
+  "alwaysThinkingEnabled": true,
   "effortLevel": "xhigh",
   "advisorModel": "opus",
-  "fastMode": true,
+  "fastMode": false,
   "fastModePerSessionOptIn": true,
   "autoUpdatesChannel": "latest",
   "tui": "fullscreen",
+  "autoMemoryEnabled": true,
+  "autoDreamEnabled": true,
   "skipDangerousModePermissionPrompt": true,
+  "theme": "dark",
   "verbose": true,
   "preferredNotifChannel": "kitty",
   "autoCompactEnabled": true,
