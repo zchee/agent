@@ -126,5 +126,6 @@
   "autoUploadSessions": true,
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
-  "backendType": "tmux"
+  "backendType": "tmux",
+  "skipAutoPermissionPrompt": true
 }
