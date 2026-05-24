@@ -1,13 +1,13 @@
 model = "gpt-5.5"
 review_model = "gpt-5.5"
-model_context_window = 10000000
-model_auto_compact_token_limit = 9000000
+model_context_window = 1000000
+model_auto_compact_token_limit = 900000
+model_reasoning_effort = "xhigh"
 model_auto_compact_token_limit_scope = "total"
 approval_policy = "never"
 tool_output_token_limit = 40000
 project_doc_max_bytes = 46080
 project_doc_fallback_filenames = ["AGENTS.md", "CLAUDE.md", "GEMINI.md"]
-zsh_path = "/opt/homebrew/bin/zsh"
 allow_login_shell = true
 hide_agent_reasoning = false
 show_raw_agent_reasoning = true
@@ -30,7 +30,22 @@ personality = "pragmatic"
 service_tier = "fast"
 developer_instructions = "You have oh-my-codex installed through Codex plugin mode. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing and $name workflow invocation. Registered Codex plugin marketplace surfaces supply OMX workflows, prompts, and native-agent roles when the plugin is installed. User-installed skills may still live under ~/.codex/skills. Setup-owned prompt files and native-agent TOML defaults are intentionally omitted unless explicitly installed. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail."
 
-notify = ["/Users/zchee/src/github.com/zchee/agent/codex/plugins/cache/openai-bundled/computer-use/1.0.750/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+notify = ["/Users/zchee/src/github.com/zchee/agent/codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+
+[desktop]
+sansFontSize = 18
+codeFontSize = 16
+usePointerCursors = true
+dictationDictionary = []
+composerEnterBehavior = "cmdIfMultiline"
+reviewDelivery = "inline"
+preventSleepWhileRunning = true
+keepRemoteControlAwakeWhilePluggedIn = true
+git-branch-prefix = "codex-"
+git-pull-request-merge-method = "squash"
+git-show-sidebar-pr-icons = true
+notifications-turn-mode = "always"
+sqlite_home = "/Users/zchee/.codex/sqlite"
 
 [model_providers.oai]
 name = "openai"
@@ -65,10 +80,6 @@ model_provider = "codex-responses-api-proxy"
 model = "gpt-5.5-pro"
 service_tier = "fast"
 
-[profiles.openrouter]
-model_provider = "openrouter"
-model = "qwen/qwen3.7-max"
-
 [profiles.or-gemini]
 model_provider = "openrouter"
 model = "google/gemini-3.1-pro-preview-customtools"
@@ -76,10 +87,6 @@ model = "google/gemini-3.1-pro-preview-customtools"
 [profiles.or-claude]
 model_provider = "openrouter"
 model = "anthropic/claude-opus-4.7"
-
-[profiles.xai]
-model_provider = "xai"
-model = "grok-4.3"
 
 [sandbox_workspace_write]
 exclude_tmpdir_env_var = false
@@ -108,6 +115,8 @@ persistence = "save-all"
 max_bytes = 104857600
 
 [tui]
+raw_output_mode = true
+terminal_resize_reflow_max_rows = 0
 notifications = true
 notification_method = "osc9"
 notification_condition = "always"
@@ -134,12 +143,11 @@ max_unused_days = 21
 max_rollout_age_days = 42
 max_rollouts_per_startup = 9
 min_rollout_idle_hours = 24
-disable_on_external_context = true
+disable_on_external_context = false
 extract_model = "gpt-5.3-codex-spark"
 consolidation_model = "gpt-5.5"
 
 [features]
-shell_zsh_fork = true
 code_mode = true
 code_mode_only = false
 codex_git_commit = true
@@ -201,12 +209,12 @@ source_type = "local"
 source = "/Applications/Codex.app/Contents/Resources/plugins/openai-bundled"
 
 [marketplaces.openai-primary-runtime]
-last_updated = "2026-05-21T16:23:35Z"
+last_updated = "2026-05-24T07:00:58Z"
 source_type = "local"
 source = "/Users/zchee/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.memsearch-plugins]
-last_updated = "2026-05-21T21:04:30Z"
+last_updated = "2026-05-24T09:11:53Z"
 last_revision = "c04cd4a028eb6ac63a0e32ebe076ce9d7f67b7a2"
 source_type = "git"
 source = "https://github.com/zilliztech/memsearch.git"
@@ -220,6 +228,12 @@ last_updated = "2026-05-10T21:19:22Z"
 last_revision = "079af2436be804f4cba5932226755eaabc17632e"
 source_type = "git"
 source = "https://github.com/langchain-ai/langsmith-codex-plugins.git"
+
+[marketplaces.sendbird]
+last_updated = "2026-05-22T20:25:10Z"
+last_revision = "c7cdcf3f413f1232161f021f6841022e1f4c0de8"
+source_type = "git"
+source = "https://github.com/sendbird/codex-marketplace.git"
 
 [plugins."documents@openai-primary-runtime"]
 enabled = false
@@ -240,7 +254,7 @@ enabled = true
 enabled = false
 
 [plugins."plugin-eval@openai-curated"]
-enabled = false
+enabled = true
 
 [plugins."build-ios-apps@openai-curated"]
 enabled = false
@@ -270,10 +284,16 @@ enabled = false
 enabled = false
 
 [plugins."google-drive@openai-curated"]
-enabled = true
+enabled = false
 
 [plugins."chrome@openai-bundled"]
 enabled = false
+
+[plugins."browser@openai-bundled"]
+enabled = true
+
+[plugins."cc@sendbird"]
+enabled = true
 
 [[skills.config]]
 path = "/Users/zchee/src/github.com/zchee/agent/codex/skills/execplan/SKILL.md"
@@ -568,11 +588,12 @@ command = "kubernetes-mcp-server"
 enabled = false
 startup_timeout_sec = 15
 
-[mcp_servers.lldb]
-command = "mcp-language-server"
-args = ["--workspace", ".", "--lsp", "/opt/homebrew/opt/llvm/bin/lldb-mcp"]
-enabled = false
-startup_timeout_sec = 15
+# TODO(zchee): not works
+# [mcp_servers.lldb]
+# command = "mcp-language-server"
+# args = ["--workspace", ".", "--lsp", "/opt/homebrew/opt/llvm/bin/lldb-mcp"]
+# enabled = false
+# startup_timeout_sec = 15
 
 [mcp_servers.lua_ls]
 command = "mcp-language-server"
@@ -619,3 +640,4 @@ startup_timeout_sec = 15
 [mcp_servers.pencil]
 command = "/Users/zchee/.pencil/mcp/visual_studio_code_-_insiders/out/mcp-server-darwin-arm64"
 args = ["--app", "visual_studio_code_-_insiders"]
+enabled = false
