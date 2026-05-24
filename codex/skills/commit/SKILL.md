@@ -21,6 +21,10 @@ Use this skill to turn the current worktree into reviewable git commits.
 
 ## Rules
 
+- The 72 Rule
+    - 72-character subject line: The subject line of a commit message should be no more than 72 characters long. This is to ensure that the message is concise and easy to read. The subject should provide a brief summary of the changes made in the commit.
+    - 72-character body lines: If the commit message includes a body (which is optional but recommended for more detailed explanations), each line in the body should not exceed 72 characters. This helps maintain readability, especially when the commit messages are viewed in the terminal or other tools that may wrap text.
+    - All trailers are exempt from this rule.
 - Never revert, discard, or absorb unrelated local changes just to make the worktree look clean.
 - If staged and unstaged hunks coexist in one file, verify that the split still leaves both states coherent.
 - Run the narrowest useful validation before committing when a fast, directly relevant check exists.
