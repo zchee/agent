@@ -28,7 +28,7 @@ include_apps_instructions = true
 include_environment_context = true
 personality = "pragmatic"
 service_tier = "fast"
-developer_instructions = "You have oh-my-codex installed through Codex plugin mode. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing and $name workflow invocation. Registered Codex plugin marketplace surfaces supply OMX workflows, prompts, and native-agent roles when the plugin is installed. User-installed skills may still live under ~/.codex/skills. Setup-owned prompt files and native-agent TOML defaults are intentionally omitted unless explicitly installed. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail."
+developer_instructions = "You have oh-my-codex installed through Codex plugin mode. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing and $name workflow invocation. Registered Codex plugin marketplace surfaces supply OMX workflows and plugin-scoped companion resources when the plugin is installed; native agent roles are installed as setup-owned Codex agent TOML files in plugin mode so agent_type routing works. User-installed skills may still live under ~/.codex/skills. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail."
 
 notify = ["/Users/zchee/src/github.com/zchee/agent/codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 
@@ -108,15 +108,12 @@ experimental_use_profile = false
 
 [shell_environment_policy.set]
 OMX_LORE_COMMIT_GUARD = "0"
-USE_OMX_EXPLORE_CMD = "1"
 
 [history]
 persistence = "save-all"
 max_bytes = 104857600
 
 [tui]
-raw_output_mode = true
-terminal_resize_reflow_max_rows = 0
 notifications = true
 notification_method = "osc9"
 notification_condition = "always"
@@ -154,7 +151,6 @@ codex_git_commit = true
 runtime_metrics = true
 memories = true
 chronicle = true
-child_agents_md = false
 apply_patch_streaming_events = true
 exec_permission_approvals = true
 request_permissions_tool = true
@@ -175,8 +171,8 @@ prevent_idle_sleep = true
 workspace_owner_usage_nudge = true
 responses_websocket_response_processed = true
 remote_compaction_v2 = true
-goals = true
 
+goals = true
 [features.multi_agent_v2]
 enabled = true
 max_concurrent_threads_per_session = 6
@@ -214,7 +210,7 @@ source_type = "local"
 source = "/Users/zchee/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.memsearch-plugins]
-last_updated = "2026-05-24T09:11:53Z"
+last_updated = "2026-05-26T09:16:26Z"
 last_revision = "c04cd4a028eb6ac63a0e32ebe076ce9d7f67b7a2"
 source_type = "git"
 source = "https://github.com/zilliztech/memsearch.git"
@@ -224,8 +220,8 @@ source_type = "local"
 source = "/opt/local/var/bun/install/global/node_modules/oh-my-codex"
 
 [marketplaces.langsmith-codex-plugins]
-last_updated = "2026-05-10T21:19:22Z"
-last_revision = "079af2436be804f4cba5932226755eaabc17632e"
+last_updated = "2026-05-26T09:07:37Z"
+last_revision = "23df072b7f1af99aa809251795a511b4b1d226d7"
 source_type = "git"
 source = "https://github.com/langchain-ai/langsmith-codex-plugins.git"
 
