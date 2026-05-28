@@ -1,6 +1,8 @@
-# Claude Code Environment Variables (v2.1.146)
+# Claude Code Environment Variables (v2.1.154)
 
-Reverse-engineered from `cli.unpack.js` at tag `2.1.146` (last updated 2026-05-21). This catalog includes first-party Claude Code knobs plus ambient/dependency environment variables that are read somewhere in the bundled runtime.
+Reverse-engineered from `cli.unpack.js` at tag `2.1.154` (last updated 2026-05-29). This catalog includes first-party Claude Code knobs plus ambient/dependency environment variables that are read somewhere in the bundled runtime.
+
+> **v2.1.154 refresh:** 15 environment variables newly read in the bundle since `2.1.146` were added (each tagged `(v2.1.154)` in its row): `CLAUDE_CODE_DISABLE_CLAUDE_CODE_SKILL` and `CLAUDE_CODE_DISABLE_WORKFLOWS` (Feature Disable Flags); `CLAUDE_CODE_COORDINATOR_MODE`, `CLAUDE_CODE_SYNC_SKILLS`, and `CLAUDE_CODE_SYNC_SKILLS_WAIT_TIMEOUT_MS` (Teams / Teammates); `CLAUDE_CODE_PROPAGATE_TRACEPARENT` (OpenTelemetry); `CLAUDE_BG_MEMORY_TOGGLED_OFF` and `CLAUDE_CODE_SPAWN_TIMESTAMP_MS` (Idle, Resume & Background); `CLAUDE_BRIDGE_REATTACH_OUTBOUND_ONLY`, `CLAUDE_CODE_FORCE_MID_CONVERSATION_SYSTEM`, and `CLAUDE_IMPORT_CONVERSATIONS` (Miscellaneous); `CLAUDE_PTY_ORPHAN_CHECK_MS` (System & Shell); and the lowercase GCP detection reads `gcloud_project`, `google_cloud_project`, and `google_application_credentials` (GCP Metadata & Detection). The remainder of the `v2.1.146→v2.1.154` bundle diff is internal minified-identifier churn and does not change which env vars are read.
 
 > **v2.1.146 refresh:** 2 environment variables newly read in the bundle since `2.1.145` were added (each tagged `(v2.1.146)` in its row): `CLAUDE_BG_SESSION_PERMISSION_RULES` (JSON permission overrides for background sessions) and `CLAUDE_CODE_WORKFLOWS` (gate for the workflows feature). The remainder of the `v2.1.145→v2.1.146` bundle diff is internal minified-identifier churn (e.g. `xH→mH`, `f6→R6`) and does not change which env vars are read.
 
@@ -262,6 +264,8 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_CODE_DISABLE_NONSTREAMING_FALLBACK` | `false` | Disable fallback from streaming to non-streaming API calls |
 | `CLAUDE_CODE_DISABLE_POLICY_SKILLS` | `false` | Disable policy-driven skills loading |
 | `CLAUDE_CODE_DISABLE_CLAUDE_API_SKILL` | `false` | Disable the Claude API skill |
+| `CLAUDE_CODE_DISABLE_CLAUDE_CODE_SKILL` | `false` | Disable loading of the built-in Claude Code skill (gated by `!xH(process.env.CLAUDE_CODE_DISABLE_CLAUDE_CODE_SKILL)`) (v2.1.154) |
+| `CLAUDE_CODE_DISABLE_WORKFLOWS` | `false` | Disable the workflows feature; truthy disables it, equivalent to `settings.disableWorkflows === true` (v2.1.154) |
 | `DISABLE_AUTOUPDATER` | `false` | Disable auto-updater |
 | `DISABLE_TELEMETRY` | `false` | Disable all telemetry |
 | `DISABLE_COMPACT` | `false` | Disable context compaction entirely |
@@ -417,6 +421,7 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `BETA_TRACING_ENDPOINT` | — | Beta tracing endpoint URL |
 | `TRACEPARENT` | — | W3C trace context propagation: trace parent header (used in SDK mode) |
 | `TRACESTATE` | — | W3C trace context propagation: trace state header (used in SDK mode) |
+| `CLAUDE_CODE_PROPAGATE_TRACEPARENT` | — | Truthy forces W3C `traceparent` propagation to spawned/child requests even outside the default conditions (v2.1.154) |
 
 ## Network & Proxy
 
@@ -567,6 +572,9 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_CODE_TMUX_PREFIX_CONFLICTS` | — | Whether tmux prefix conflicts exist |
 | `CLAUDE_CODE_TMUX_TRUECOLOR` | — | Override truecolor detection for tmux sessions |
 | `TEAM_MEMORY_SYNC_URL` | — | URL for team memory synchronization |
+| `CLAUDE_CODE_COORDINATOR_MODE` | — | Marks the current process as a team coordinator; set to `"1"` on the coordinator and inherited by child processes (v2.1.154) |
+| `CLAUDE_CODE_SYNC_SKILLS` | — | Truthy enables synchronous skill syncing for teammate/agent spawns (v2.1.154) |
+| `CLAUDE_CODE_SYNC_SKILLS_WAIT_TIMEOUT_MS` | — | Timeout in ms to wait for skill sync to finish; parsed via `parseInt(..., 10)` (v2.1.154) |
 
 ## Plugins / Cowork
 
@@ -623,6 +631,8 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_BG_RENDEZVOUS_SOCK` | — | Unix socket path used by background jobs to rendezvous with the parent daemon; consumed and deleted on read |
 | `CLAUDE_BG_STARTUP_WEDGE_MS` | `45000` | Milliseconds to delay (`unref`'d timer) before the background job's startup wedge fires |
 | `CLAUDE_BG_SESSION_PERMISSION_RULES` | — | JSON-encoded permission rule overrides applied to a background session (`CLAUDE_CODE_SESSION_KIND=bg`); the parent injects it via `JSON.stringify(...)` and the worker consumes and deletes it from `process.env` on read (v2.1.146) |
+| `CLAUDE_BG_MEMORY_TOGGLED_OFF` | — | Presence (`!== undefined`) signals that auto-memory was toggled off for this background session; consumed and deleted from `process.env` on read (v2.1.154) |
+| `CLAUDE_CODE_SPAWN_TIMESTAMP_MS` | — | Spawn timestamp (ms) propagated to a child/background process; parsed via `parseInt(..., 10)` and used as a fallback spawn time (v2.1.154) |
 
 ## Miscellaneous
 
@@ -698,12 +708,15 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `CLAUDE_CODE_PROACTIVE` | — | Truthy turns on the proactive/Kairos assistant mode in the TUI |
 | `CLAUDE_CODE_INVESTIGATE_FIRST` | — | Controls the "investigate first" prelude mode; accepts `additive`, `compact`, or a boolean-style toggle |
 | `CLAUDE_CODE_MID_CONVERSATION_SYSTEM` | — | Marker string used to detect (and inject) a mid-conversation system prompt; falls back to the `tengu_fennel_kite_model` GrowthBook flag |
+| `CLAUDE_CODE_FORCE_MID_CONVERSATION_SYSTEM` | — | Truthy forces injection of the mid-conversation system prompt regardless of the usual gating (companion to `CLAUDE_CODE_MID_CONVERSATION_SYSTEM`) (v2.1.154) |
 | `CLAUDE_CODE_SIMPLE_SYSTEM_PROMPT` | — | Truthy forces the simplified system prompt; falsy explicitly disables it |
 | `CLAUDE_CODE_VERIFY_PROMPT` | — | Truthy enables verifier-style prompt validation before sending |
 | `CLAUDE_CODE_SUPERVISED` | — | Truthy marks the process as supervised; uncaught exceptions/rejections exit instead of being swallowed |
 | `CLAUDE_CODE_VOICE_FORWARD_INTERIMS_TYPED` | — | Truthy forwards interim voice transcription results as typed input |
 | `CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE` | — | Truthy opts the installer into automatic package-manager-driven self-updates |
 | `BUGHUNTER_FLEET_SIZE` | `5` | Number of parallel Bug Hunter subagents to launch; default sourced from GrowthBook (`fleet_size`, capped 5–20) |
+| `CLAUDE_IMPORT_CONVERSATIONS` | — | Truthy enables importing prior conversations on startup (gated by `!xH(process.env.CLAUDE_IMPORT_CONVERSATIONS)`) (v2.1.154) |
+| `CLAUDE_BRIDGE_REATTACH_OUTBOUND_ONLY` | — | Set to `"1"` by the parent to instruct a re-attaching Chrome-bridge connection to operate outbound-only; consumed and deleted from `process.env` on read (v2.1.154) |
 
 ## GitHub Actions
 
@@ -788,6 +801,9 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `METADATA_SERVER_DETECTION` | — | Control GCE metadata server detection behavior |
 | `DETECT_GCP_RETRIES` | — | Number of retries for GCP detection |
 | `CLOUDSDK_CONFIG` | — | Override the path to the `gcloud` SDK configuration directory; falls back to the platform default if unset |
+| `gcloud_project` | — | Lowercase GCP project fallback, read after `GOOGLE_CLOUD_PROJECT` (`GOOGLE_CLOUD_PROJECT || gcloud_project || google_cloud_project`) (v2.1.154) |
+| `google_cloud_project` | — | Lowercase GCP project fallback, read last in the `GOOGLE_CLOUD_PROJECT || gcloud_project || google_cloud_project` chain (v2.1.154) |
+| `google_application_credentials` | — | Lowercase fallback for the service-account key path, read after `GOOGLE_APPLICATION_CREDENTIALS` (v2.1.154) |
 
 ## Azure Identity (Bundled SDK)
 
@@ -867,9 +883,10 @@ New Bedrock Mantle route, selected when `CLAUDE_CODE_USE_MANTLE` is truthy. Base
 | `LOCALAPPDATA` | ambient | Local application data directory (Windows) |
 | `ProgramData` | ambient | Program data directory (Windows) |
 | `ProgramFiles` | ambient | Program files directory (Windows) |
-| `comspec` | `cmd.exe` | Windows command processor |
+| `ComSpec` / `comspec` | `cmd.exe` | Windows command processor; read as `process.env.ComSpec` for the shell command path, falling back to `%SystemRoot%\System32\cmd.exe` |
 | `CLAUDE_CODE_POWERSHELL_RESPECT_EXECUTION_POLICY` | — | When unset/falsy, Claude Code bypasses the PowerShell execution policy when invoking `powershell`; set truthy to respect the configured policy instead (v2.1.145) |
 | `CLAUDE_PTY_HOST_EXEC` | — | When set to `"1"`, routes command execution through the PTY host; consumed and deleted from the environment after it is read (v2.1.145) |
+| `CLAUDE_PTY_ORPHAN_CHECK_MS` | `2000` | Interval (ms) for the PTY host's orphan-process check; parsed via `Number(...)` and falls back to `2000` (v2.1.154) |
 | `DISPLAY` | `:99` | X11 display read by bundled helper code; falls back to `:99` (v2.1.145) |
 | `XDG_CONFIG_HOME` | ambient | XDG configuration home |
 | `XDG_RUNTIME_DIR` | ambient | XDG runtime directory |
