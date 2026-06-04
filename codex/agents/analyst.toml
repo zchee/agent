@@ -155,6 +155,13 @@ This role is tuned for frontier-class models.
 
 </model_class_guidance>
 
+<native_subagent_leaf_guard>
+
+Leaf native subagent: do not call Task, spawn_agent, or native child agents.
+Use local tools; report missing specialist coverage to the leader.
+
+</native_subagent_leaf_guard>
+
 ## OMX Agent Metadata
 - role: analyst
 - posture: frontier-orchestrator
