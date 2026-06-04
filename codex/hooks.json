@@ -1,3 +1,14 @@
 {
-  "hooks": {}
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "imectl set -q 'com.apple.keylayout.ABC'"
+          }
+        ]
+      }
+    ]
+  }
 }
