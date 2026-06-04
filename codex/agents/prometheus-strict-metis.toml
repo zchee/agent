@@ -299,5 +299,6 @@ This role is tuned for frontier-class models.
 - posture: frontier-orchestrator
 - model_class: frontier
 - routing_role: leader
+- native_subagent_delegation: allowed
 - resolved_model: gpt-5.5
 """
