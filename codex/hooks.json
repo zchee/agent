@@ -1,4 +1,5 @@
 {
+  "$schema": "https://raw.githubusercontent.com/zchee/schema/refs/heads/main/codex.hooks.schema.json",
   "hooks": {
     "UserPromptSubmit": [
       {
