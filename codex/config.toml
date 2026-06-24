@@ -262,6 +262,15 @@ last_revision = "854db0b24a3f8f7d9d8c45134fe9df8809fb2dfe"
 source_type = "git"
 source = "https://github.com/langchain-ai/langsmith-codex-plugins.git"
 
+[plugins."browser@openai-bundled"]
+enabled = true
+
+[plugins."chrome@openai-bundled"]
+enabled = true
+
+[plugins."record-and-replay@openai-bundled"]
+enabled = true
+
 [plugins."documents@openai-primary-runtime"]
 enabled = false
 
@@ -275,6 +284,12 @@ enabled = false
 enabled = false
 
 [plugins."computer-use@openai-bundled"]
+enabled = true
+
+[plugins."pdf@openai-primary-runtime"]
+enabled = true
+
+[plugins."template-creator@openai-primary-runtime"]
 enabled = true
 
 [plugins."figma@openai-curated"]
@@ -311,18 +326,6 @@ enabled = false
 enabled = false
 
 [plugins."oh-my-codex@oh-my-codex-local"]
-enabled = true
-
-[plugins."pdf@openai-primary-runtime"]
-enabled = true
-
-[plugins."template-creator@openai-primary-runtime"]
-enabled = true
-
-[plugins."browser@openai-bundled"]
-enabled = true
-
-[plugins."chrome@openai-bundled"]
 enabled = true
 
 [skills.bundled]
