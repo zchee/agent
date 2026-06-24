@@ -75,10 +75,11 @@ If any score is below 0.9, refine the solution before finalizing.
   - Search the codebase before adding new functions.
 - NO DEAD CODE
   - Every added path must be used, or remove it.
-- IMPLEMENT TESTS FOR EVERY FUNCTION
 - NO CHEATER TESTS
   - Tests must reflect realistic usage and expose flaws.
   - Keep tests verbose enough for debugging.
+  - Excessive test cases are a bad idea.
+    - See https://testing.googleblog.com/2020/08/code-coverage-best-practices.html
 - NO INCONSISTENT NAMING
   - Follow existing naming patterns.
 - NO OVER-ENGINEERING
