@@ -21,3 +21,7 @@ version.json
 
 # https://github.com/ndycode/codex-multi-auth
 multi-auth/
+
+# state db
+codex-dev.db
+*.sqlite*
