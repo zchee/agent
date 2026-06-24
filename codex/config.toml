@@ -7,7 +7,6 @@ model_auto_compact_token_limit = 900000
 model_auto_compact_token_limit_scope = "total"
 approval_policy = "never"
 tool_output_token_limit = 40000
-sqlite_home = "/Users/zchee/.codex/sqlite"
 project_doc_max_bytes = 46080
 project_doc_fallback_filenames = ["AGENTS.md", "CLAUDE.md", "GEMINI.md"]
 allow_login_shell = true
@@ -29,12 +28,10 @@ include_permissions_instructions = true
 include_apps_instructions = true
 include_environment_context = true
 personality = "pragmatic"
-service_tier = "fast"
-developer_instructions = "You have oh-my-codex installed through Codex plugin mode. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing and $name workflow invocation. When spawning native subagents, set `agent_type` to an installed role and never omit it for OMX work. Registered Codex plugin marketplace surfaces supply OMX workflows and plugin-scoped companion resources when the plugin is installed; native agent roles are installed as setup-owned Codex agent TOML files in plugin mode so agent_type routing works. User-installed skills may still live under ~/.codex/skills. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail."
-
-notify = ["/Users/zchee/src/github.com/zchee/agent/codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+service_tier = "priority"
 disable_paste_burst = true
-model_reasoning_effort = "xhigh"
+developer_instructions = "You have oh-my-codex installed through Codex plugin mode. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing and $name workflow invocation. When spawning native subagents, set `agent_type` to an installed role and never omit it for OMX work. Registered Codex plugin marketplace surfaces supply OMX workflows and plugin-scoped companion resources when the plugin is installed; native agent roles are installed as setup-owned Codex agent TOML files in plugin mode so agent_type routing works. User-installed skills may still live under ~/.codex/skills. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail."
+notify = ["/Users/zchee/src/github.com/zchee/agent/codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 
 [desktop]
 sansFontSize = 18
@@ -42,14 +39,51 @@ codeFontSize = 16
 usePointerCursors = true
 dictationDictionary = []
 composerEnterBehavior = "cmdIfMultiline"
-reviewDelivery = "inline"
+reviewDelivery = "detached"
 preventSleepWhileRunning = true
 keepRemoteControlAwakeWhilePluggedIn = true
 git-branch-prefix = "codex-"
 git-pull-request-merge-method = "squash"
 git-show-sidebar-pr-icons = true
 notifications-turn-mode = "always"
-sqlite_home = "/Users/zchee/.codex/sqlite"
+dock-icon-preference = "app-default"
+appearanceTheme = "system"
+show-context-window-usage = true
+hotkey-window-projectless-default-enabled = true
+useFontSmoothing = true
+appshotSoundEnabled = true
+
+[desktop.appearanceLightChromeTheme]
+accent = "#339cff"
+contrast = 45
+ink = "#1a1c1f"
+opaqueWindows = false
+surface = "#ffffff"
+
+[desktop.appearanceLightChromeTheme.fonts]
+code = "MonoLisaCode"
+ui = "MonoLisaText"
+
+[desktop.appearanceLightChromeTheme.semanticColors]
+diffAdded = "#00a240"
+diffRemoved = "#ba2623"
+skill = "#924ff7"
+
+[desktop.appearanceDarkChromeTheme]
+accent = "#339cff"
+contrast = 60
+ink = "#ffffff"
+opaqueWindows = false
+surface = "#181818"
+
+[desktop.appearanceDarkChromeTheme.fonts]
+code = "MonoLisaCode"
+ui = "MonoLisaText,-apple-system"
+
+[desktop.appearanceDarkChromeTheme.semanticColors]
+diffAdded = "#40c977"
+diffRemoved = "#fa423e"
+skill = "#ad7bf9"
 
 [model_providers.oai]
 name = "openai"
@@ -175,8 +209,8 @@ apps = false
 terminal_resize_reflow = true
 use_agent_identity = true
 js_repl = false
-
 goals = true
+
 [features.multi_agent_v2]
 enabled = false
 max_concurrent_threads_per_session = 10000
@@ -208,7 +242,7 @@ source_type = "local"
 source = "/Applications/Codex.app/Contents/Resources/plugins/openai-bundled"
 
 [marketplaces.openai-primary-runtime]
-last_updated = "2026-06-23T09:02:42Z"
+last_updated = "2026-06-24T10:02:41Z"
 source_type = "local"
 source = "/Users/zchee/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
@@ -283,6 +317,12 @@ enabled = true
 enabled = true
 
 [plugins."template-creator@openai-primary-runtime"]
+enabled = true
+
+[plugins."browser@openai-bundled"]
+enabled = true
+
+[plugins."chrome@openai-bundled"]
 enabled = true
 
 [skills.bundled]
@@ -382,7 +422,7 @@ enabled = false
 command = "npx"
 args = ["-y", "@modelcontextprotocol/server-filesystem@latest", "/Users/zchee/go", "/Users/zchee/src", "/Users/zchee/Downloads", "/opt"]
 enabled = false
-startup_timeout_sec = 30.0
+startup_timeout_sec = 15.0
 
 [mcp_servers.filesystem.tools.write_file]
 approval_mode = "approve"
@@ -586,7 +626,7 @@ startup_timeout_sec = 15.0
 command = "mcp-language-server"
 args = ["--workspace", ".", "--lsp", "lua-language-server"]
 enabled = false
-startup_timeout_sec = 16.0
+startup_timeout_sec = 15.0
 
 [mcp_servers.openaiDeveloperDocs]
 url = "https://developers.openai.com/mcp"
@@ -626,7 +666,7 @@ startup_timeout_sec = 15.0
 
 [mcp_servers.pencil]
 command = "/Users/zchee/.pencil/mcp/visual_studio_code_-_insiders/out/mcp-server-darwin-arm64"
-args = ["--app", "visual_studio_code_-_insiders"]
+args = ["--app", "visual_studio_code_-_insiders", "--agent", "codexCLI"]
 enabled = false
 
 [mcp_servers.xcode]
@@ -635,6 +675,7 @@ args = ["mcpbridge"]
 enabled = false
 
 [mcp_servers.node_repl]
+args = []
 command = "/Applications/Codex.app/Contents/Resources/cua_node/bin/node_repl"
 startup_timeout_sec = 120
 
@@ -644,10 +685,10 @@ NODE_REPL_NODE_MODULE_DIRS = "/Applications/Codex.app/Contents/Resources/cua_nod
 NODE_REPL_NODE_PATH = "/Applications/Codex.app/Contents/Resources/cua_node/bin/node"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/zchee/.config/codex"
 CODEX_HOME = "/Users/zchee/.config/codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "5ee3754ef68f803b9cebf40e30f94ea22aaf446de1a0a24b109180fa2ae0bd3e"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "5504c0782b5c86b7dd08314045b9843e973a230e1be8f7e2e0ba3716fc63c55e"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.616.71553"
+BROWSER_USE_CODEX_APP_VERSION = "26.616.81150"
 CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
