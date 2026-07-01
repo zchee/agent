@@ -2,6 +2,7 @@
 
 model = "gpt-5.5"
 review_model = "gpt-5.5"
+# model_reasoning_effort = "xhigh"
 model_context_window = 1000000
 model_auto_compact_token_limit = 900000
 model_auto_compact_token_limit_scope = "total"
@@ -27,7 +28,8 @@ approvals_reviewer = "guardian_subagent"
 include_permissions_instructions = true
 include_apps_instructions = true
 include_environment_context = true
-personality = "pragmatic"
+personality = "none"
+# personality = "pragmatic"
 service_tier = "priority"
 disable_paste_burst = true
 developer_instructions = "You have oh-my-codex installed through Codex plugin mode. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing and $name workflow invocation. When spawning native subagents, set `agent_type` to an installed role and never omit it for OMX work. Registered Codex plugin marketplace surfaces supply OMX workflows and plugin-scoped companion resources when the plugin is installed; native agent roles are installed as setup-owned Codex agent TOML files in plugin mode so agent_type routing works. User-installed skills may still live under ~/.codex/skills. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail."
@@ -52,6 +54,7 @@ show-context-window-usage = true
 hotkey-window-projectless-default-enabled = true
 useFontSmoothing = true
 appshotSoundEnabled = true
+followUpQueueMode = "queue"
 
 [desktop.appearanceLightChromeTheme]
 accent = "#339cff"
@@ -105,12 +108,6 @@ env_key = "XAI_API_KEY"
 wire_api = "responses"
 supports_websockets = true
 
-[orchestrator.skills]
-enabled = true
-
-[orchestrator.mcp]
-enabled = true
-
 [experimental_thread_store]
 type = "local"
 
@@ -162,17 +159,14 @@ extract_model = "gpt-5.3-codex-spark"
 consolidation_model = "gpt-5.5"
 
 [features]
-unified_exec = true
-plugins = true
-secret_auth_storage = true
 shell_zsh_fork = false
 unified_exec_zsh_fork = false
 deferred_executor = true
 code_mode = false
+code_mode_host = true
 code_mode_only = false
-codex_git_commit = true
+standalone_web_search = true
 runtime_metrics = true
-standalone_web_search = false
 memories = true
 local_thread_store_compression = true
 chronicle = true
@@ -180,41 +174,40 @@ apply_patch_streaming_events = true
 exec_permission_approvals = true
 request_permissions_tool = true
 network_proxy = true
-multi_agent_mode = true
-enable_fanout = true
 respect_system_proxy = true
+enable_fanout = true
+apps = false
 enable_mcp_apps = true
-apps_mcp_path_override = true
-tool_search_always_defer_mcp_tools = true
 non_prefixed_mcp_tool_names = true
-plugin_hooks = true
-remote_plugin = true
-item_ids = true
-skill_env_var_dependency_prompt = true
-mentions_v2 = true
 imagegenext = false
-resize_all_images = true
+item_ids = false
 default_mode_request_user_input = true
 terminal_visualization_instructions = true
-token_budget = true
-rollout_budget = false
+token_budget = false
 current_time_reminder = true
-sleep_tool = true
 auth_elicitation = true
 realtime_conversation = true
 prevent_idle_sleep = true
-workspace_owner_usage_nudge = true
-remote_compaction_v2 = true
-apps = false
-terminal_resize_reflow = true
 use_agent_identity = true
 js_repl = false
-goals = true
+
+# [features.rollout_budget]
+# enabled = true
+# limit_tokens = 100000
+# reminder_at_remaining_tokens = 100000
+# reminder_at_remaining_tokens = 100
 
 [features.multi_agent_v2]
-enabled = false
-max_concurrent_threads_per_session = 10000
+enabled = true
+max_concurrent_threads_per_session = 50
 hide_spawn_agent_metadata = false
+non_code_mode_only = false
+
+[orchestrator.skills]
+enabled = true
+
+[orchestrator.mcp]
+enabled = true
 
 [analytics]
 enabled = false
@@ -242,13 +235,13 @@ source_type = "local"
 source = "/Applications/Codex.app/Contents/Resources/plugins/openai-bundled"
 
 [marketplaces.openai-primary-runtime]
-last_updated = "2026-06-24T10:02:41Z"
+last_updated = "2026-07-01T07:02:26Z"
 source_type = "local"
 source = "/Users/zchee/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.memsearch-plugins]
-last_updated = "2026-06-22T14:33:13Z"
-last_revision = "bdd82768e91fe6d8704b1188b5ac359e0e25a630"
+last_updated = "2026-06-30T15:54:48Z"
+last_revision = "8995fb0ec3a4f9456e3019b2f29ba40333170c50"
 source_type = "git"
 source = "https://github.com/zilliztech/memsearch.git"
 
@@ -257,10 +250,15 @@ source_type = "local"
 source = "/opt/local/var/bun/install/global/node_modules/oh-my-codex"
 
 [marketplaces.langsmith-codex-plugins]
-last_updated = "2026-06-24T07:18:38Z"
-last_revision = "854db0b24a3f8f7d9d8c45134fe9df8809fb2dfe"
+last_updated = "2026-07-01T12:38:42Z"
+last_revision = "5ed8f3b4ba51633235e4413149a6d9dd4aa98ff3"
 source_type = "git"
 source = "https://github.com/langchain-ai/langsmith-codex-plugins.git"
+
+[marketplaces.mattpocock-skills-local]
+last_updated = "2026-07-01T17:28:10Z"
+source_type = "local"
+source = "/Users/zchee/src/github.com/zchee/agent/codex/cache/marketplaces/mattpocock-skills-local"
 
 [plugins."browser@openai-bundled"]
 enabled = true
@@ -326,6 +324,9 @@ enabled = false
 enabled = false
 
 [plugins."oh-my-codex@oh-my-codex-local"]
+enabled = true
+
+[plugins."mattpocock-skills@mattpocock-skills-local"]
 enabled = true
 
 [skills.bundled]
@@ -688,10 +689,10 @@ NODE_REPL_NODE_MODULE_DIRS = "/Applications/Codex.app/Contents/Resources/cua_nod
 NODE_REPL_NODE_PATH = "/Applications/Codex.app/Contents/Resources/cua_node/bin/node"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/zchee/.config/codex"
 CODEX_HOME = "/Users/zchee/.config/codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "5504c0782b5c86b7dd08314045b9843e973a230e1be8f7e2e0ba3716fc63c55e"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "cb79053fda6deb0f3b5d6f0d90d4257305ebdbd1e378a12e8fbc5bde782eb59b"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.616.81150"
+BROWSER_USE_CODEX_APP_VERSION = "26.623.81905"
 CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
