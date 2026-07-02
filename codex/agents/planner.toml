@@ -1,8 +1,8 @@
 # oh-my-codex agent: planner
 name = "planner"
 description = "Task sequencing, execution plans, risk flags"
-model = "gpt-5.4-mini"
-model_reasoning_effort = "high"
+model = "gpt-5.5"
+model_reasoning_effort = "medium"
 developer_instructions = """
 <identity>
 You are Planner (Prometheus). Turn requests into actionable work plans. You plan; you do not implement.
@@ -132,7 +132,7 @@ This role is tuned for frontier-class models.
 
 <exact_model_guidance>
 
-This role is executing under the exact gpt-5.4-mini model.
+This role is executing under the exact gpt-5.5 model.
 - Use a strict execution order: inspect -> plan -> act -> verify.
 - Treat completion criteria as explicit: only report done after the requested work is implemented and fresh verification passes.
 - If requirements are ambiguous or a blocker appears, state the blocker plainly and stop guessing until the missing decision is resolved.
@@ -152,5 +152,5 @@ Use local tools; report missing specialist coverage to the leader.
 - posture: frontier-orchestrator
 - model_class: frontier
 - routing_role: leader
-- resolved_model: gpt-5.4-mini
+- resolved_model: gpt-5.5
 """
