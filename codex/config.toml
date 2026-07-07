@@ -2,7 +2,7 @@
 
 model = "gpt-5.5"
 review_model = "gpt-5.5"
-# model_reasoning_effort = "xhigh"
+model_reasoning_effort = "xhigh"
 model_context_window = 1000000
 model_auto_compact_token_limit = 900000
 model_auto_compact_token_limit_scope = "total"
@@ -181,6 +181,7 @@ enable_mcp_apps = true
 non_prefixed_mcp_tool_names = true
 imagegenext = false
 item_ids = false
+concurrent_reasoning_summaries = true
 default_mode_request_user_input = true
 terminal_visualization_instructions = true
 token_budget = false
@@ -612,6 +613,11 @@ GOOGLE_CLOUD_LOCATION = "global"
 GOOGLE_CLOUD_PROJECT = "gaudiy-ai"
 GOOGLE_GENAI_USE_VERTEXAI = "true"
 
+[mcp_servers.mcp-lsp]
+command = "mcp-lsp"
+enabled = true
+startup_timeout_sec = 15.0
+
 [mcp_servers.gopls]
 command = "gopls"
 args = ["mcp"]
@@ -689,10 +695,10 @@ NODE_REPL_NODE_MODULE_DIRS = "/Applications/Codex.app/Contents/Resources/cua_nod
 NODE_REPL_NODE_PATH = "/Applications/Codex.app/Contents/Resources/cua_node/bin/node"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/zchee/.config/codex"
 CODEX_HOME = "/Users/zchee/.config/codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "cb79053fda6deb0f3b5d6f0d90d4257305ebdbd1e378a12e8fbc5bde782eb59b"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "60e4902788f207f88fd09344dfeafe07769488bdb2924bbb12b322c3b9d2b999"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.623.81905"
+BROWSER_USE_CODEX_APP_VERSION = "26.623.101652"
 CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
