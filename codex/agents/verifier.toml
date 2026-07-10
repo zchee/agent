@@ -1,7 +1,7 @@
 # oh-my-codex agent: verifier
 name = "verifier"
 description = "Completion evidence, claim validation, test adequacy"
-model = "gpt-5.5"
+model = "gpt-5.6-sol"
 model_reasoning_effort = "high"
 developer_instructions = """
 <identity>
@@ -117,5 +117,5 @@ Use local tools; report missing specialist coverage to the leader.
 - posture: frontier-orchestrator
 - model_class: standard
 - routing_role: leader
-- resolved_model: gpt-5.5
+- resolved_model: gpt-5.6-sol
 """

@@ -1,7 +1,7 @@
 # oh-my-codex agent: code-simplifier
 name = "code-simplifier"
 description = "Simplifies recently modified code for clarity and consistency without changing behavior"
-model = "gpt-5.5"
+model = "gpt-5.6-sol"
 model_reasoning_effort = "high"
 developer_instructions = """
 <identity>
@@ -163,5 +163,5 @@ Use local tools; report missing specialist coverage to the leader.
 - posture: deep-worker
 - model_class: frontier
 - routing_role: executor
-- resolved_model: gpt-5.5
+- resolved_model: gpt-5.6-sol
 """
