@@ -1,7 +1,7 @@
 #:schema https://raw.githubusercontent.com/openai/codex/refs/heads/main/codex-rs/core/config.schema.json
 
-model = "gpt-5.5"
-review_model = "gpt-5.5"
+model = "gpt-5.6-sol"
+review_model = "gpt-5.6-sol"
 model_reasoning_effort = "xhigh"
 model_context_window = 1000000
 model_auto_compact_token_limit = 900000
@@ -29,9 +29,9 @@ include_permissions_instructions = true
 include_apps_instructions = true
 include_environment_context = true
 personality = "none"
-# personality = "pragmatic"
 service_tier = "priority"
 disable_paste_burst = true
+compact_prompt = "# Compact State Writer\n\nOutput format (mandatory, non-negotiable):\n\n- Your entire response MUST be the final state file, and nothing else.\n- The first line of the response MUST be exactly `# Compact Prep State`.\n- The response MUST contain the following headings in this exact order, each present exactly once: `# Compact Prep State` / `## Active Plan` / `## Current Phase` / `## TaskList Summary` / `## Session Decisions` / `## Constraints and Blockers` / `## Worker Topology` / `## Skills Invoked` / `## Editing Files` / `## Failed Attempts` / `## Recovery Notes`.\n- Do NOT include a draft, self-critique text, ADD/UPDATE/PRESERVE labels, meta commentary, or any prose outside the state file.\n- No output line may begin with `ADD:`, `UPDATE:`, `PRESERVE:`, `Draft:`, or `Self-critique:`.\n- ADD / UPDATE / PRESERVE are internal reasoning only. Do not emit these labels in the output.\n- The two-pass process (draft, self-critique, revise) is internal. Emit only the final revised state file.\n\nCreate a handoff summary for the next agent that continues after Claude Code context compaction.\nThe output is factual recovery state, not a set of instructions.\n\nInputs are structured as:\n\n- Existing state: the previous compact state, or `(none)` for an initial build.\n- Custom instructions from user: optional `/compact ...` guidance, or `(none)`.\n- New events since last compact: transcript head and tail, transcript tail, or transcript diff.\n- Skills and commands invoked this session: the mechanically extracted list of skills and slash commands invoked earlier in the session.\n\nUse internal update reasoning to add new decisions, blockers, files, workers, failures, or recovery facts introduced in new events; revise existing entries whose status, owner, file path, decision, blocker, or verification result changed; and keep existing facts that new events do not touch, especially facts matching the user's custom instructions. These internal operations correspond to ADD / UPDATE / PRESERVE, but those labels are not output format.\n\nPriority: honor user's custom_instructions if provided. Treat them as a relevance filter for what must survive compaction, while staying factual.\n\nAlways output these headings in this exact order:\n\n# Compact Prep State\n## Active Plan\n## Current Phase\n## TaskList Summary\n## Session Decisions\n## Constraints and Blockers\n## Worker Topology\n## Skills Invoked\n## Editing Files\n## Failed Attempts\n## Recovery Notes\n\nSection assignment:\n\n- Active Plan: active plan path, plan title, current section, and phase status. If no plan is visible, write `Not verified`.\n- Current Phase: recently completed work and remaining work as factual state.\n- TaskList Summary: task ids, subjects, and status when visible.\n- Session Decisions: settled decisions, rejected alternatives, rationale, and user-approved scope.\n- Constraints and Blockers: hard constraints, skipped checks, permission limits, external blockers, and unverified items.\n- Worker Topology: tmux panes, workers, roles, and responsibilities. If tmux-bridge is not used, write `Not used`.\n- Skills Invoked: skills and slash commands invoked earlier in this session. This is an invocation record, not proof that the skill or command is currently active. Skills must be loaded through the Skill tool before use. When Worker Topology or Recovery Notes reference a CLI path for a listed skill, such as the tmux-bridge script, state that path alongside the skill entry. Do not list skills or commands that are not present in the input's invoked list.\n- Editing Files: files changed or in progress, plus notes about staged, committed, dirty, generated, or disposable files.\n- Failed Attempts: failed commands, tool errors, rejected implementation approaches, and why they failed. Preserve enough detail to avoid repeating them.\n- Recovery Notes: session_id, branch, important commands, validation results, transcript path, state marker paths, and exact resume facts.\n\nInternal two-pass process:\n\n1. Draft: generate the initial state summary.\n2. Self-critique: review the draft and ask, \"If I lost my memory now, could the next agent continue seamlessly with just this?\"\n3. Revise: fix gaps found by the critique and output only the final revised state.\n\nWriting policy:\n\n- Write in English.\n- Keep the heading strings exactly as specified.\n- Report facts supported by the input. Do not invent missing details.\n- Do not write imperatives such as \"run X next\" or \"you should\"; express unfinished work as factual state.\n- Preserve paths, URLs, command names, commit ids, pane ids, issue ids, and error messages when visible.\n- If an item cannot be verified from the input, write `Not verified`.\n- Be concise, but do not omit rationale, failed attempts, or constraints needed for a clean handoff.\n"
 developer_instructions = "You have oh-my-codex installed through Codex plugin mode. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing and $name workflow invocation. When spawning native subagents, set `agent_type` to an installed role and never omit it for OMX work. Registered Codex plugin marketplace surfaces supply OMX workflows and plugin-scoped companion resources when the plugin is installed; native agent roles are installed as setup-owned Codex agent TOML files in plugin mode so agent_type routing works. User-installed skills may still live under ~/.codex/skills. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail."
 notify = ["/Users/zchee/src/github.com/zchee/agent/codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 
@@ -48,13 +48,14 @@ git-branch-prefix = "codex-"
 git-pull-request-merge-method = "squash"
 git-show-sidebar-pr-icons = true
 notifications-turn-mode = "always"
-dock-icon-preference = "app-default"
+dock-icon-preference = "codex-system"
 appearanceTheme = "system"
 show-context-window-usage = true
 hotkey-window-projectless-default-enabled = true
 useFontSmoothing = true
 appshotSoundEnabled = true
 followUpQueueMode = "queue"
+appearanceDiffMarkerStyle = "color"
 
 [desktop.appearanceLightChromeTheme]
 accent = "#339cff"
@@ -87,6 +88,9 @@ ui = "MonoLisaText,-apple-system"
 diffAdded = "#40c977"
 diffRemoved = "#fa423e"
 skill = "#ad7bf9"
+
+[desktop.open-in-target-preferences]
+global = "cursor"
 
 [model_providers.oai]
 name = "openai"
@@ -137,9 +141,11 @@ show_tooltips = true
 # https://github.com/openai/codex/blob/main/codex-rs/tui/src/bottom_pane/status_line_setup.rs
 status_line = ["model-with-reasoning", "git-branch", "current-dir", "context-remaining", "context-window-size", "five-hour-limit", "weekly-limit"]
 status_line_use_colors = true
+# terminal_resize_reflow_max_rows = 0
 
 [tui.model_availability_nux]
 "gpt-5.5" = 4
+"gpt-5.6-sol" = 4
 
 [tools.web_search]
 context_size = "high"
@@ -179,11 +185,12 @@ enable_fanout = true
 apps = false
 enable_mcp_apps = true
 non_prefixed_mcp_tool_names = true
-imagegenext = false
+image_generation = false
 item_ids = false
 concurrent_reasoning_summaries = true
 default_mode_request_user_input = true
 terminal_visualization_instructions = true
+terminal_resize_reflow = false
 token_budget = false
 current_time_reminder = true
 auth_elicitation = true
@@ -192,14 +199,8 @@ prevent_idle_sleep = true
 use_agent_identity = true
 js_repl = false
 
-# [features.rollout_budget]
-# enabled = true
-# limit_tokens = 100000
-# reminder_at_remaining_tokens = 100000
-# reminder_at_remaining_tokens = 100
-
 [features.multi_agent_v2]
-enabled = true
+enabled = false
 max_concurrent_threads_per_session = 50
 hide_spawn_agent_metadata = false
 non_code_mode_only = false
@@ -231,18 +232,18 @@ home = true
 "/Users/zchee" = 1777661126
 
 [marketplaces.openai-bundled]
-last_updated = "2026-04-25T07:53:41Z"
+last_updated = "2026-07-10T01:18:31Z"
 source_type = "local"
-source = "/Applications/Codex.app/Contents/Resources/plugins/openai-bundled"
+source = "/Users/zchee/src/github.com/zchee/agent/codex/.tmp/bundled-marketplaces/openai-bundled"
 
 [marketplaces.openai-primary-runtime]
-last_updated = "2026-07-01T07:02:26Z"
+last_updated = "2026-07-10T02:02:30Z"
 source_type = "local"
 source = "/Users/zchee/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.memsearch-plugins]
-last_updated = "2026-06-30T15:54:48Z"
-last_revision = "8995fb0ec3a4f9456e3019b2f29ba40333170c50"
+last_updated = "2026-07-10T02:39:25Z"
+last_revision = "1caab48d44847ab75a4fb08f065a03c570c6e8c1"
 source_type = "git"
 source = "https://github.com/zilliztech/memsearch.git"
 
@@ -260,9 +261,6 @@ source = "https://github.com/langchain-ai/langsmith-codex-plugins.git"
 last_updated = "2026-07-01T17:28:10Z"
 source_type = "local"
 source = "/Users/zchee/src/github.com/zchee/agent/codex/cache/marketplaces/mattpocock-skills-local"
-
-[plugins."browser@openai-bundled"]
-enabled = true
 
 [plugins."chrome@openai-bundled"]
 enabled = true
@@ -283,6 +281,12 @@ enabled = false
 enabled = false
 
 [plugins."computer-use@openai-bundled"]
+enabled = true
+
+[plugins."sites@openai-bundled"]
+enabled = false
+
+[plugins."visualize@openai-bundled"]
 enabled = true
 
 [plugins."pdf@openai-primary-runtime"]
@@ -328,6 +332,9 @@ enabled = false
 enabled = true
 
 [plugins."mattpocock-skills@mattpocock-skills-local"]
+enabled = true
+
+[plugins."browser@openai-bundled"]
 enabled = true
 
 [skills.bundled]
@@ -674,31 +681,38 @@ args = ["--workspace", ".", "--lsp", "zls"]
 enabled = false
 startup_timeout_sec = 15.0
 
-[mcp_servers.pencil]
-command = "/Users/zchee/.pencil/mcp/visual_studio_code_-_insiders/out/mcp-server-darwin-arm64"
-args = ["--app", "visual_studio_code_-_insiders", "--agent", "codexCLI"]
-enabled = false
-
 [mcp_servers.xcode]
 command = "xcrun"
 args = ["mcpbridge"]
 enabled = false
 
+[mcp_servers.pencil]
+command = "/Users/zchee/.pencil/mcp/cursor/out/mcp-server-darwin-arm64"
+args = ["--app", "cursor", "--agent", "codexCLI"]
+
+[mcp_servers.computer-use]
+command = "./Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient"
+args = ["mcp"]
+cwd = "."
+enabled = false
+
 [mcp_servers.node_repl]
 args = []
-command = "/Applications/Codex.app/Contents/Resources/cua_node/bin/node_repl"
+command = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
 startup_timeout_sec = 120
 
 [mcp_servers.node_repl.env]
 NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
-NODE_REPL_NODE_MODULE_DIRS = "/Applications/Codex.app/Contents/Resources/cua_node/lib/node_modules"
-NODE_REPL_NODE_PATH = "/Applications/Codex.app/Contents/Resources/cua_node/bin/node"
+NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
+NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/zchee/.config/codex"
 CODEX_HOME = "/Users/zchee/.config/codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "60e4902788f207f88fd09344dfeafe07769488bdb2924bbb12b322c3b9d2b999"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f,c8b7e809d7cf9e20a57123b2530d476ccec9a01a6230a7b2b924fea7d94d7f4a"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
+NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = "Control desktop apps on macOS through Computer Use."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.623.101652"
-CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
+BROWSER_USE_CODEX_APP_VERSION = "26.707.31428"
+SKY_CUA_SERVICE_PATH = "/Users/zchee/.config/codex/plugins/cache/openai-bundled/computer-use/1.0.1000366/Codex Computer Use.app"
+CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
