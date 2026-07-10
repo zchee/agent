@@ -384,6 +384,28 @@ Co-authored-by: Codex <noreply@openai.com>
 <tools>
 ## Tools
 
+### Python scripts
+
+When creating a temporary Python script for a specific task, you can use the `uv` shebang to make any necessary third-party packages available for that task.
+    - https://docs.astral.sh/uv/guides/scripts/#using-a-shebang-to-create-an-executable-file
+
+Example:
+
+```python
+#!/usr/bin/env -S uv run --script
+
+# /// script
+# dependencies = [
+#   "numpy",
+#   "requests<3",
+#   "rich",
+# ]
+# ///
+
+import numpy as np
+import requests
+from rich.pretty import pprint
+
 ### Code Search
 
 Use `semble search` to find code by describing what it does or naming a symbol/identifier, instead of grep:
