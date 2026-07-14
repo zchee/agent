@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grok Schema Drift"
+  short_description: "Detect Grok schema and binary drift safely"
+  default_prompt: "Verify the Grok binary and schema baseline hermetically; report drift without updating artifacts."
