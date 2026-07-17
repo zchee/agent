@@ -1,0 +1,22 @@
+{
+  "$schema": "https://opencode.ai/tui.json",
+  "scroll_speed": 3,
+  "scroll_acceleration": {
+    "enabled": true
+  },
+  "diff_style": "auto",
+  "mouse": true,
+  "prompt": {
+    "max_width": "auto",
+    "max_height": 100
+  },
+  "attention": {
+    "enabled": true,
+    "notifications": true,
+    "sound": true,
+    "volume": 0.4
+  },
+  "plugin": [
+    "oh-my-openagent@latest"
+  ]
+}
