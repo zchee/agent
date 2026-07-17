@@ -293,7 +293,7 @@ enabled = true
 enabled = true
 
 [plugins."template-creator@openai-primary-runtime"]
-enabled = true
+enabled = false
 
 [plugins."figma@openai-curated"]
 enabled = false
@@ -336,6 +336,9 @@ enabled = true
 
 [plugins."browser@openai-bundled"]
 enabled = true
+
+[plugins."app-6938a94a61d881918ef32cb999ff937c@openai-curated-remote"]
+enabled = false
 
 [skills.bundled]
 enabled = true
