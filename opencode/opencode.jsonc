@@ -1,0 +1,94 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "github-copilot/claude-fable-5",
+  "autoupdate": true,
+  "server": {
+    "hostname": "0.0.0.0",
+    "port": 4096
+  },
+  "share": "manual",
+  "permission": {
+    "bash": "allow",
+    "edit": "allow",
+    "write": "allow",
+    "read": "allow",
+    "grep": "allow",
+    "glob": "allow",
+    "lsp": "allow",
+    "skill": "allow",
+    "todowrite": "allow",
+    "webfetch": "allow",
+    "websearch": "allow",
+    "question": "allow",
+    "external_directory": "allow",
+    "list": "allow",
+    "task": "allow",
+    "doom_loop": "allow"
+  },
+  "skills": {
+    "paths": [
+      "~/.agents/skills"
+    ]
+  },
+  "compaction": {
+    "auto": true
+  },
+  "provider": {},
+  "mcp": {
+    "mcp-lsp": {
+      "type": "local",
+      "command": [
+        "mcp-lsp"
+      ],
+      "enabled": true
+    },
+    "gemini-search": {
+      "type": "local",
+      "command": [
+        "uvx",
+        "--prerelease=allow",
+        "--from",
+        "git+https://github.com/zchee/mcp-gemini-search@interactions",
+        "mcp-gemini-search"
+      ],
+      "environment": {
+        "GOOGLE_GENAI_USE_VERTEXAI": "true",
+        "GOOGLE_CLOUD_PROJECT": "gaudiy-ai",
+        "GOOGLE_CLOUD_LOCATION": "global",
+        "GEMINI_MODEL": "gemini-3.5-flash",
+      },
+      "enabled": true
+    },
+    "context7": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "CONTEXT7_API_KEY": "{env:CONTEXT7_API_KEY}"
+      },
+      "enabled": true
+    }
+  },
+  "shell": "/opt/homebrew/bin/zsh",
+  "watcher": {
+    "ignore": [
+      "node_modules/**",
+      "dist/**",
+      ".git/**"
+    ]
+  },
+  "disabled_providers": [
+    "anthropic",
+    "cloudflare-ai-gateway",
+    "cloudflare-workers-ai",
+    "cohere",
+    "digitalocean",
+    "google",
+    "huggingface",
+    "openai",
+    "togetherai",
+    "xai",
+  ],
+  "plugin": [
+    "oh-my-openagent@latest"
+  ]
+}
