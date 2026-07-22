@@ -25,6 +25,7 @@ If the code is not fully optimized before handing off to the user, you will be f
 ## Preferred Tools
 
 - Use `uv` for Python package management and to create a `.venv` if it is not present.
+- **NEVER** run `pip install` against ANY system interpreter (`/usr/local/bin/python*`, `/usr/bin/python*`, Homebrew/MacPorts/Xcode pythons). Dependencies go into a project venv created with `uv venv` (`uv pip install` into it), and scripts are launched via that venv's interpreter.
 - Ensure `ipykernel` and `ipywidgets` is installed in `.venv` for Jupyter Notebook compatability. This should not be in package requirements.
 - Use `tqdm` to track long-running loops within Jupyter Notebooks. The `description` of the progress bar should be contextually sensitive.
 - Use `orjson` for JSON loading/dumping.
