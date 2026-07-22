@@ -1,0 +1,54 @@
+[models]
+default = "grok-4.5"
+default_reasoning_effort = "xhigh"
+
+[toolset]
+file_toolset = "hashline"
+
+[session]
+auto_compact_threshold_percent = 85
+
+[cli]
+installer = "internal"
+channel = "alpha"
+
+[features]
+lsp_tools = true
+
+[memory]
+enabled = true
+
+[marketplace]
+official_marketplace_auto_installed = true
+default_skills_installs_purged = true
+
+[[marketplace.sources]]
+name = "xAI Official"
+git = "https://github.com/xai-org/plugin-marketplace.git"
+
+[compat.cursor]
+sessions = false
+skills = false
+rules = false
+agents = false
+mcps = false
+hooks = false
+
+[compat.claude]
+skills = false
+rules = false
+agents = false
+mcps = false
+hooks = false
+sessions = false
+
+[plugins]
+disabled = ["asana"]
+
+[ui]
+max_thoughts_width = 200
+fork_secondary_model = "grok-build"
+yolo = true
+compact_mode = false
+render_mermaid = "on"
+group_tool_verbs = true
