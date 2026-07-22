@@ -1,6 +1,7 @@
 [models]
-default = "grok-4.5"
+default = "grok-build"
 default_reasoning_effort = "xhigh"
+web_search = "grok-4.20-multi-agent"
 
 [toolset]
 file_toolset = "hashline"
@@ -14,6 +15,10 @@ channel = "alpha"
 
 [features]
 lsp_tools = true
+web_fetch = true
+video_gen = true
+codebase_indexing = true
+two_pass_compaction = true
 
 [memory]
 enabled = true
