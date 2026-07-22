@@ -1,0 +1,29 @@
+[[rule]]
+include = ["grok/config.toml"]
+
+[rule.schema]
+path = "file:///Users/zchee/src/github.com/zchee/schema/grok-config.schema.json"
+
+[[rule]]
+include = ["grok/requirements.toml"]
+
+[rule.schema]
+path = "file:///Users/zchee/src/github.com/zchee/schema/grok-requirements-config.schema.json"
+
+[[rule]]
+include = ["grok/sandbox.toml"]
+
+[rule.schema]
+path = "file:///Users/zchee/src/github.com/zchee/schema/grok-sandbox-config.schema.json"
+
+[[rule]]
+include = ["grok/pager.toml"]
+
+[rule.schema]
+path = "file:///Users/zchee/src/github.com/zchee/schema/grok-pager-config.schema.json"
+
+[[rule]]
+include = ["grok/trusted_folders.toml"]
+
+[rule.schema]
+path = "file:///Users/zchee/src/github.com/zchee/schema/grok-trusted-folders.schema.json"
