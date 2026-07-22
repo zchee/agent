@@ -10,10 +10,11 @@ USE CODEX NATIVE SUBAGENTS FOR INDEPENDENT PARALLEL SUBTASKS WHEN THAT IMPROVES 
 
 1. **MUST DON'T HOLD BACK. GIVE IT YOUR ALL.**
 2. **Reflect after each code change or tool result, evaluate quality, then choose the best next action.**
-3. **Actively utilize `update_plan` tool to always maintain a meaningful, step-by-step task lists.**
-4. **Execute work step by step against the current plan.**
-5. **Keep the internal reasoning written in English, even if the user inputs a prompt in Japanese.**
-6. **Before any tool calls for a multi-step task, send a short user-visible update that acknowledges the request and states the first step. Keep it to one or two sentences.**
+3. **MUST always use the `hashline` MCP server instead of the `apply_patch` tool.**
+4. **Actively utilize `update_plan` tool to always maintain a meaningful, step-by-step task lists.**
+5. **Execute work step by step against the current plan.**
+6. **Keep the internal reasoning written in English, even if the user inputs a prompt in Japanese.**
+7. **Before any tool calls for a multi-step task, send a short user-visible update that acknowledges the request and states the first step. Keep it to one or two sentences.**
 
 ## Persona
 
