@@ -1,10 +1,10 @@
 {
-  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "$schema": "file:///Users/zchee/src/github.com/zchee/schema/claude-code-settings.schema.json",
   "cleanupPeriodDays": 99999,
   "env": {
-    "TRACE_TO_LANGSMITH": "true",
-    "CC_LANGSMITH_PROJECT": "pandaemonium",
-    "CLAUDE_CODE_SCROLL_SPEED": "3"
+    "CLAUDE_CODE_SCROLL_SPEED": "3",
+    "CLAUDE_CODE_NO_FLICKER": "1",
+    "GCLOUD_ACCESS_TOKEN": "$(gcloud auth print-access-token 2>/dev/null)"
   },
   "includeCoAuthoredBy": true,
   "permissions": {
@@ -20,8 +20,55 @@
     ],
     "defaultMode": "bypassPermissions"
   },
-  "model": "claude-opus-4-7[1m]",
+  "model": "claude-fable-5",
   "enableAllProjectMcpServers": true,
+  "deniedMcpServers": [
+    {
+      "serverName": "claude.ai Cloudflare Developer Platform"
+    },
+    {
+      "serverName": "claude.ai Datadog"
+    },
+    {
+      "serverName": "claude.ai Figma"
+    },
+    {
+      "serverName": "claude.ai Gmail"
+    },
+    {
+      "serverName": "claude.ai Google Calendar"
+    },
+    {
+      "serverName": "claude.ai Notion"
+    },
+    {
+      "serverName": "claude.ai Linear"
+    },
+    {
+      "serverName": "claude.ai Hugging Face"
+    },
+    {
+      "serverName": "musubi-otlp-setup"
+    },
+    {
+      "serverName": "pencil"
+    },
+    {
+      "serverName": "datadog-code-security"
+    },
+    {
+      "serverName": "datadog-mcp"
+    },
+    {
+      "serverName": "filesystem"
+    },
+    {
+      "serverName": "gcp-cloud-run"
+    },
+    {
+      "serverName": "pencil"
+    }
+  ],
   "hooks": {
     "Notification": [
       {
@@ -38,17 +85,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node $HOME/.claude/hooks/keyword-detector.mjs"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node $HOME/.claude/hooks/stop-continuation.mjs"
+            "command": "imectl set -q 'com.apple.keylayout.ABC'"
           }
         ]
       }
@@ -59,21 +96,27 @@
     "command": "sh ${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hud/omc-hud-cache.sh ${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hud/omc-hud.mjs"
   },
   "enabledPlugins": {
-    "claude-hud@claude-hud": true,
-    "oh-my-claudecode@omc": true,
-    "rust-analyzer-lsp@claude-plugins-official": true,
-    "skill-creator@claude-plugins-official": true,
     "codex@openai-codex": true,
-    "langsmith-tracing@langsmith-claude-code-plugins": true,
-    "rust-reverse-engineering@jingjing2222-plugins": true
+    "langsmith-tracing@langsmith-claude-code-plugins": false,
+    "oh-my-claudecode@omc": true,
+    "rust-reverse-engineering@jingjing2222-plugins": true,
+    "security-guidance@claude-plugins-official": false,
+    "skill-creator@claude-plugins-official": true,
+    "clangd-lsp@claude-plugins-official": true,
+    "gopls-lsp@claude-plugins-official": true,
+    "lua-lsp@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true,
+    "rust-analyzer-lsp@claude-plugins-official": true,
+    "swift-lsp@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "compact-plus@compact-plus-local": true,
+    "fable-advisor@fable-advisor": true,
+    "mattpocock-skills@mattpocock": true,
+    "grok-build@xai-grok-build": true,
+    "plugin-dev@claude-plugins-official": true,
+    "mcp-gemini-search@mcp-gemini-search": true
   },
   "extraKnownMarketplaces": {
-    "claude-hud": {
-      "source": {
-        "source": "github",
-        "repo": "jarrodwatts/claude-hud"
-      }
-    },
     "goland-claude-marketplace": {
       "source": {
         "source": "github",
@@ -82,8 +125,8 @@
     },
     "omc": {
       "source": {
-        "source": "git",
-        "url": "https://github.com/Yeachan-Heo/oh-my-claudecode.git"
+        "source": "directory",
+        "path": "/opt/local/var/bun/install/global/node_modules/oh-my-claude-sisyphus"
       }
     },
     "openai-codex": {
@@ -103,29 +146,161 @@
         "source": "github",
         "repo": "jingjing2222/rust-reverse-engineering-skill"
       }
+    },
+    "compact-plus-local": {
+      "source": {
+        "source": "github",
+        "repo": "u-ichi/compact-plus"
+      }
+    },
+    "fable-advisor": {
+      "source": {
+        "source": "github",
+        "repo": "DannyMac180/fable-advisor"
+      }
+    },
+    "mattpocock": {
+      "source": {
+        "source": "github",
+        "repo": "mattpocock/skills"
+      }
+    },
+    "xai-grok-build": {
+      "source": {
+        "source": "github",
+        "repo": "xai-org/grok-build-plugin-cc"
+      }
+    },
+    "mcp-gemini-search": {
+      "source": {
+        "source": "github",
+        "repo": "zchee/mcp-gemini-search"
+      }
     }
   },
-  "outputStyle": "default",
+  "outputStyle": "Proactive",
+  "viewMode": "verbose",
   "spinnerTipsEnabled": true,
-  "alwaysThinkingEnabled": true,
   "effortLevel": "xhigh",
-  "advisorModel": "opus",
-  "fastMode": false,
   "fastModePerSessionOptIn": true,
   "autoUpdatesChannel": "latest",
   "tui": "fullscreen",
   "autoMemoryEnabled": true,
   "autoDreamEnabled": true,
+  "showThinkingSummaries": true,
   "skipDangerousModePermissionPrompt": true,
   "theme": "dark",
+  "editorMode": "normal",
   "verbose": true,
   "preferredNotifChannel": "kitty",
-  "autoCompactEnabled": true,
+  "autoCompactEnabled": false,
+  "autoScrollEnabled": true,
   "teammateMode": "tmux",
   "remoteControlAtStartup": true,
   "autoUploadSessions": true,
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
-  "backendType": "tmux",
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "useAutoModeDuringPlan": true,
+  "omcHud": {
+    "elements": {
+      "cwd": false,
+      "cwdFormat": "relative",
+      "useHyperlinks": false,
+      "gitRepo": true,
+      "gitBranch": true,
+      "gitStatus": true,
+      "gitInfoPosition": "above",
+      "model": true,
+      "modelFormat": "versioned",
+      "omcLabel": true,
+      "updateNotification": true,
+      "rateLimits": true,
+      "ralph": true,
+      "autopilot": true,
+      "prdStory": true,
+      "activeSkills": true,
+      "lastSkill": true,
+      "contextBar": true,
+      "agents": true,
+      "agentsFormat": "multiline",
+      "agentsMaxLines": 10,
+      "backgroundTasks": true,
+      "todos": true,
+      "permissionStatus": false,
+      "thinking": true,
+      "thinkingFormat": "text",
+      "apiKeySource": true,
+      "hostname": false,
+      "profile": true,
+      "missionBoard": false,
+      "promptTime": true,
+      "sessionHealth": true,
+      "showSessionDuration": true,
+      "showHealthIndicator": true,
+      "showTokens": false,
+      "useBars": true,
+      "showCallCounts": true,
+      "callCountsFormat": "auto",
+      "showLastTool": false,
+      "sessionSummary": false,
+      "maxOutputLines": 12,
+      "safeMode": true
+    },
+    "thresholds": {
+      "contextWarning": 70,
+      "contextCompactSuggestion": 80,
+      "contextCritical": 85,
+      "ralphWarning": 7
+    },
+    "staleTaskThresholdMinutes": 10,
+    "contextLimitWarning": {
+      "threshold": 80,
+      "autoCompact": false
+    },
+    "layout": {
+      "line1": [
+        "hostname",
+        "cwd",
+        "gitRepo",
+        "gitBranch",
+        "gitStatus",
+        "apiKeySource",
+        "profile"
+      ],
+      "main": [
+        "omcLabel",
+        "model",
+        "enterpriseCost",
+        "contextBar",
+        "rateLimits",
+        "session",
+        "customBuckets",
+        "permission",
+        "thinking",
+        "promptTime",
+        "tokens",
+        "ralph",
+        "autopilot",
+        "prd",
+        "skills",
+        "lastSkill",
+        "agents",
+        "background",
+        "callCounts",
+        "lastTool",
+        "sessionSummary"
+      ],
+      "detail": [
+        "missionBoard",
+        "agents",
+        "contextWarning",
+        "payloadWarning",
+        "todos"
+      ]
+    }
+  },
+  "usageApiPollIntervalMs": 5000,
+  "wrapMode": "wrap",
+  "backendType": "tmux"
 }
