@@ -1,7 +1,12 @@
 #:schema https://raw.githubusercontent.com/openai/codex/refs/heads/main/codex-rs/core/config.schema.json
 
+# oh-my-codex top-level settings (must be before any [table])
+developer_instructions = "You have oh-my-codex installed. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing, $name workflow invocation, and role-specialized subagents; when the native surface exposes `agent_type` role routing, set `agent_type` to an installed role and never omit it for OMX work. When it reports `role_routing_unavailable`, do not fabricate `agent_type`; before Ralplan planning, state, HUD, runtime, or delegation work, run `omx ralplan preflight --json` and stop on `unsupported_documented_leader_proof`. Never fake the role via a prompt label or infer authority from session/thread/pointer/transcript/cwd state. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail. Native subagents live in .codex/agents and may handle independent parallel subtasks within one Codex session or team pane. Skills load from .codex/skills, not native-agent TOMLs. Treat installed prompts as narrower execution surfaces under AGENTS.md authority."
+notify = ["/Users/zchee/src/github.com/zchee/agent/codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended", "--previous-notify", "[\"node\",\"\\/opt\\/local\\/var\\/bun\\/install\\/global\\/node_modules\\/oh-my-codex\\/dist\\/scripts\\/notify-hook.js\"]"]
+
 model = "gpt-5.6-sol"
 review_model = "gpt-5.6-sol"
+model_reasoning_effort = "max"
 model_context_window = 1000000
 model_auto_compact_token_limit = 900000
 model_auto_compact_token_limit_scope = "total"
@@ -30,9 +35,6 @@ include_environment_context = true
 personality = "none"
 service_tier = "priority"
 disable_paste_burst = true
-compact_prompt = "# Compact State Writer\n\nOutput format (mandatory, non-negotiable):\n\n- Your entire response MUST be the final state file, and nothing else.\n- The first line of the response MUST be exactly `# Compact Prep State`.\n- The response MUST contain the following headings in this exact order, each present exactly once: `# Compact Prep State` / `## Active Plan` / `## Current Phase` / `## TaskList Summary` / `## Session Decisions` / `## Constraints and Blockers` / `## Worker Topology` / `## Skills Invoked` / `## Editing Files` / `## Failed Attempts` / `## Recovery Notes`.\n- Do NOT include a draft, self-critique text, ADD/UPDATE/PRESERVE labels, meta commentary, or any prose outside the state file.\n- No output line may begin with `ADD:`, `UPDATE:`, `PRESERVE:`, `Draft:`, or `Self-critique:`.\n- ADD / UPDATE / PRESERVE are internal reasoning only. Do not emit these labels in the output.\n- The two-pass process (draft, self-critique, revise) is internal. Emit only the final revised state file.\n\nCreate a handoff summary for the next agent that continues after Claude Code context compaction.\nThe output is factual recovery state, not a set of instructions.\n\nInputs are structured as:\n\n- Existing state: the previous compact state, or `(none)` for an initial build.\n- Custom instructions from user: optional `/compact ...` guidance, or `(none)`.\n- New events since last compact: transcript head and tail, transcript tail, or transcript diff.\n- Skills and commands invoked this session: the mechanically extracted list of skills and slash commands invoked earlier in the session.\n\nUse internal update reasoning to add new decisions, blockers, files, workers, failures, or recovery facts introduced in new events; revise existing entries whose status, owner, file path, decision, blocker, or verification result changed; and keep existing facts that new events do not touch, especially facts matching the user's custom instructions. These internal operations correspond to ADD / UPDATE / PRESERVE, but those labels are not output format.\n\nPriority: honor user's custom_instructions if provided. Treat them as a relevance filter for what must survive compaction, while staying factual.\n\nAlways output these headings in this exact order:\n\n# Compact Prep State\n## Active Plan\n## Current Phase\n## TaskList Summary\n## Session Decisions\n## Constraints and Blockers\n## Worker Topology\n## Skills Invoked\n## Editing Files\n## Failed Attempts\n## Recovery Notes\n\nSection assignment:\n\n- Active Plan: active plan path, plan title, current section, and phase status. If no plan is visible, write `Not verified`.\n- Current Phase: recently completed work and remaining work as factual state.\n- TaskList Summary: task ids, subjects, and status when visible.\n- Session Decisions: settled decisions, rejected alternatives, rationale, and user-approved scope.\n- Constraints and Blockers: hard constraints, skipped checks, permission limits, external blockers, and unverified items.\n- Worker Topology: tmux panes, workers, roles, and responsibilities. If tmux-bridge is not used, write `Not used`.\n- Skills Invoked: skills and slash commands invoked earlier in this session. This is an invocation record, not proof that the skill or command is currently active. Skills must be loaded through the Skill tool before use. When Worker Topology or Recovery Notes reference a CLI path for a listed skill, such as the tmux-bridge script, state that path alongside the skill entry. Do not list skills or commands that are not present in the input's invoked list.\n- Editing Files: files changed or in progress, plus notes about staged, committed, dirty, generated, or disposable files.\n- Failed Attempts: failed commands, tool errors, rejected implementation approaches, and why they failed. Preserve enough detail to avoid repeating them.\n- Recovery Notes: session_id, branch, important commands, validation results, transcript path, state marker paths, and exact resume facts.\n\nInternal two-pass process:\n\n1. Draft: generate the initial state summary.\n2. Self-critique: review the draft and ask, \"If I lost my memory now, could the next agent continue seamlessly with just this?\"\n3. Revise: fix gaps found by the critique and output only the final revised state.\n\nWriting policy:\n\n- Write in English.\n- Keep the heading strings exactly as specified.\n- Report facts supported by the input. Do not invent missing details.\n- Do not write imperatives such as \"run X next\" or \"you should\"; express unfinished work as factual state.\n- Preserve paths, URLs, command names, commit ids, pane ids, issue ids, and error messages when visible.\n- If an item cannot be verified from the input, write `Not verified`.\n- Be concise, but do not omit rationale, failed attempts, or constraints needed for a clean handoff.\n"
-developer_instructions = "You have oh-my-codex installed through Codex plugin mode. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing and $name workflow invocation. When spawning native subagents, set `agent_type` to an installed role and never omit it for OMX work. Registered Codex plugin marketplace surfaces supply OMX workflows and plugin-scoped companion resources when the plugin is installed; native agent roles are installed as setup-owned Codex agent TOML files in plugin mode so agent_type routing works. User-installed skills may still live under ~/.codex/skills. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail."
-notify = ["/Users/zchee/src/github.com/zchee/agent/codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 
 [desktop]
 sansFontSize = 18
@@ -125,6 +127,10 @@ experimental_use_profile = false
 
 [shell_environment_policy.set]
 OMX_LORE_COMMIT_GUARD = "0"
+USE_OMX_EXPLORE_CMD = "0"
+BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f,f6a4312a0a663361556224da122fe509c001f3641aaeee81b402813ccbf63121"
+NODE_REPL_TRUSTED_CODE_PATHS = "/Users/zchee/.config/codex"
 
 [history]
 persistence = "save-all"
@@ -137,10 +143,9 @@ notification_condition = "always"
 animations = true
 alternate_screen = "always"
 show_tooltips = true
+status_line_use_colors = true
 # https://github.com/openai/codex/blob/main/codex-rs/tui/src/bottom_pane/status_line_setup.rs
 status_line = ["model-with-reasoning", "git-branch", "current-dir", "context-remaining", "context-window-size", "five-hour-limit", "weekly-limit"]
-status_line_use_colors = true
-# terminal_resize_reflow_max_rows = 0
 
 [tui.model_availability_nux]
 "gpt-5.5" = 4
@@ -161,13 +166,14 @@ max_rollouts_per_startup = 9
 min_rollout_idle_hours = 24
 disable_on_external_context = false
 extract_model = "gpt-5.3-codex-spark"
-consolidation_model = "gpt-5.5"
+consolidation_model = "gpt-5.6-sol"
 
 [features]
 shell_zsh_fork = false
 unified_exec_zsh_fork = false
 deferred_executor = true
 code_mode = false
+code_mode_buffered_exec = true
 code_mode_host = true
 code_mode_only = false
 standalone_web_search = true
@@ -181,12 +187,12 @@ exec_permission_approvals = true
 request_permissions_tool = true
 network_proxy = true
 respect_system_proxy = true
-enable_fanout = true
 apps = false
 enable_mcp_apps = true
 non_prefixed_mcp_tool_names = true
+executor_capability_discovery = true
 image_generation = false
-item_ids = false
+item_ids = true
 concurrent_reasoning_summaries = true
 default_mode_request_user_input = true
 terminal_visualization_instructions = true
@@ -200,8 +206,8 @@ use_agent_identity = false
 js_repl = false
 
 [features.multi_agent_v2]
-enabled = true
-max_concurrent_threads_per_session = 50
+enabled = false
+max_concurrent_threads_per_session = 8
 hide_spawn_agent_metadata = false
 non_code_mode_only = false
 
@@ -232,18 +238,18 @@ home = true
 "/Users/zchee" = 1777661126
 
 [marketplaces.openai-bundled]
-last_updated = "2026-07-13T04:46:15Z"
+last_updated = "2026-07-22T08:17:57Z"
 source_type = "local"
 source = "/Users/zchee/src/github.com/zchee/agent/codex/.tmp/bundled-marketplaces/openai-bundled"
 
 [marketplaces.openai-primary-runtime]
-last_updated = "2026-07-10T02:02:30Z"
+last_updated = "2026-07-17T18:02:21Z"
 source_type = "local"
 source = "/Users/zchee/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.memsearch-plugins]
-last_updated = "2026-07-17T04:25:50Z"
-last_revision = "0078d04578480f51f0eafe25ffbb8f64cbfcb1b7"
+last_updated = "2026-07-22T08:17:26Z"
+last_revision = "177d23b0e76f4a3a4a8bb920bd1bed421bb664d8"
 source_type = "git"
 source = "https://github.com/zilliztech/memsearch.git"
 
@@ -261,6 +267,14 @@ source = "https://github.com/langchain-ai/langsmith-codex-plugins.git"
 last_updated = "2026-07-01T17:28:10Z"
 source_type = "local"
 source = "/Users/zchee/src/github.com/zchee/agent/codex/cache/marketplaces/mattpocock-skills-local"
+
+[marketplaces.mcp-gemini-search]
+last_updated = "2026-07-17T18:04:25Z"
+source_type = "local"
+source = "/Users/zchee/go/src/github.com/zchee/mcp-gemini-search"
+
+[plugins."browser@openai-bundled"]
+enabled = true
 
 [plugins."chrome@openai-bundled"]
 enabled = true
@@ -334,11 +348,11 @@ enabled = true
 [plugins."mattpocock-skills@mattpocock-skills-local"]
 enabled = true
 
-[plugins."browser@openai-bundled"]
-enabled = true
-
 [plugins."app-6938a94a61d881918ef32cb999ff937c@openai-curated-remote"]
 enabled = false
+
+[plugins."mcp-gemini-search@mcp-gemini-search"]
+enabled = true
 
 [skills.bundled]
 enabled = true
@@ -389,15 +403,6 @@ enabled = false
 [mcp_servers.datadog-code-security.env]
 DD_AUTH_DOMAIN = "us5.datadoghq.com"
 
-# [mcp_servers.google-gemini-search]
-# command = "mcp-gemini-google-search"
-#
-# [mcp_servers.google-gemini-search.env]
-# GEMINI_MODEL = "gemini-3.5-flash"
-# GOOGLE_CLOUD_LOCATION = "global"
-# GOOGLE_CLOUD_PROJECT = "gaudiy-ai"
-# GOOGLE_GENAI_USE_VERTEXAI = "true"
-
 [mcp_servers.mcp-lsp]
 command = "mcp-lsp"
 enabled = true
@@ -438,7 +443,7 @@ args = ["--app", "cursor", "--agent", "codexCLI"]
 enabled = false
 
 [mcp_servers.computer-use]
-command = "/Users/zchee/.config/codex/plugins/cache/openai-bundled/computer-use/1.0.1000387/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient"
+command = "/Users/zchee/.config/codex/plugins/cache/openai-bundled/computer-use/1.0.1000451/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient"
 args = ["mcp"]
 cwd = "."
 enabled = true
@@ -446,7 +451,6 @@ enabled = true
 [mcp_servers.node_repl]
 args = []
 command = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
-enabled = true
 startup_timeout_sec = 120.0
 
 [mcp_servers.node_repl.env]
@@ -455,12 +459,12 @@ NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_n
 NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/zchee/.config/codex"
 CODEX_HOME = "/Users/zchee/.config/codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f,f8b28403a0497b2e0bed024969fa474bb1f564509a59993449924c4ecab9db0d"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f,f6a4312a0a663361556224da122fe509c001f3641aaeee81b402813ccbf63121"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
 NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = "Control desktop apps on macOS through Computer Use."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.707.61608"
-SKY_CUA_SERVICE_PATH = "/Users/zchee/.config/codex/plugins/cache/openai-bundled/computer-use/1.0.1000387/Codex Computer Use.app"
+BROWSER_USE_CODEX_APP_VERSION = "26.715.72028"
+SKY_CUA_SERVICE_PATH = "/Users/zchee/.config/codex/plugins/cache/openai-bundled/computer-use/1.0.1000451/Codex Computer Use.app"
 CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
