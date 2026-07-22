@@ -1,8 +1,8 @@
 #:schema https://raw.githubusercontent.com/openai/codex/refs/heads/main/codex-rs/core/config.schema.json
 
 # oh-my-codex top-level settings (must be before any [table])
-developer_instructions = "You have oh-my-codex installed. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing, $name workflow invocation, and role-specialized subagents; when the native surface exposes `agent_type` role routing, set `agent_type` to an installed role and never omit it for OMX work. When it reports `role_routing_unavailable`, do not fabricate `agent_type`; before Ralplan planning, state, HUD, runtime, or delegation work, run `omx ralplan preflight --json` and stop on `unsupported_documented_leader_proof`. Never fake the role via a prompt label or infer authority from session/thread/pointer/transcript/cwd state. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail. Native subagents live in .codex/agents and may handle independent parallel subtasks within one Codex session or team pane. Skills load from .codex/skills, not native-agent TOMLs. Treat installed prompts as narrower execution surfaces under AGENTS.md authority."
 notify = ["/Users/zchee/src/github.com/zchee/agent/codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended", "--previous-notify", "[\"node\",\"\\/opt\\/local\\/var\\/bun\\/install\\/global\\/node_modules\\/oh-my-codex\\/dist\\/scripts\\/notify-hook.js\"]"]
+developer_instructions = "You have oh-my-codex installed. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing, $name workflow invocation, and role-specialized subagents; when the native surface exposes `agent_type` role routing, set `agent_type` to an installed role and never omit it for OMX work. When it reports `role_routing_unavailable` and adapted Ralplan authority is requested, do not fabricate `agent_type`; run `omx ralplan preflight --json` and stop on `unsupported_documented_leader_proof`. Ordinary work remains under its own workflow gates. Never fake the role via a prompt label or infer authority from session/thread/pointer/transcript/cwd state. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail. Native subagents live in .codex/agents and may handle independent parallel subtasks within one Codex session or team pane. Skills load from .codex/skills, not native-agent TOMLs. Treat installed prompts as narrower execution surfaces under AGENTS.md authority."
 
 model = "gpt-5.6-sol"
 review_model = "gpt-5.6-sol"
@@ -20,7 +20,6 @@ show_raw_agent_reasoning = true
 model_reasoning_summary = "detailed"
 plan_mode_reasoning_effort = "xhigh"
 model_verbosity = "high"
-# model_supports_reasoning_summaries = true
 check_for_update_on_startup = false
 sandbox_mode = "danger-full-access"
 cli_auth_credentials_store = "file"
@@ -206,7 +205,7 @@ use_agent_identity = false
 js_repl = false
 
 [features.multi_agent_v2]
-enabled = false
+enabled = true
 max_concurrent_threads_per_session = 8
 hide_spawn_agent_metadata = false
 non_code_mode_only = false
@@ -248,8 +247,8 @@ source_type = "local"
 source = "/Users/zchee/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.memsearch-plugins]
-last_updated = "2026-07-22T08:17:26Z"
-last_revision = "177d23b0e76f4a3a4a8bb920bd1bed421bb664d8"
+last_updated = "2026-07-22T16:07:58Z"
+last_revision = "76dba5df707ff46c703e5a3c2158ee8213189f51"
 source_type = "git"
 source = "https://github.com/zilliztech/memsearch.git"
 
@@ -374,8 +373,10 @@ path = "/Users/zchee/src/github.com/zchee/agent/codex/skills/exa-research-paper/
 enabled = false
 
 [mcp_servers.alphaxiv]
-url = "https://api.alphaxiv.org/mcp/v1"
+command = "npx"
+args = ["-y", "mcp-remote", "https://api.alphaxiv.org/mcp/v1"]
 enabled = false
+startup_timeout_sec = 15.0
 
 [mcp_servers.apple-docs]
 command = "uv"
@@ -429,6 +430,12 @@ enabled = false
 [mcp_servers.semble]
 command = "uvx"
 args = ["--from", "semble[mcp]", "semble"]
+enabled = true
+startup_timeout_sec = 15.0
+
+[mcp_servers.hashline]
+command = "hashline"
+args = ["mcp"]
 enabled = true
 startup_timeout_sec = 15.0
 
