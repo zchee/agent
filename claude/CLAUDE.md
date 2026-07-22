@@ -67,7 +67,6 @@ State root: `.omc/` by default, or `$OMC_STATE_DIR/{project-id}/` when `OMC_STAT
 ## Setup
 
 Say "setup omc" or run `/oh-my-claudecode:omc-setup`.
-
 <!-- OMC:END -->
 
 <!-- User customizations -->
@@ -75,10 +74,10 @@ Say "setup omc" or run `/oh-my-claudecode:omc-setup`.
 
 1. **MUST DON'T HOLD BACK. GIVE IT YOUR ALL.**
 2. **Reflect after each code change or tool result, evaluate quality, then choose the best next action.**
-3. **Actively utilize `TodoWrite` tool to always maintain a meaningful, step-by-step task lists.**
-4. **Execute work step by step against the current plan.**
-5. **Keep the internal reasoning written in English, even if the user inputs a prompt in Japanese.**
-6. **Before any tool calls for a multi-step task, send a short user-visible update that acknowledges the request and states the first step. Keep it to one or two sentences.**
+3. **Execute work step by step against the current plan.**
+4. **Keep the internal reasoning written in English, even if the user inputs a prompt in Japanese.**
+5. **Before any tool calls for a multi-step task, send a short user-visible update that acknowledges the request and states the first step. Keep it to one or two sentences.**
+<!-- 3. **Actively utilize `TodoWrite` tool to always maintain a meaningful, step-by-step task lists.** -->
 
 ## Persona
 
@@ -149,7 +148,7 @@ After proposing a solution, score confidence (0.0-1.0) for:
 
 ## Testing
 
-- Implement tests for every function.
+<!-- - Implement tests for every function. -->
 - Tests must reflect real usage and be designed to reveal flaws. Make them verbose for debugging.
 - No mock services.
 - If a test fails, verify the test structure before refactoring production code.
@@ -173,6 +172,9 @@ Co-Authored-By: (Claude Opus 4.8 (1M context) or Claude Fable 5) <noreply@anthro
 
 - Intent line first; describe why, not what.
 - Use trailers only when they add decision context.
+- When a cross-vendor implementation lane wrote the code (e.g. fable-advisor orchestration), the `Co-Authored-By` trailer must credit that lane, kept alongside the Claude architect trailer:
+    - grok lane: `Co-Authored-By: Grok <noreply@x.ai>`
+    - codex lane: `Co-Authored-By: Codex <noreply@openai.com>`
 - Git commits: always use `git commit --gpg-sign`.
 - To prevent new lines from being inserted into the commit message for each `-m` flag, do not use one-liners with multiple `-m` flags, such as `git commit -m '...' -m '...'`. Write your commit message in a temporary file and commit by passing that file to the `-F` flag.
 - The 72 Rule
@@ -182,9 +184,34 @@ Co-Authored-By: (Claude Opus 4.8 (1M context) or Claude Fable 5) <noreply@anthro
 
 ## Tool
 
+### Codex CLI
+
+- **When delegating work to the OpenAI Codex CLI (`codex exec`) — e.g. via codex-implementer lanes — always run it at reasoning effort `xhigh`** by passing `-c model_reasoning_effort="xhigh"`, unless the task is trivially mechanical. Deeper reasoning is preferred over token cost for delegated implementation and review work.
+
+### Python scripts
+
+**When creating a temporary Python script for a specific task, you can use the `uv` shebang to make any necessary third-party packages available for that task.**
+    - https://docs.astral.sh/uv/guides/scripts/#using-a-shebang-to-create-an-executable-file
+
+Example:
+
+```python
+#!/usr/bin/env -S uv run --script
+
+# /// script
+# dependencies = [
+#   "requests<3",
+#   "rich",
+# ]
+# ///
+
+import requests
+from rich.pretty import pprint
+```
+
 ### Code Search
 
-Use `semble search` to find code by describing what it does or naming a symbol/identifier, instead of grep:
+MUST USE `semble search` to find code by describing what it does or naming a symbol/identifier, instead of `grep` tool:
 
 ```sheell
 semble search "authentication flow" ./my-project
