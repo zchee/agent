@@ -209,6 +209,17 @@ Leader vs worker: leaders own mode selection, integration, verification, and sto
 Rules: max 6 concurrent child agents; child prompts remain under AGENTS.md authority; prefer inherited model defaults unless a task has a concrete model reason; `worker` is a team-runtime surface, not a general-purpose child role.
 </child_agent_protocol>
 
+<subagent_transport_protocol>
+Native subagent transport baseline (verified 2026-07-25 UTC):
+- A fresh OMX session successfully completed spawn, child-to-parent and parent-to-child nonce delivery, final-answer delivery, and lifecycle completion. Treat native subagents as currently usable.
+- Earlier sessions emitted `stream disconnected before completion: Encrypted function output content could not be decrypted or decoded.` Treat that as a real transport/decryption failure and the later success as recovery evidence, not proof of a permanent fix.
+Operational rules:
+- When role routing requires an explicit `agent_type`, use `fork_turns:"none"`; full-history forks inherit the parent agent type and reject an explicit override. Classify that rejection as invocation validation, not transport failure.
+- For health checks, use unique nonces and prove spawn, both message directions, final-answer delivery, and `completed` lifecycle state.
+- Inspect structured `task_complete.error.message` fields in the exact current rollout; broad text search can match error strings embedded in prompts.
+- Report status as `currently healthy`, `currently failing`, or `intermittent/recovered`; re-verify live before relying on transport for critical work.
+</subagent_transport_protocol>
+
 
 <invocation_conventions>
 - `$name` — invoke a workflow skill.
