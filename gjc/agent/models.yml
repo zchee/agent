@@ -1,0 +1,23 @@
+profiles:
+  cursor-codex:
+    display_name: cursor-codex
+    required_providers:
+      - cursor
+    model_mapping:
+      default: cursor/gpt-5.6-sol-medium-fast
+      executor: cursor/gpt-5.6-terra-medium
+      planner: cursor/gpt-5.6-sol-high-fast
+      critic: cursor/gpt-5.6-sol-max-fast
+      architect: cursor/gpt-5.6-sol-xhigh-fast
+
+  cursor-fable:
+    display_name: cursor-fable
+    required_providers:
+      - cursor
+      - openai-codex
+    model_mapping:
+      default: cursor/claude-fable-5-high
+      executor: cursor/gpt-5.6-terra-medium
+      architect: cursor/gpt-5.6-sol-xhigh-fast
+      planner: cursor/gpt-5.6-sol-high-fast
+      critic: openai-codex/gpt-5.6-sol:max
