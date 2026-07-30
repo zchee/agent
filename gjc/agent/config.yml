@@ -1,0 +1,35 @@
+lastChangelogVersion: 0.12.4
+modelRoles: 
+  {}
+task: 
+  agentModelOverrides: 
+    {}
+defaultThinkingLevel: medium
+modelProfile: 
+  default: cursor-codex
+theme: 
+  dark: codex
+symbolPreset: nerd
+statusLine: 
+  preset: nerd
+  maxRows: 3
+display: 
+  showTokenUsage: true
+power: 
+  preventSystemSleep: true
+  preventDisplaySleep: true
+  declareUserActive: true
+mouse: 
+  enabled: true
+memory: 
+  backend: local
+readLineNumbers: true
+images: 
+  blockImages: true
+hideThinkingBlock: false
+compaction: 
+  strategy: context-full
+  autoContinue: true
+configSchemaVersion: 1
+edit: 
+  mode: hashline
