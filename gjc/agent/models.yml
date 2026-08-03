@@ -10,6 +10,17 @@ profiles:
       critic: cursor/gpt-5.6-sol-max-fast
       architect: cursor/gpt-5.6-sol-xhigh-fast
 
+  cursor-grok:
+    display_name: cursor-grok
+    required_providers:
+      - cursor
+    model_mapping:
+      default: cursor/cursor-grok-4.5-high-fast
+      executor: cursor/cursor-grok-4.5-medium-fast
+      planner: cursor/cursor-grok-4.5-high-fast
+      critic: cursor/cursor-grok-4.5-high-fast
+      architect: cursor/cursor-grok-4.5-high-fast
+
   cursor-fable:
     display_name: cursor-fable
     required_providers:
