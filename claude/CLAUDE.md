@@ -175,23 +175,28 @@ outbound request, probing an authenticated endpoint — running that step
 **myself** can trip a dual-use security check whose fallback path lands on
 Opus 4.8. That fallback is expensive and usually unwanted.
 
-**Avoid it by delegating the credential-touching execution to a Fable
-implementation lane** (`fable-advisor:fable-implementer`) rather than running
-it in the orchestrator context. The worker holds the token and performs the
-network/auth work; the orchestrator receives only the derived facts (observed
-wire fields, a verdict, a decision) and never reads the raw secret. This keeps
-the whole run on Fable 5 and preserves the "workers are Fable, not Opus"
-routing.
+**Avoid it by delegating the credential-touching execution to the Fable
+implementation lane (`fable-advisor:fable-implementer`), launched through the
+OMC team runtime** — invoke the `oh-my-claudecode:team` skill with that agent
+type as the worker — rather than running it in the orchestrator context. The
+worker holds the token and performs the network/auth work; the orchestrator
+receives only the derived facts (observed wire fields, a verdict, a decision)
+and never reads the raw secret. This keeps the whole run on Fable 5 and
+preserves the "workers are Fable, not Opus" routing.
 
 Alternatives, in order of preference:
-1. **Full delegation to the Fable lane** (default) — design, execution, and
-   recording all move to the worker; the orchestrator reviews the result.
+1. **Full delegation to the team-launched Fable lane** (default) — design,
+   execution, and recording all move to the worker; the orchestrator reviews
+   the result.
 2. **Hybrid** — orchestrator authors the scaffold/test skeleton; only the
    token-reading execution goes to the Fable lane. Use when the design work is
    the bulk and the live call is a single shot.
 3. **User runs it** (`! <cmd>`) — the credential never passes through any
    agent; the orchestrator parses only the raw output. Use when a single manual
    call suffices; poor fit for iterative probing.
+4. **Direct spawn fallback** — when the team runtime is unavailable (wedged
+   tmux panes, missing CLI), spawn `fable-advisor:fable-implementer` directly
+   with the Agent tool, the pre-team shape.
 
 When delegation shifts ownership away from what a frozen execution contract
 assigns, record it as a numbered deviation in that contract's ledger.
