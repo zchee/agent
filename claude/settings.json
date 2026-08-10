@@ -1,10 +1,123 @@
 {
   "$schema": "file:///Users/zchee/src/github.com/zchee/schema/claude-code-settings.schema.json",
-  "cleanupPeriodDays": 99999,
+  "cleanupPeriodDays": 999999,
   "env": {
     "CLAUDE_CODE_SCROLL_SPEED": "3",
     "CLAUDE_CODE_NO_FLICKER": "1",
-    "GCLOUD_ACCESS_TOKEN": "$(gcloud auth print-access-token 2>/dev/null)"
+    "GCLOUD_ACCESS_TOKEN": "$(gcloud auth print-access-token 2>/dev/null)",
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "MAX_THINKING_TOKENS": "-1",
+    "COMPACT_PLUS_PRIMARY_BACKEND": "tmp=$(mktemp \"${TMPDIR:-/tmp}/compact-plus-codex.XXXXXX\"); { printf \"%s\\n\\n\" \"$SYSTEM_PROMPT\"; cat; } | codex exec --model gpt-5.6-luna --sandbox read-only --skip-git-repo-check --dangerously-bypass-approvals-and-sandbox --ignore-user-config --ephemeral --output-last-message \"$tmp\" - >/dev/null && cat \"$tmp\"; status=$?; rm -f \"$tmp\"; exit \"$status\"",
+    "ANTHROPIC_API_KEY": "",
+    "ANTHROPIC_DEFAULT_FABLE_MODEL": "claude-fable-5",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-5",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-5",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "claude-haiku-4-5-20251001",
+    "CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY": "1",
+    "TERM": "xterm-256color",
+    "FORCE_COLOR": "1",
+    "COLORTERM": "truecolor",
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
+    "OTEL_METRICS_EXPORTER": "otlp",
+    "OTEL_LOGS_EXPORTER": "otlp",
+    "OTEL_LOG_TOOL_DETAILS": "1",
+    "DISABLE_BUG_COMMAND": "1",
+    "DISABLE_COST_WARNINGS": "1",
+    "DISABLE_ERROR_REPORTING": "1",
+    "DISABLE_INSTALLATION_CHECKS": "1",
+    "ANTHROPIC_BETAS": "files-api-2025-04-14,context-1m-2025-08-07,web-fetch-2025-09-10,model-context-window-exceeded-2025-08-26,code-execution-2025-08-25,advanced-tool-use-2025-11-20,effort-2025-11-24,structured-outputs-2025-11-13,code-execution-web-tools-2026-02-09,fast-mode-2026-02-01,adaptive-thinking-2026-01-28,prompt-caching-scope-2026-01-05,token-efficient-tools-2026-03-28,managed-agents-2026-04-01,afk-mode-2026-01-31,cli-internal-2026-02-09,dreaming-2026-04-21,mid-conversation-system-2026-04-07,advisor-tool-2026-03-01,computer-use-2025-11-24,mcp-client-2025-11-20,compact-2026-01-12,context-management-2025-06-27,task-budgets-2026-03-13,cache-diagnosis-2026-04-07,thinking-token-count-2026-05-13,mid-conversation-tool-changes-2026-07-01,server-side-fallback-2026-07-01",
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "75",
+    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "64000",
+    "MAX_MCP_OUTPUT_TOKENS": "256000",
+    "CLAUDE_CODE_SSE_PORT": "21134",
+    "ENABLE_IDE_INTEGRATION": "1",
+    "ENABLE_BACKGROUND_TASKS": "1",
+    "FORCE_AUTO_BACKGROUND_TASKS": "1",
+    "CLAUDE_CODE_ENABLE_UNIFIED_READ_TOOL": "1",
+    "CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION": "true",
+    "DETAILED_PERMISSION_MESSAGES": "1",
+    "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1",
+    "USE_BUILTIN_RIPGREP": "0",
+    "CLAUDE_CODE_PLAN_V2_AGENT_COUNT": "10",
+    "CLAUDE_CODE_PLAN_V2_EXPLORE_AGENT_COUNT": "10",
+    "CLAUDE_CODE_USE_NATIVE_FILE_SEARCH": "1",
+    "CLAUDE_CODE_ALLOW_MCP_TOOLS_FOR_SUBAGENTS": "1",
+    "ENABLE_CODE_GUIDE_SUBAGENT": "1",
+    "CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY": "20",
+    "ENABLE_EXPERIMENTAL_MCP_CLI": "1",
+    "CLAUDE_CODE_ENABLE_FINE_GRAINED_TOOL_STREAMING": "1",
+    "CLAUDE_CODE_STREAMING_TEXT": "1",
+    "CLAUDE_CODE_USE_CCR_V2": "1",
+    "CLAUDE_CODE_POST_FOR_SESSION_INGRESS_V2": "1",
+    "CLAUDE_CODE_SYNTAX_HIGHLIGHT": "true",
+    "CLAUDE_CODE_SHELL": "zsh",
+    "CLAUDE_CODE_ENABLE_CFC": "1",
+    "CLAUDE_CODE_USE_COWORK_PLUGINS": "false",
+    "CLAUDE_CODE_PLAN_MODE_INTERVIEW_PHASE": "1",
+    "CLAUDE_CODE_PERFETTO_TRACE": "1",
+    "CLAUDE_CODE_TERMINAL_RECORDING": "1",
+    "ENABLE_LSP_TOOL": "1",
+    "ENABLE_TOOL_SEARCH": "1",
+    "ENABLE_BTW": "1",
+    "CLAUDE_CODE_ALWAYS_ENABLE_EFFORT": "1",
+    "CLAUDE_ENV_FILE": "/Users/zchee/.claude/.env",
+    "CLAUDE_CODE_ENABLE_TASKS": "1",
+    "ENABLE_CLAUDE_CODE_SM_COMPACT": "1",
+    "FORCE_AUTOUPDATE_PLUGINS": "1",
+    "CLAUDE_CODE_NEW_INIT": "1",
+    "CLAUDE_ENABLE_STREAM_WATCHDOG": "1",
+    "CLAUDE_AUTO_BACKGROUND_TASKS": "1",
+    "EMBEDDED_SEARCH_TOOLS": "1",
+    "USE_API_CONTEXT_MANAGEMENT": "1",
+    "CCR_ENABLE_BUNDLE": "1",
+    "CCR_FORCE_BUNDLE": "1",
+    "REVIEW_REMOTE": "1",
+    "CLAUDE_INTERNAL_FC_OVERRIDES": "1",
+    "CLAUDE_MORERIGHT": "true",
+    "CLAUDE_CODE_UNDERCOVER": "true",
+    "CLAUDE_CODE_COORDINATOR_MODE": "1",
+    "MCP_CONNECTION_NONBLOCKING": "1",
+    "DISABLE_COMMAND_INJECTION_CHECK": "1",
+    "CLAUDE_CODE_ABLATION_BASELINE": "1",
+    "CLAUDE_CODE_ENABLE_AWAY_SUMMARY": "1",
+    "CLAUDE_CODE_ENABLE_BACKGROUND_PLUGIN_REFRESH": "1",
+    "CLAUDE_CODE_ENABLE_EXPERIMENTAL_ADVISOR_TOOL": "1",
+    "ENABLE_PROMPT_CACHING_1H": "1",
+    "CLAUDE_ENABLE_BYTE_WATCHDOG": "1",
+    "CLAUDE_CODE_FORCE_FULLSCREEN_UPSELL": "0",
+    "CLAUDE_CODE_ENABLE_APPEND_SUBAGENT_PROMPT": "1",
+    "CHOKIDAR_USEPOLLING": "1",
+    "SHARP_FORCE_GLOBAL_LIBVIPS": "1",
+    "CLAUDE_CODE_REPL": "1",
+    "CLAUDE_CODE_DECSTBM": "1",
+    "CLAUDE_BG_BACKEND": "daemon",
+    "CLAUDE_BRIDGE_REATTACH_SESSION": "1",
+    "CLAUDE_BG_RENDEZVOUS_SOCK": "/tmp/claude.sock",
+    "CLAUDE_CODE_DAEMON_COLD_START": "transient",
+    "CLAUDE_CODE_FORCE_SYNC_OUTPUT": "1",
+    "CLAUDE_CODE_FORK_SUBAGENT": "1",
+    "CLAUDE_CODE_INVESTIGATE_FIRST": "1",
+    "CLAUDE_CODE_LOOP_PERSISTENT": "1",
+    "CLAUDE_CODE_NATIVE_CURSOR": "1",
+    "CLAUDE_CODE_PROACTIVE": "1",
+    "CLAUDE_CODE_RETRY_WATCHDOG": "1",
+    "CLAUDE_CODE_SUPERVISED": "1",
+    "CLAUDE_CODE_VERIFY_PROMPT": "1",
+    "CLAUDE_CODE_ALT_SCREEN_FULL_REPAINT": "0",
+    "CLAUDE_CODE_WORKFLOWS": "1",
+    "CLAUDE_CODE_MID_CONVERSATION_SYSTEM": "claude-fable-5",
+    "CLAUDE_CODE_FORCE_MID_CONVERSATION_SYSTEM": "1",
+    "CLAUDE_CODE_ENABLE_DESIGN_SYNC": "1",
+    "CLAUDE_CODE_ENABLE_SDK_FILE_CHECKPOINTING": "1",
+    "CLAUDE_CODE_ENABLE_XAA": "1",
+    "ENABLE_SESSION_BACKGROUNDING": "1",
+    "CLAUDE_CODE_AMBER_ASTROLABE": "1",
+    "CLAUDE_CODE_BASALT_COVE": "1",
+    "CLAUDE_CODE_GAULT_KESTREL": "1",
+    "CLAUDE_CODE_LANTERN_PRISM": "1",
+    "CLAUDE_CODE_LARCH_CISTERN": "1",
+    "CLAUDE_CODE_WALNUT_SPIRE": "1",
+    "CLAUDE_CODE_THRIFTY_SONIC": "1"
   },
   "includeCoAuthoredBy": true,
   "permissions": {
@@ -20,9 +133,12 @@
     ],
     "defaultMode": "bypassPermissions"
   },
-  "model": "claude-fable-5",
+  "model": "claude-fable-5[1m]",
   "enableAllProjectMcpServers": true,
   "deniedMcpServers": [
+    {
+      "serverName": "claude.ai workspace-developer"
+    },
     {
       "serverName": "claude.ai Cloudflare Developer Platform"
     },
@@ -85,7 +201,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "imectl set -q 'com.apple.keylayout.ABC'"
+            "command": "imectl set com.apple.keylayout.ABC"
           }
         ]
       }
@@ -96,43 +212,29 @@
     "command": "sh ${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hud/omc-hud-cache.sh ${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hud/omc-hud.mjs"
   },
   "enabledPlugins": {
-    "codex@openai-codex": true,
     "langsmith-tracing@langsmith-claude-code-plugins": false,
-    "oh-my-claudecode@omc": true,
-    "rust-reverse-engineering@jingjing2222-plugins": true,
+    "rust-reverse-engineering@jingjing2222-plugins": false,
     "security-guidance@claude-plugins-official": false,
     "skill-creator@claude-plugins-official": true,
     "clangd-lsp@claude-plugins-official": true,
     "gopls-lsp@claude-plugins-official": true,
     "lua-lsp@claude-plugins-official": true,
     "pyright-lsp@claude-plugins-official": true,
-    "rust-analyzer-lsp@claude-plugins-official": true,
+    "rust-analyzer-lsp@claude-plugins-official": false,
     "swift-lsp@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
     "compact-plus@compact-plus-local": true,
     "fable-advisor@fable-advisor": true,
-    "mattpocock-skills@mattpocock": true,
-    "grok-build@xai-grok-build": true,
-    "plugin-dev@claude-plugins-official": true,
-    "mcp-gemini-search@mcp-gemini-search": true
+    "plugin-dev@claude-plugins-official": false,
+    "mcp-gemini-search@mcp-gemini-search": true,
+    "oh-my-claudecode@omc": true,
+    "mattpocock-skills@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "goland-claude-marketplace": {
       "source": {
         "source": "github",
         "repo": "JetBrains/go-modern-guidelines"
-      }
-    },
-    "omc": {
-      "source": {
-        "source": "directory",
-        "path": "/opt/local/var/bun/install/global/node_modules/oh-my-claude-sisyphus"
-      }
-    },
-    "openai-codex": {
-      "source": {
-        "source": "github",
-        "repo": "openai/codex-plugin-cc"
       }
     },
     "langsmith-claude-code-plugins": {
@@ -159,32 +261,31 @@
         "repo": "DannyMac180/fable-advisor"
       }
     },
-    "mattpocock": {
-      "source": {
-        "source": "github",
-        "repo": "mattpocock/skills"
-      }
-    },
-    "xai-grok-build": {
-      "source": {
-        "source": "github",
-        "repo": "xai-org/grok-build-plugin-cc"
-      }
-    },
     "mcp-gemini-search": {
       "source": {
         "source": "github",
         "repo": "zchee/mcp-gemini-search"
+      }
+    },
+    "omc": {
+      "source": {
+        "source": "directory",
+        "path": "/Users/zchee/src/github.com/Yeachan-Heo/oh-my-claudecode"
       }
     }
   },
   "outputStyle": "Proactive",
   "viewMode": "verbose",
   "spinnerTipsEnabled": true,
+  "alwaysThinkingEnabled": true,
   "effortLevel": "xhigh",
   "fastModePerSessionOptIn": true,
   "autoUpdatesChannel": "latest",
   "tui": "fullscreen",
+  "voice": {
+    "enabled": true,
+    "mode": "tap"
+  },
   "autoMemoryEnabled": true,
   "autoDreamEnabled": true,
   "showThinkingSummaries": true,
@@ -193,7 +294,7 @@
   "editorMode": "normal",
   "verbose": true,
   "preferredNotifChannel": "kitty",
-  "autoCompactEnabled": false,
+  "autoCompactEnabled": true,
   "autoScrollEnabled": true,
   "teammateMode": "tmux",
   "remoteControlAtStartup": true,
@@ -202,6 +303,7 @@
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
   "useAutoModeDuringPlan": true,
+  "voiceEnabled": true,
   "omcHud": {
     "elements": {
       "cwd": false,
@@ -255,8 +357,8 @@
     },
     "staleTaskThresholdMinutes": 10,
     "contextLimitWarning": {
-      "threshold": 80,
-      "autoCompact": false
+      "threshold": 90,
+      "autoCompact": true
     },
     "layout": {
       "line1": [
