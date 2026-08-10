@@ -1,5 +1,5 @@
 <!-- OMC:START -->
-<!-- OMC:VERSION:4.15.7 -->
+<!-- OMC:VERSION:4.15.10 -->
 
 # oh-my-claudecode - Intelligent Multi-Agent Orchestration
 
@@ -76,9 +76,19 @@ Say "setup omc" or run `/oh-my-claudecode:omc-setup`.
 1. **MUST DON'T HOLD BACK. GIVE IT YOUR ALL.**
 2. **Reflect after each code change or tool result, evaluate quality, then choose the best next action.**
 3. **Execute work step by step against the current plan.**
-4. **Keep the internal reasoning written in English, even if the user inputs a prompt in Japanese.**
+4. **Keep the internal reasoning in English, even if the user inputs a prompt in Japanese.**
+    - **If the user prompts in Japanese, the response should be in Japanese followed by English. Note that it is only a response. Reasoning MUST BE in English only.**
 5. **Before any tool calls for a multi-step task, send a short user-visible update that acknowledges the request and states the first step. Keep it to one or two sentences.**
+<!-- 6. **MUST always use the `hashline` MCP server instead of the `edit` or `replace_string_in_file` tools.** -->
 <!-- 3. **Actively utilize `TodoWrite` tool to always maintain a meaningful, step-by-step task lists.** -->
+
+## Plan Status Reporting
+
+When executing any multi-phase plan (phases, waves, stages, rollouts) in ANY project, render the current state as Markdown tables at every phase-relevant moment — a wave/stage completing, a user-ordered pause or resume, a phase transition, or the user asking where things stand. Format:
+
+- **Phase table**: every phase with a one-line description and status marker (✅ done / 🔶 in progress / ⏸ paused / 🔜 not started), plus landed commit hashes or artifacts where they exist.
+- **Wave/stage table**: when the active phase has internal waves/stages, expand it inline (between the phase rows or directly after) with lane/task composition, description, landed commits, and per-wave status.
+- Always mark the current stop point and the next action explicitly (e.g. "paused before W5; resumes on user go").
 
 ## Persona
 
@@ -155,6 +165,37 @@ After proposing a solution, score confidence (0.0-1.0) for:
 - If a test fails, verify the test structure before refactoring production code.
 - Use the test-runner agent to execute tests.
 
+## Orchestration Routing
+
+### Security-gated work: keep the orchestrator off the credential path
+
+When I am the orchestrator (running on Fable 5) and a step involves handling a
+live credential — reading a stored auth token, putting a Bearer token on an
+outbound request, probing an authenticated endpoint — running that step
+**myself** can trip a dual-use security check whose fallback path lands on
+Opus 4.8. That fallback is expensive and usually unwanted.
+
+**Avoid it by delegating the credential-touching execution to a Fable
+implementation lane** (`fable-advisor:fable-implementer`) rather than running
+it in the orchestrator context. The worker holds the token and performs the
+network/auth work; the orchestrator receives only the derived facts (observed
+wire fields, a verdict, a decision) and never reads the raw secret. This keeps
+the whole run on Fable 5 and preserves the "workers are Fable, not Opus"
+routing.
+
+Alternatives, in order of preference:
+1. **Full delegation to the Fable lane** (default) — design, execution, and
+   recording all move to the worker; the orchestrator reviews the result.
+2. **Hybrid** — orchestrator authors the scaffold/test skeleton; only the
+   token-reading execution goes to the Fable lane. Use when the design work is
+   the bulk and the live call is a single shot.
+3. **User runs it** (`! <cmd>`) — the credential never passes through any
+   agent; the orchestrator parses only the raw output. Use when a single manual
+   call suffices; poor fit for iterative probing.
+
+When delegation shifts ownership away from what a frozen execution contract
+assigns, record it as a numbered deviation in that contract's ledger.
+
 ## Git Commit Protocol
 
 Every commit message must follow the Git protocol.
@@ -185,10 +226,6 @@ Co-Authored-By: (Claude Opus 4.8 (1M context) or Claude Fable 5) <noreply@anthro
 
 ## Tool
 
-### Codex CLI
-
-- **When delegating work to the OpenAI Codex CLI (`codex exec`) — e.g. via codex-implementer lanes — always run it at reasoning effort `xhigh`** by passing `-c model_reasoning_effort="xhigh"`, unless the task is trivially mechanical. Deeper reasoning is preferred over token cost for delegated implementation and review work.
-
 ### Python scripts
 
 **When creating a temporary Python script for a specific task, you can use the `uv` shebang to make any necessary third-party packages available for that task.**
@@ -209,59 +246,6 @@ Example:
 import requests
 from rich.pretty import pprint
 ```
-
-### Code Search
-
-MUST USE `semble search` to find code by describing what it does or naming a symbol/identifier, instead of `grep` tool:
-
-```sheell
-semble search "authentication flow" ./my-project
-semble search "save_pretrained" ./my-project
-semble search "save model to disk" ./my-project --top-k 10
-```
-
-If you anticipate doing more than one search, use `semble index` to create an index.
-
-```sheell
-semble index ./my-project -o my_index
-```
-
-You can then reuse this index later on:
-
-```sheell
-semble search "save_pretrained" --index my_index
-```
-
-An index is not automatically updated, so if the code changes significantly, reindex. If you notice stale results while resolving searches to files, reindex.
-
-Use `--content docs` to search documentation and prose, `--content config` for config files (yaml, toml, etc.), or `--content all` to search code, docs, and config:
-
-```sheell
-semble search "deployment guide" ./my-project --content docs
-semble search "database host port" ./my-project --content config
-semble search "authentication" ./my-project --content all
-```
-
-Use `semble find-related` to discover code similar to a known location (pass `file_path` and `line` from a prior search result):
-
-```sheell
-semble find-related src/auth.py 42 ./my-project
-```
-
-Like search, `find-related` also accepts an `--index` argument.
-
-`path` defaults to the current directory when omitted; git URLs are accepted.
-
-If `semble` is not on `$PATH`, use `uvx --from "semble[mcp]" semble` in its place.
-
-#### Workflow
-
-1. Index the repo using `semble index -o cached_index`.
-2. Start with `semble search` to find relevant chunks. Pass the index to achieve results faster.
-3. Use `--content docs` for documentation, `--content config` for config files, or `--content all` for everything.
-4. Inspect full files only when the returned chunk does not give enough context.
-5. Optionally use `semble find-related` with a promising result's `file_path` and `line` to discover related implementations.
-6. Use grep only when you need exhaustive literal matches or quick confirmation of an exact string.
 
 ## MCP Servers
 
@@ -292,7 +276,7 @@ If `semble` is not on `$PATH`, use `uvx --from "semble[mcp]" semble` in its plac
 
 ## Swift
 
-@~/.claude/instructions/Swift.md
+- ~/.claude/instructions/Swift.md
 
 ## Zig
 
