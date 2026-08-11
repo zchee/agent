@@ -1,19 +1,23 @@
-# Claude Code Environment Variables (v2.1.221)
+# Claude Code Environment Variables (v2.1.226)
 
-Reverse-engineered from `cli.unpack.js` at tag `2.1.221` (last updated 2026-08-04). This catalog covers first-party Claude Code knobs plus the ambient and bundled-dependency environment variables that are read somewhere in the shipped runtime.
+Reverse-engineered from `cli.unpack.js` at tag `2.1.226` (last updated 2026-08-10). This catalog covers first-party Claude Code knobs plus the ambient and bundled-dependency environment variables that are read somewhere in the shipped runtime.
 
 ## How this was derived
 
-At 2.1.221 the bundle is a Bun-compiled artifact (`package.json` `bin` is `bin/claude.exe`) and most first-party variables are no longer read through bare `process.env.NAME`. They are declared in a typed schema and reached through an accessor namespace, so a `process.env` grep alone under-reports the surface by roughly a third. The list below is the union of four access patterns:
+At 2.1.226 the bundle is a Bun-compiled artifact (`package.json` `bin` is `bin/claude.exe`) and most first-party variables are no longer read through bare `process.env.NAME`. They are declared in a typed schema and reached through an accessor namespace, so a `process.env` grep alone under-reports the surface by roughly a third. The list below is the union of four access patterns:
 
-1. **Typed schema declarations** — a builder (`Ne.str()`, `Ne.bool()`, `Ne.triBool()`, `Ne.int()`, `Ne.enum([...])`) defines 836 variables, exported as `NAME: () => symbol` maps and consumed at call sites as `re.NAME`. This is the authoritative first-party surface and the source of the **Type** column.
-2. **Direct `process.env.NAME` reads** — 524 names, mostly platform/ambient detection and bundled SDKs. A plain `process\.env\.NAME` grep is not sufficient: the bundle also reads through `process.env?.NAME` (optional chaining), `process.env['NAME']` (one literal, `ANTHROPIC_LOG`; the other 135 bracket reads are dynamic), and through a bound alias after destructuring, as in `Boolean(e.TERMINUS_SUBLIME)` at line 193454. Variables reached only by those forms look absent to a naive grep and can be mistaken for removals.
-3. **Bundled-SDK helpers** — `getStringFromEnv(...)` / `getNumberFromEnv(...)` in the OpenTelemetry SDK.
-4. **Name registries** — literal allowlists such as the settings-injectable set (`Flg`, 181 names, line 78202), the provider-sensitive set, the proxy set, and the subprocess-forwarding sets. Variables that appear only here are still live: they are injected into `process.env` from `settings.json` `env` and then read indirectly.
+1. **Typed schema declarations** — a builder (`Fe.str()`, `Fe.bool()`, `Fe.triBool()`, `Fe.int()`, `Fe.enum([...])`) is invoked 841 times, exported as `NAME: () => symbol` maps and consumed at call sites as `te.NAME`. This is the authoritative first-party surface and the source of the **Type** column.
+2. **Direct `process.env.NAME` reads** — 556 names, mostly platform/ambient detection and bundled SDKs. A plain `process\.env\.NAME` grep is not sufficient: the bundle also reads through `process.env?.NAME` (optional chaining), through `process.env[...]` with a computed key (the self-hosted runner's own config reader `MV(...)` is one such, taking the variable name as a parameter), and through a bound alias after destructuring, as in `Boolean(e.TERMINUS_SUBLIME)`. Variables reached only by those forms look absent to a naive grep and can be mistaken for removals.
+3. **Bundled-SDK helpers** — `getStringFromEnv(...)` / `getNumberFromEnv(...)` in the OpenTelemetry SDK, and a runtime-agnostic reader that evaluates `globalThis.process.env?.[e]?.trim()` with a `globalThis.Deno.env.get(e)` fallback. Because its key is a parameter, every variable it serves — `ANTHROPIC_LOG` among them — is invisible to any grep for a literal `process.env.NAME`.
+4. **Name registries** — literal allowlists such as the settings-injectable set (`bBg`, 183 names, line 79279), the provider-sensitive set (`mBg`, line 79271), the proxy/host-managed set (`EBg`, 90 names, line 79387), and the subprocess-forwarding set (`OLr`, 65 names, line 797545). Variables that appear only here are still live: they are injected into `process.env` from `settings.json` `env` and then read indirectly.
 
-The minified identifiers shift every release: the schema builder was `Pe` and the accessor `Z` at 2.1.220, and they are `Ne` and `re` here. Treat them as version-specific evidence pointers, not stable anchors.
+Sixteen of the typed declarations carry names that are not SCREAMING_SNAKE_CASE — `CI`, `ComSpec`, `ConEmuTask`, `ProgramFiles`, `SystemRoot`, `NoDefaultCurrentDirectoryInExePath`, `__CFBundleIdentifier`, the lowercase proxy quartet `http_proxy` / `https_proxy` / `no_proxy` / `all_proxy`, and the lowercase Google trio `gcloud_project` / `google_cloud_project` / `google_application_credentials`. An export-map pattern of `[A-Z][A-Z0-9_]{2,}` cannot map any of them back to a declaring symbol and reports a phantom shortfall. This revision's export-map scan accepts any `[A-Za-z_][A-Za-z0-9_]*` name and therefore maps **all 841** declarations with no unmapped remainder, which is how the count is confirmed against the raw builder-invocation count rather than merely asserted. One typed name (`CLAUDE_CODE_MESSAGING_SOCKET`) is declared through a second, separate export map (`FYi`/`m0g`) with its own accessor (`MOe`, distinct from the composed `te`); the 841 total is 840 mapped through `te` plus this one, and the completion invariant was checked against that split.
 
-**1057 variables** are documented, plus 34 historical entries under *Removed / Legacy*. Rows marked *Settings-injectable* may also be set through the `env` block of `settings.json`.
+The minified identifiers shift every release: the schema builder/accessor pair was `Ne`/`re` at 2.1.221, `Me`/`te` at 2.1.222, `Ne`/`ee` at 2.1.224, and is `Fe`/`te` here — note that `te` has come back around to mean the accessor again (it meant the builder at 2.1.222), which is exactly why a symbol must never be carried across tags. Treat every symbol and line number as a version-specific evidence pointer.
+
+**1166 variables** are documented — 1106 as catalog rows (mechanically counted with `rg -c '^\| \`'` bounded to the *Authentication & API*...*Dependency / Library Internals* range) plus the 24 runner-injected names listed inline in *Self-Hosted Runner* — alongside 36 historical entries under *Removed / Legacy*. This revision corrects the catalog-row figure: the previous header text stated 1102, which a fresh mechanical recount did not reproduce even before this tag's one addition, so 1106 is stated here as directly measured rather than carried forward. Rows marked *Settings-injectable* may also be set through the `env` block of `settings.json`. Every one of the 841 typed declarations at this tag appears in the catalog; that coverage was checked mechanically rather than assumed.
+
+Per-row `line NNNNN` citations in the tables below record where a variable was observed **at the tag the row was written against**, not necessarily at 2.1.226 — line numbers move by tens of thousands of lines between releases even when nothing about the variable changes. The anchors named in this section and in the change log are current for 2.1.226; treat older in-row citations as provenance, and re-resolve by content before relying on one.
 
 ## Reading the Type column
 
@@ -26,7 +30,166 @@ The minified identifiers shift every release: the schema builder was `Pe` and th
 | `enum a \| b` | Only the listed values are accepted; anything else is discarded and treated as unset. |
 | `—` | Not in the typed schema — read directly from `process.env`, by a bundled dependency, or only via a name registry. |
 
-## Changes since v2.1.220
+## Changes since v2.1.224
+
+Covers two releases, 2.1.224 -> 2.1.225 -> 2.1.226. As at every prior tag the raw bundle diff is a full re-emission — minified identifiers are regenerated on each build — so the surface was re-derived from scratch and the *results* diffed rather than the text. `cli.unpack.js` at 2.1.225 was not separately checked out; every row below is a diff of the 2.1.224 and 2.1.226 bundles only. Where a change cannot be pinned to one of the two intermediate releases it is attributed to "between 2.1.224 and 2.1.226" rather than guessed.
+
+This is the quietest environment-surface release in the recent series. Every one of the four access-form surfaces re-derived from scratch — the 841 typed declarations, the 555 direct `process.env.NAME` reads, the settings-injectable registry (183), the provider-sensitive registry (98), and the subprocess-forwarding registry (65) — came back **byte-identical in both count and content** to 2.1.224, confirmed by set-diffing the extracted name lists, not by comparing counts alone. Zero type/enum drift was found across all 841 typed names (one apparent drift, `ANTHROPIC_BEDROCK_REGION_PREFIX`'s enum constraint, is a false positive: the constraint array is `["us", "eu", "apac", "jp", "au", "global"]` at both tags, just bound to a different minified symbol name — `ldc` at 2.1.224, `e_c` at 2.1.226). The declared-but-never-consumed set is also byte-identical: the same 56 names, re-verified with a corrected whole-token occurrence regex (see the note below the table).
+
+| Change | Count | Detail |
+|---|---|---|
+| Variables added to the bundle | 1 | `CLAUDE_REMOTE_TOOLS_BRIDGE_URL`, brought in by a brand-new "device bridge" subsystem (see below). Landed sometime between 2.1.224 and 2.1.226; not attributable to a specific one of the two releases from the bundle alone. |
+| Variables removed from the bundle | 0 | No name occurs at 2.1.224 that does not still occur at 2.1.226, across all four access forms and every registry. |
+| Typed schema declarations | 841 (unchanged) | Same 841 names as 2.1.224, confirmed by set-diffing the two 841-name lists: zero additions, zero removals. `CLAUDE_REMOTE_TOOLS_BRIDGE_URL` is **not** a typed declaration — see below. |
+| Type / enum drift | 0 | Every one of the 841 carried-forward names kept both its builder kind and its constraint argument; the one apparent difference (see above) resolved to a minified-symbol-name artifact, not a real change. |
+| Direct `process.env.NAME` reads | 555 (unchanged) | Identical name set at both tags. |
+| Settings-injectable registry | 183 (unchanged) | Identical name set at both tags (`bBg` here, `VDg` at 2.1.224). |
+| Provider-sensitive registry | 98 (unchanged) | Identical name set at both tags (`mBg` here, `qDg` at 2.1.224), including every spread-in sub-list resolved recursively. |
+| Proxy/host-managed registry | 90 (was 89) | Gained `CLAUDE_REMOTE_TOOLS_BRIDGE_URL` (`EBg` here, `XDg` at 2.1.224). No other change. |
+| Subprocess-forwarding registry | 65 (unchanged) | Identical name set at both tags (`OLr` here, `THr` at 2.1.224). |
+| Declared but never consumed | 56 (unchanged) | Identical 56-name set at both tags — see the correction note below. |
+
+**Correction to the unconsumed-count methodology.** Re-deriving the unconsumed set for this revision surfaced a bug in the identifier-boundary regex used to count occurrences: a naive `(?<![\w.$])NAME(?![\w])` pattern excludes the property-access form `te.NAME` (and its predecessor `ee.NAME`), because the `.` immediately before `NAME` trips the negative lookbehind. This under-reports every typed variable's true occurrence count by at least one live read and, left uncorrected, would have produced a false unconsumed count in the hundreds (an initial pass returned 360). The correct boundary excludes only `\w` and `$` from the lookbehind, not `.`: `(?<![\w$])NAME(?![\w])`. Both tags' unconsumed sets were recomputed with the corrected pattern for this revision; the counts and content documented for 2.1.224 in the table above were independently re-verified with it and matched the previously published 56 exactly, so no earlier row in this file needs correction — only the extraction script itself did.
+
+### New subsystem: the device bridge
+
+An entirely new, self-contained subsystem appears at 2.1.226 with zero occurrences anywhere in the 2.1.224 bundle: a "device bridge" that opens a WebSocket connection to relay tool calls to/from a paired device (functions and diagnostics are grouped around lines 1185300-1186400, all prefixed `[deviceBridge]` in their log output). It registers under the telemetry event `tengu_device_bridge_stopped` / `tengu_device_bridge_skipped` and is gated by `Bs("allow_remote_sessions")` plus a first-party-provider check, so it is inert unless both conditions hold.
+
+| Variable | Change | Type | Default | Description |
+|---|---|---|---|---|
+| `CLAUDE_REMOTE_TOOLS_BRIDGE_URL` | added, between 2.1.224 and 2.1.226 | — | environment-derived (`ZQv`/`eZv` by OAuth environment) | Intended override for the device-bridge base URL, read as `qf.CLAUDE_REMOTE_TOOLS_BRIDGE_URL !== undefined` at line 1186217 inside `kqh()`, the function that resolves the bridge URL before falling back to an OAuth-environment default. **This read is currently inert**: `qf` is built as `BYi(_0g, null)` (line 43953) where `_0g` is assigned only once, to `{}` (line 43952), and never populated anywhere else in the bundle — so `qf` never has an own property for any name, and `qf.CLAUDE_REMOTE_TOOLS_BRIDGE_URL` evaluates to `undefined` unconditionally regardless of what is set in the real `process.env`. The same always-empty-backing-object pattern already existed at 2.1.224 (as `Zm`, backed by `z_g`) for roughly two dozen other `qf`-routed names (`CLAUDE_RUNNER_FAIL_FAST_FETCH`, the `CLAUDE_CODE_AUTO_MODE_*` family, etc.), so this is a pre-existing bundle quirk applied to a new name, not a regression specific to this variable. Listed in the proxy/host-managed registry (`EBg`, line 79387) alongside its neighbors `CLAUDE_BRIDGE_BASE_URL` / `CLAUDE_BRIDGE_OAUTH_TOKEN` / `CLAUDE_BRIDGE_SESSION_INGRESS_URL`, but not in the settings-injectable or provider-sensitive registries, and not a typed declaration (absent from the 841-name `Fe`-builder set). |
+
+This is the largest environment-surface change in the recent series, and almost all of it is one feature: **a self-hosted session runner** (`claude self-hosted-runner`) that did not exist at 2.1.222 and brings 60 new variables with it. Outside that subsystem the release is small — nine typed declarations added and three removed.
+
+| Change | Count | Detail |
+|---|---|---|
+| Variables added to the bundle | 63 | 60 belong to the new self-hosted-runner subsystem (enumerated in their own table below); the other three are `ANTHROPIC_BEDROCK_REGION_PREFIX`, `CLAUDE_CODE_ARTIFACT_DB` and `CLAUDE_CODE_ULTRAREVIEW_QUOTA_FIXTURE`. |
+| Variables removed from the bundle | 2 | `CLAUDE_CODE_INVESTIGATE_FIRST` (gone at 2.1.223) and `CLAUDE_CODE_MARL_CORMORANT` (gone at 2.1.224). Both now return zero matches bundle-wide and have moved to *Removed / Legacy*. |
+| Typed schema declarations | 841 (was 835) | 835 -> 838 at 2.1.223, 838 -> 841 at 2.1.224. Nine declarations added, three removed; the arithmetic closes exactly against the raw builder-invocation count. |
+| Declaration removed but name still live | 1 | `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` lost its typed declaration at 2.1.224 but remains in the settings-injectable registry. This is a partial removal, not a deletion — see the note below the table, and do not report it as a removed variable. |
+| Type / enum drift | 0 | Every carried-forward variable kept both its builder kind and its constraint argument; a full kind-by-kind comparison of the 832 names present at both tags found no differences. |
+| Settings-injectable registry | 183 (was 181) | Grew by `ANTHROPIC_BEDROCK_REGION_PREFIX` and `CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT`. |
+| Subprocess-forwarding registry | 65 (was 54) | Now carries `CLAUDE_CODE_MESSAGING_SOCKET` among others. |
+| Declared but never consumed | 56 (was 63) | Same name-only criterion as the previous revision (exactly one occurrence bundle-wide can only be the export-map entry). Seven variables left the set and none entered it — but only two of the seven gained an actual reader; see the note below. |
+
+**On the "declared but never consumed" count — a registry entry is not a consumer.** Seven names left the unconsumed set, but the reason differs and the distinction matters. Only `CLAUDE_RUNNER_FETCH_DEPTH` and `CLAUDE_RUNNER_DISABLE_AWAITING_ACTION_OVERRIDE` gained real readers (`ee.CLAUDE_RUNNER_FETCH_DEPTH`, with an "Ignoring …" diagnostic for a malformed value, and a negated read in the awaiting-action path). The other five — `CLAUDE_BRIDGE_BASE_URL`, `CLAUDE_BRIDGE_OAUTH_TOKEN`, `CLAUDE_BRIDGE_SESSION_INGRESS_URL`, `ANT_OTEL_LOGS_EXPORTER` and `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT` — merely had their names added to a name registry, so each now occurs twice rather than once. Their occurrence count rose without a single line of code reading them, and their catalog rows still correctly say they have no consumer. This is a limitation of the name-only criterion worth carrying forward: it detects *a second occurrence*, not *a read*, so every departure from the set needs its context inspected before being reported as a variable coming alive. `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT` is the subtlest of the five: its second occurrence is the runner *writing* the name as an object key when it builds a child's environment (line 1183382), which is the opposite of the CLI reading it.
+
+**On `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION`.** Its typed declaration is gone at 2.1.224, so a scan of the typed surface alone reports it as removed — but the name still occurs in the settings-injectable registry (`VDg`, line 79168), which means it can still be injected into `process.env` from a `settings.json` `env` block. What was lost is the typed read path, not the name. This is precisely the failure mode the four-access-form rule exists to prevent, and it is the reason "removed" in the table above is reserved for names with **zero** bundle-wide occurrences.
+
+### Added outside the runner subsystem
+
+| Variable | Change | Type | Default | Description |
+|---|---|---|---|---|
+| `ANTHROPIC_BEDROCK_REGION_PREFIX` | added 2.1.224 | string | inference-profile discovery | Forces the cross-region inference-profile prefix used for Bedrock model ids (`us`, `eu`, `apac`, …) instead of letting the CLI discover it, read as `ee.ANTHROPIC_BEDROCK_REGION_PREFIX ?? <discovery>` at line 124762. The bundle is unusually explicit about its limits: when discovery is unavailable it warns that the prefix is applied without an availability check and that requests will 400 unless the matching `<prefix>.*` profiles are enabled in the account (line 125138), and when some models resolve elsewhere it warns that this is "a preference, not a residency guarantee" (line 125168). Do not treat it as a data-residency control. Settings-injectable and provider-sensitive. |
+| `CLAUDE_CODE_ARTIFACT_DB` | added 2.1.224 | tri-bool | experiment `tengu_umber_lattice` (`false`) | Enables the artifact database backend. Unset defers to the experiment, which is off by default (line 691827). |
+| `CLAUDE_CODE_ULTRAREVIEW_QUOTA_FIXTURE` | added 2.1.224 | string | — | Test fixture that short-circuits the ultrareview quota lookup: its value is JSON-parsed and schema-validated in place of the `GET /v1/ultrareview/quota` call (line 591210). A parse or validation failure yields `null` rather than falling through to the network, so a malformed value disables the quota check rather than being ignored. Development aid, not a production knob. |
+| `CLAUDE_CODE_DISABLE_ADMIN_ENV_UNION` | added 2.1.223 | bool | unset (union enabled) | Set to `true` to stop the CLI from unioning administrator-supplied environment settings into the effective environment; read as `ee.CLAUDE_CODE_DISABLE_ADMIN_ENV_UNION === true` at line 83278, so only a real boolean-true value disables it. Appears in the host-managed and subprocess-strip registries, meaning a host-managed CLI controls it rather than the user. |
+| `CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT` | added 2.1.223 | bool | unset (enforcement on) | Restores the pre-2.1.223 behavior for models this build does not recognize. With enforcement on (the default), auto-compact assumes a context window for an unknown model and keeps the session inside it; setting this to `1` returns to waiting for the API to report the real window. The bundle surfaces the variable name directly in its user-facing diagnostic (line 1122227), which also names the supported alternative — mapping the model in the `modelOverrides` setting. Settings-injectable. |
+| `CLAUDE_CODE_PARCHMENT_FERN` | added 2.1.223 | tri-bool | — | Gates an unreleased capability behind a codename, checked at two sites (lines 145537, 145546) that first exclude a set of older models and, at the second site, additionally require the `tengu_velvet_mallet` experiment for the specific model. As with every codenamed flag, the bundle gives no user-facing description of what it enables. |
+| `CLAUDE_CODE_PLAN_ARTIFACTS` | added 2.1.223 | tri-bool | experiment `tengu_basalt_loom` (`false`) | Enables plan artifacts. Unset defers to the experiment, off by default (line 253718). |
+| `CLAUDE_CODE_HARBOR_KITE` | added 2.1.224 | bool | experiment `tengu_harbor_kite` (`false`) | Another codenamed capability, but note the combining operator: it is read as an OR of the experiment with `Boolean(ee.CLAUDE_CODE_HARBOR_KITE)` (line 253805), so unlike the tri-bool flags above the variable can only turn the feature **on** — it cannot force it off once the experiment enables it. Related machinery (`tengu_harbor_kite_limits`, a peer-guard limits object at line 641890) suggests a concurrency- or peer-limited feature. Also in the host-managed registry. |
+| `CLAUDE_CODE_MESSAGING_SOCKET` | added 2.1.224 | string | — | Path to a Unix socket used for inter-process messaging; read through the destructured env alias (`EPe.CLAUDE_CODE_MESSAGING_SOCKET`, lines 138641 and 646995) rather than `process.env`, so a naive grep misses it. It is carried into child sessions by the subprocess-forwarding registry (`THr`, line 785074) and simultaneously listed in the host-managed strip set, i.e. forwarded to children the CLI spawns but not honoured from an untrusted parent. |
+
+### Removed
+
+| Variable | Change | Type | Default | Description |
+|---|---|---|---|---|
+| `CLAUDE_CODE_INVESTIGATE_FIRST` | removed 2.1.223 | bool | — | Zero occurrences at 2.1.223 and after, across all four access forms and every registry. No successor name exists; the behavior it gated is either unconditional now or gone. |
+| `CLAUDE_CODE_MARL_CORMORANT` | removed 2.1.224 | tri-bool | — | Zero occurrences at 2.1.224. A codenamed experiment flag retired without a successor, which is the usual end state for these names once the feature ships or is abandoned. |
+
+### New subsystem: the self-hosted runner (60 variables)
+
+`claude self-hosted-runner` is a long-lived worker process that accepts assigned Claude Code sessions, checks out repositories, and spawns child CLI processes to run them — aimed at self-hosted CI/agent fleets. None of these names existed at 2.1.222.
+
+Two facts govern how to read this family, and getting them backwards will mislead anyone using the list:
+
+- **`SELF_HOSTED_RUNNER_*` are operator knobs.** Every one is read via `process.env` (or the runner's own `MV(...)` reader) at runner startup, and nearly all of them are a fallback for an explicit command-line flag. The bundle ships a full `--help` text (lines 1186155-1186312) that documents each one, and the descriptions below are taken from it rather than inferred.
+- **`CLAUDE_RUNNER_*` are mostly injected, not read.** Most of this group appears only as an **object key** in the environment the runner builds for each child session (`CLAUDE_RUNNER_SESSION_ID: …`, `CLAUDE_RUNNER_REPO_URL: …`, lines 1178943-1181669). They are values a child *receives*; setting them yourself before launching the runner does nothing. Only four are genuinely read as input: `CLAUDE_RUNNER_USE_GIT_PROXY`, `CLAUDE_RUNNER_SKIP_GIT_VERIFY`, `CLAUDE_RUNNER_TRUST_CANONICAL_PREWARM` and `CLAUDE_RUNNER_ACTIVITY_FD`.
+
+Note also the unit convention: every `*_MS` variable takes milliseconds while its paired flag takes seconds or minutes (`--drain-wait-sec` vs `SELF_HOSTED_RUNNER_DRAIN_WAIT_MS`), which the help text flags explicitly as `[env: …, in ms]`.
+
+#### Runner configuration (`SELF_HOSTED_RUNNER_*`)
+
+| Variable | Type | Default | Description |
+|---|---|---|---|
+| `SELF_HOSTED_RUNNER_ENVIRONMENT_SECRET` | — | — | The runner's registration secret, and the only mandatory setting: startup aborts with "No environment secret provided" (line 1186140) when neither this nor `--environment-secret-file` is given. Treat as a credential. |
+| `SELF_HOSTED_RUNNER_POOL_SECRET` | — | — | Deprecated alias for `SELF_HOSTED_RUNNER_ENVIRONMENT_SECRET`, named as such in the help text. Still accepted; prefer the new name. |
+| `SELF_HOSTED_RUNNER_LOCK_TO_ACCOUNT` | — | unset (any account) | Locks the runner to a single account id at registration, so only that account's sessions are assigned to it. Intended for webhook-driven on-demand spawn. |
+| `SELF_HOSTED_RUNNER_BASE_DIR` | — | built-in path | Base directory for repository checkouts. |
+| `SELF_HOSTED_RUNNER_EXEC_PATH` | — | this process's own binary | Binary to spawn for child sessions. |
+| `SELF_HOSTED_RUNNER_HOOKS_DIR` | — | unset | Directory of lifecycle hook scripts (checkout, command, post-session). An absent hook falls through to built-in behavior, so a partial directory is valid. |
+| `SELF_HOSTED_RUNNER_HOST_CONFIG_DIR` | — | `~/.claude` | Directory seeded into each session's `CLAUDE_CONFIG_DIR` — settings, `agents/`, `skills/` and similar, with runtime state excluded. Point it at an empty directory to disable seeding. |
+| `SELF_HOSTED_RUNNER_HEALTH_PORT` | — | built-in port | Port for the `/healthz` HTTP listener; `0` disables it. Validated at startup, and a non-integer or out-of-range value is a hard error: "must be an integer in [0, 65535]" (line 1185787). |
+| `SELF_HOSTED_RUNNER_LOG_FILE` | — | unset | Tees runner logs to a file in append mode; stdout is unchanged. The file is created mode `0600`. |
+| `SELF_HOSTED_RUNNER_TRUST_WORKSPACE` | — | build-dependent | Seeds persisted trust for each session's repo paths so repo-level `.claude/settings.json` `permissions.allow` and `additionalDirectories` are honored by the child. Set to `0` for the stricter gate, under which repo-committed grants are dropped with an "Ignoring N permissions.allow" diagnostic and host-level grants must come from the host-config directory instead. Accepts `1/true/yes/on` or `0/false/no/off`; anything else is a startup error (line 1185801). **Security-relevant** — this decides whether a checked-out repository can grant itself permissions. |
+| `SELF_HOSTED_RUNNER_CONFINE_REPO_SETTINGS` | — | `warn` | Repo-committed-settings confine guard: `warn` logs a would-refuse diagnostic per violation and still spawns, `enforce` refuses to spawn the session, `off` disables the scan. Invalid values fail closed at startup. |
+| `SELF_HOSTED_RUNNER_CONFIGURE_GIT` | — | unset | Set to `1` to write `~/.gitconfig` at runner startup, setting the global git identity to `Claude <noreply@anthropic.com>` and enabling commit signing via Anthropic's signing service. Without it the image must supply its own git identity. |
+| `SELF_HOSTED_RUNNER_PUSH_OUTCOME_ON_RELEASE` | — | unset | Set to `1` to push every tracked outcome branch to origin before deleting it on a runner-initiated session end, so in-flight commits survive a restart. The help text carries an explicit security caveat: the resume path trusts `refs/heads/<outcome-branch>` on the source remote, so anyone with push access to that ref can place content into a resumed workspace. Adds 30s to the advertised shutdown budget. |
+| `SELF_HOSTED_RUNNER_SESSION_STOP_GRACE_MS` | — | built-in | How long to wait for the Claude process to exit cleanly after a session ends, before force-killing it; the post-session hook runs after this. |
+| `SELF_HOSTED_RUNNER_POST_SESSION_HOOK_TIMEOUT_MS` | — | built-in | SIGTERM budget for the post-session lifecycle hook, applied on every session end including runner shutdown. |
+| `SELF_HOSTED_RUNNER_DRAIN_WAIT_MS` | — | `0` | On SIGTERM/SIGINT, how long to wait for each session's in-flight turn and running background tasks before sending the session process its SIGTERM. Adds to the advertised shutdown budget; maximum 86400s. |
+| `SELF_HOSTED_RUNNER_DRAIN_GRACE_MS` | — | `0` | After active sessions finish, how long to stay warm and re-poll the locked account's queue before exiting. `0` means exit immediately without polling — effectively one-shot when capacity is 1. |
+| `SELF_HOSTED_RUNNER_IDLE_SHUTDOWN_MS` | — | never | Exit the runner if it is never assigned work within this window (autoscaler scale-down). |
+| `SELF_HOSTED_RUNNER_RETIRE_AT` | — | never | Absolute Unix timestamp **in seconds** (not ms, unlike its siblings) at which to retire: release every active session server-side, stop taking new work, and exit 0. The help text advises setting it far enough before a hard host kill to cover a typical turn plus the entire shutdown budget. |
+| `SELF_HOSTED_RUNNER_SESSION_IDLE_MS` | — | never | Release a session slot after this much time with no user input. The runner exits if this drops it to zero active sessions. |
+| `SELF_HOSTED_RUNNER_STARTUP_TIMEOUT_MS` | — | 15 min | Release a session slot if the child has not completed initialization after this long — covering a child hung during `--resume` hydration or MCP connect. Cleared once the child emits `system:init`. `0` disables. |
+| `SELF_HOSTED_RUNNER_MAX_LIFETIME_MS` | — | never | SIGTERM a session child after this much wall-clock time (runaway backstop). A kill due at a moment when a turn is in flight is deferred until the turn finishes. |
+| `SELF_HOSTED_RUNNER_MAX_LIFETIME_GRACE_MS` | — | 15 min | Hard cap on that deferral. Documented only inside the `--kill-session-after-min` help entry as an override, and never as a flag of its own. |
+| `SELF_HOSTED_RUNNER_SIGKILL_GRACE_MS` | — | 30000 | Floor for the computed SIGKILL grace, clamped upward so it always covers the post-session hook timeout plus any push-outcome window (line 1183481). Read only through the runner's `MV(...)` reader, so it is invisible to a `process.env.NAME` grep. |
+| `SELF_HOSTED_RUNNER_DEBUG_DIR` | — | unset | Debug output directory. |
+| `SELF_HOSTED_RUNNER_DEBUG_TOKEN_DIR` | — | unset | **Debug only — writes live tokens to disk.** The help text says explicitly not to use it in production. |
+| `SELF_HOSTED_RUNNER_TOOLS` | — | — | Runner-side tool configuration, present as an object key rather than a `process.env` read. |
+| `SELF_HOSTED_RUNNER_TOOL_NAMES` | — | — | Companion to the above, carrying the tool name list. |
+
+**Rejected names.** Four spellings are recognized only to be refused, which is why they appear in a name scan without being knobs. `SELF_HOSTED_RUNNER_SIGKILL_TIMEOUT_MS` is a **fatal** error at startup — the runner prints that it was renamed to `SELF_HOSTED_RUNNER_SESSION_STOP_GRACE_MS` and exits 1 (line 1186349). `RUNNER_RELEASE_IDLE_SESSION_MIN`, `SELF_HOSTED_RUNNER_RELEASE_IDLE_SESSION_MIN`, `SELF_HOSTED_RUNNER_SESSION_IDLE_MIN` and `SELF_HOSTED_RUNNER_SESSION_IDLE_SEC` are merely warned about and ignored, with the message pointing at `SELF_HOSTED_RUNNER_SESSION_IDLE_MS` (line 1186354). `SELF_HOSTED_RUNNER_DRAIN_WAIT_BG_TASKS_MS` is a deprecated alias for `SELF_HOSTED_RUNNER_DRAIN_WAIT_MS`.
+
+#### Runner inputs read from the environment (`CLAUDE_RUNNER_*`, `CCR_SHR_*`)
+
+| Variable | Type | Default | Description |
+|---|---|---|---|
+| `CLAUDE_RUNNER_USE_GIT_PROXY` | — | unset | Set to `1` to clone through Anthropic's git proxy, using the session creator's stored GitHub OAuth token (or the org's GitHub App installation token for bot sessions) so the runner holds no git credentials of its own. Supersedes both URL-rewrite flags. |
+| `CLAUDE_RUNNER_SKIP_GIT_VERIFY` | — | unset | Skips git verification during checkout. |
+| `CLAUDE_RUNNER_TRUST_CANONICAL_PREWARM` | — | unset | Skips `sanitizeCanonicalGitState` for a trusted one-shot prewarm. Guarded hard: combined with a non-zero drain grace it is a **fatal** startup error (line 1186513), because a second session could otherwise reuse a VM whose canonical `.git/` a previous child had written to — bypassing cross-session isolation. If drain-grace is raised later it is ignored with a warning rather than silently honored (line 1184052). **Security-relevant.** |
+| `CLAUDE_RUNNER_ACTIVITY_FD` | — | unset | File descriptor the child writes activity heartbeats to. The only member of this group that predates 2.1.223. |
+| `CCR_SHR_SSE_HINTS` | — | unset | Opens the server-sent-events hint stream (`[runner:hints] … opening stream`, line 1186769). Overridable in code by `sseHintsEnabledOverride`, which takes precedence. |
+
+#### Injected into child sessions (`CLAUDE_RUNNER_*`, not read as input)
+
+These 25 names are written by the runner into each child session's environment. They are documented so that a scan does not mistake them for configuration: setting them yourself has no effect on the runner.
+
+`CLAUDE_RUNNER_ACCOUNT_EMAIL`, `CLAUDE_RUNNER_ACCOUNT_ID`, `CLAUDE_RUNNER_API_BASE_URL`, `CLAUDE_RUNNER_ATTEMPT`, `CLAUDE_RUNNER_CHECKOUT_PATH`, `CLAUDE_RUNNER_CLAUDE_BIN`, `CLAUDE_RUNNER_CORRELATION_ID`, `CLAUDE_RUNNER_DEBUG_LOG_PATH`, `CLAUDE_RUNNER_DISABLE_AWAITING_ACTION_OVERRIDE`, `CLAUDE_RUNNER_EXIT_REASON`, `CLAUDE_RUNNER_FAIL_FAST_FETCH`, `CLAUDE_RUNNER_FETCH_DEPTH`, `CLAUDE_RUNNER_GIT_MOUNT_URL`, `CLAUDE_RUNNER_ORDER_ID`, `CLAUDE_RUNNER_ORDER_SERVER_TIME`, `CLAUDE_RUNNER_POOL_ID`, `CLAUDE_RUNNER_PRIMARY_REPO_REVISION`, `CLAUDE_RUNNER_PRIMARY_REPO_URL`, `CLAUDE_RUNNER_REPO_REF`, `CLAUDE_RUNNER_REPO_SOURCES`, `CLAUDE_RUNNER_REPO_URL`, `CLAUDE_RUNNER_SESSION_ID`, `CLAUDE_RUNNER_SESSION_UUID`, `CLAUDE_RUNNER_WORKSPACE_PATHS`, `CLAUDE_RUNNER_WORK_ORDER_FILE`.
+
+Two of these carry a detail worth recording: `CLAUDE_RUNNER_SESSION_ID` is not the raw session id but a normalized one, with the `cse_` prefix rewritten to `session_` (lines 1181545, 1181669); and `CLAUDE_RUNNER_FETCH_DEPTH` and `CLAUDE_RUNNER_DISABLE_AWAITING_ACTION_OVERRIDE` existed at 2.1.222 as declared-but-unconsumed names and have now gained real consumers, which is part of why the unconsumed count fell.
+
+### Changes since v2.1.221
+
+Covers the 2.1.221 -> 2.1.222 release. As at every prior tag the raw bundle diff is a full re-emission — minified identifiers are regenerated on each build — so the surface was re-derived from scratch at 2.1.222 and the *results* diffed against the 2.1.221 derivation rather than the text. Every row below was verified individually against both bundles with a word-boundary occurrence count.
+
+This is a very small release for the environment surface: one declaration removed, nothing added, and no type changes anywhere.
+
+| Change | Count | Detail |
+|---|---|---|
+| Variables added to the bundle | 0 | No name occurs at 2.1.222 that did not already occur at 2.1.221, across all four access forms and every name registry. |
+| Variables removed from the bundle | 1 | `DATABASE_URL` lost its typed-schema declaration. It had no read site at 2.1.221 either, so no behavior changed — see below. |
+| Typed schema declarations | 835 (was 836) | The builder is invoked 835 times, exactly accounting for the single removal. |
+| Type / enum drift | 0 | Every carried-forward variable kept both its builder kind and its constraint argument byte-for-byte; the three `enum` variables kept identical member lists. |
+| Newly classified as provider- and model-sensitive | 3 | Three model-override variables joined two name registries. Their values are still never read; only their handling in `settings.json` changed. |
+| Declared but never consumed | 63 | Recounted under a stricter criterion than previous revisions used — see the note below the table. |
+| Name registries | unchanged | The settings-injectable set still holds 181 names and the subprocess-forwarding set 54; both were re-resolved by content, not by symbol. |
+| Repairs to this document | 1 | `MCP_DISCOVERY_CACHE` was described as having no consumer. It has one, and had one at 2.1.221 as well (`re.MCP_DISCOVERY_CACHE === false`, line 416239 there; `te.…`, line 375084 here), so this is an inherited error rather than a release change. Its row now documents the real behavior. Found by auditing every "no consumer anywhere else in the bundle" row against the recomputed unconsumed set — a check worth repeating each release, since those rows are the ones most likely to rot silently. |
+
+| Variable | Change | Type | Default | Description |
+|---|---|---|---|---|
+| `DATABASE_URL` | removed | — | — | The typed declaration (`Ne.str()` at 2.1.221) is gone. This was never a working knob: at 2.1.221 the name occurred exactly twice — the export-map entry and one example row inside an embedded documentation template — and no code ever read its value, so removing the declaration changed nothing observable. The template row ("Postgres connection string") survives at 2.1.222, which is why an occurrence count returns 1 rather than 0 and why this variable stays in *Miscellaneous* rather than moving to *Removed / Legacy*, whose entries are defined by zero matches. |
+| `CLAUDE_CODE_AUTO_MODE_MODEL` | reclassified | string | — | Joined the provider-sensitive set (`Apg`, line 78548) and the model-override strip set (`Jfg`, line 82335). Consequences: under a host-managed CLI the predicate `rZn` now causes this key to be dropped from a `settings.json` `env` block and reported rather than applied (`gzu`, line 294746), it is deleted from `process.env` on the warm-spare claim path (line 766320), and `g8i` strips it from a settings `env` block alongside `model`, `fallbackModel` and `modelOverrides`. No accessor reads its value at either tag, so it remains reserved as a knob. |
+| `CLAUDE_CODE_BG_CLASSIFIER_MODEL` | reclassified | string | — | Same two registries and the same consequences as `CLAUDE_CODE_AUTO_MODE_MODEL`; still no read site. |
+| `CLAUDE_CONTEXT_COLLAPSE_MODEL` | reclassified | string | — | Same two registries and the same consequences as `CLAUDE_CODE_AUTO_MODE_MODEL`; still no read site. |
+
+**On the "declared but never consumed" count.** Previous revisions published 65 for 2.1.221 using a test that combined the variable name with its minified symbol. That test is unsafe across releases: the minifier reuses short symbols, and `Y6h` — which was `DATABASE_URL`'s symbol at 2.1.221 — belongs to `CLAUDE_CODE_USE_NATIVE_FILE_SEARCH` at 2.1.222, so symbol occurrence counts silently mix unrelated variables. The count published here uses the name alone: a variable is unconsumed when its name occurs exactly once in the entire bundle, which can only be its export-map entry, since an accessor read (`te.NAME`), a `process.env` read and a registry entry all spell the name out. Under this criterion 2.1.221 recounts to **66** and 2.1.222 is **63**; the drop is entirely the three reclassified variables above, which now occur three times each. Read the 65 -> 63 movement as a criterion change plus three reclassifications, not as three variables becoming live.
+
+**Not an environment variable.** `CLAUDEAI_BEARER_REJECTED` is new at 2.1.222 and is SCREAMING_SNAKE, so it surfaces in name-literal scans. It is an OAuth error code, added to the error-code set that grew from 27 to 28 members (`Zey`, line 390611), and is matched as `e.code === "CLAUDEAI_BEARER_REJECTED"`. It is recorded here so the next derivation does not rediscover it as a variable.
+
+### Changes since v2.1.220
 
 Covers the 2.1.220 -> 2.1.221 release. The bundle diff between these tags is a full re-emission (roughly 972k changed lines) because minified identifiers are regenerated every build, so the surface was re-derived from scratch at each tag and the *results* diffed rather than the text. The per-variable table below is the true bundle delta, verified individually with `git show <tag>:cli.unpack.js | rg -c '<NAME>'`. The much larger "newly documented" count in the summary is a separate, documentation-level figure: those variables already existed at 2.1.220 and were missed by the previous derivation.
 
@@ -208,6 +371,7 @@ Retained from the previous revision, which was itself a full re-derivation becau
 | Variable | Type | Default | Description |
 |---|---|---|---|
 | `ANTHROPIC_BEDROCK_BASE_URL` | string | `https://bedrock-runtime.{region}.amazonaws.com` | Custom Bedrock endpoint |
+| `ANTHROPIC_BEDROCK_REGION_PREFIX` | string | inference-profile discovery | **New at 2.1.224.** Forces the cross-region inference-profile prefix applied to Bedrock model ids (`us`, `eu`, `apac`, …) instead of discovering it. Applied without an availability check when discovery is unavailable, in which case requests 400 unless the matching `<prefix>.*` profiles are enabled in the account. The bundle warns that models resolving to a different prefix make this "a preference, not a residency guarantee" — do not rely on it as a data-residency control. Settings-injectable |
 | `ANTHROPIC_BEDROCK_SERVICE_TIER` | string | — | Value sent as the `X-Amzn-Bedrock-Service-Tier` header when calling Bedrock-hosted Claude models |
 | `AWS_ACCESS_KEY_ID` | string | — | AWS access key |
 | `AWS_BEARER_TOKEN_BEDROCK` | string | — | Bearer token for Bedrock authentication |
@@ -338,7 +502,7 @@ Retained from the previous revision, which was itself a full re-derivation becau
 | `CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY` | int | `10` | Maximum concurrent tool executions |
 | `CLAUDE_CODE_PARKED_PERMISSION_WAIT_MS` | int | `2000` | How long (ms) a resumed session waits for a persisted `control_response` to answer a parked permission request before cancelling it and re-asking. Read once at module initialisation (line 1121485), so changing `process.env` after startup has no effect; `0` is not special-cased and simply fires the fallback immediately. |
 | `CLAUDE_CODE_PWSH_PARSE_TIMEOUT_MS` | int | — | Timeout for PowerShell command parsing (ms) |
-| `CLAUDE_CODE_USE_NATIVE_FILE_SEARCH` | bool | `false` | Use native file search |
+| `CLAUDE_CODE_USE_NATIVE_FILE_SEARCH` | bool | `false` | Nominally selects the native file-search implementation, but as of 2.1.224 it is declared in the typed env registry with no consumer anywhere else in the bundle — setting it has no effect. |
 | `CLAUDE_CODE_USE_POWERSHELL_TOOL` | bool | `false` | Allow the Bash/input-box execution path to run via PowerShell when `defaultShell` is `powershell` and sandbox policy permits it |
 | `SLASH_COMMAND_TOOL_CHAR_BUDGET` | int | — | Character budget for slash command tools |
 | `TASK_MAX_OUTPUT_LENGTH` | int | — | Maximum TaskOutput length in characters |
@@ -355,7 +519,7 @@ Retained from the previous revision, which was itself a full re-derivation becau
 | `MCP_CLIENT_SECRET` | string | — | OAuth client secret for MCP servers |
 | `MCP_CONNECTION_NONBLOCKING` | bool | `false` | Make MCP server connections non-blocking |
 | `MCP_CONNECT_TIMEOUT_MS` | int | — | Override (ms) for the MCP server connection timeout; parsed as an integer |
-| `MCP_DISCOVERY_CACHE` | tri-bool | — | Declared in the typed env registry but with no consumer anywhere else in the bundle (verified by both string-literal and minified-symbol search) — reserved or dead at this tag; setting it has no effect. |
+| `MCP_DISCOVERY_CACHE` | tri-bool | — | Set it to `false`/`0` to disable the MCP discovery cache outright: the eligibility check returns the reason `env-disabled` and no server is served from cache (line 375084). Only an explicit false disables — leaving it unset, or setting it true, keeps caching on, after which the kill switch and the transport check (http and sse only) still apply. `MCP_DISCOVERY_CACHE_TTL_S` and `MCP_DISCOVERY_CACHE_MAX_STALE_S` tune the cache this flag turns off. |
 | `MCP_DISCOVERY_CACHE_MAX_STALE_S` | int | `86400` | Maximum age (seconds) at which a stale MCP discovery cache entry may still be served. Values of 0 or below fall back to the default; the value is multiplied by 1000 internally (lines 416194, 416763). |
 | `MCP_DISCOVERY_CACHE_TTL_S` | int | `900` | Fresh lifetime (seconds) of an MCP discovery cache entry. Values of 0 or below fall back to the default; the value is multiplied by 1000 internally (lines 416191, 416762). |
 | `MCP_OAUTH_CALLBACK_PORT` | int | — | Port for MCP OAuth callbacks |
@@ -413,7 +577,9 @@ Retained from the previous revision, which was itself a full re-derivation becau
 | `CLAUDE_CODE_DISABLE_POLICY_SKILLS` | bool | `false` | Disable policy-driven skills loading |
 | `CLAUDE_CODE_DISABLE_PRECOMPACT_SKIP` | bool | `false` | Disable pre-compaction skip optimization |
 | `CLAUDE_CODE_DISABLE_REFUSAL_FALLBACK` | bool | — | Disables the automatic fallback retry that normally runs when the model ends a turn with a refusal. |
+| `CLAUDE_CODE_DISABLE_ADMIN_ENV_UNION` | bool | unset (union enabled) | **New at 2.1.223.** Stops administrator-supplied environment settings from being unioned into the effective environment. Compared strictly against boolean `true`, so only that exact value disables the union. Named in the host-managed and subprocess-strip registries, so a host-managed CLI — not the user — controls it |
 | `CLAUDE_CODE_DISABLE_TERMINAL_TITLE` | bool | `false` | Don't update terminal title |
+| `CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT` | bool | unset (enforcement on) | **New at 2.1.223.** Restores pre-2.1.223 behavior for unrecognized models. By default auto-compact assumes a context window for an unknown model and keeps the session inside it; setting this to `1` returns to waiting for the API to report the real window. The CLI names this variable in its own user-facing diagnostic, alongside the supported alternative of mapping the model in the `modelOverrides` setting. Settings-injectable |
 | `CLAUDE_CODE_DISABLE_THINKING` | bool | `false` | Disable extended thinking |
 | `CLAUDE_CODE_DISABLE_VIRTUAL_SCROLL` | bool | `false` | Disable virtual scroll in UI |
 | `CLAUDE_CODE_DISABLE_WORKFLOWS` | bool | `false` | Disable the workflows feature; truthy disables it, equivalent to `settings.disableWorkflows === true` (v2.1.154) |
@@ -469,7 +635,7 @@ Retained from the previous revision, which was itself a full re-derivation becau
 | `CLAUDE_CODE_ENABLE_XAA` | bool | — | Enable XAA IdP authentication feature |
 | `CLAUDE_CODE_FORCE_FULL_LOGO` | bool | `false` | Force display of full logo |
 | `CLAUDE_CODE_WORKFLOWS` | tri-bool | — | Truthy gates the workflows feature; combined with the `tengu_workflows_enabled` Statsig gate to decide whether workflows are available (v2.1.146) |
-| `EMBEDDED_SEARCH_TOOLS` | bool | `false` | Enable embedded search tools |
+| `EMBEDDED_SEARCH_TOOLS` | bool | `false` | Nominally enables embedded search tools, but as of 2.1.224 it is declared in the typed env registry with no consumer anywhere else in the bundle — setting it has no effect. |
 | `ENABLE_BETA_TRACING_DETAILED` | bool | `false` | Enable detailed beta tracing |
 | `ENABLE_ENHANCED_TELEMETRY_BETA` | bool | `false` | Enable enhanced telemetry beta |
 | `ENABLE_LOCKLESS_UPDATES` | bool | — | Declared in the typed env registry but with no consumer anywhere else in the bundle (verified by both string-literal and minified-symbol search) — reserved or dead at this tag; setting it has no effect. |
@@ -532,7 +698,7 @@ Retained from the previous revision, which was itself a full re-derivation becau
 | `ANT_OTEL_EXPORTER_OTLP_ENDPOINT` | string | — | Declared in the typed env registry but with no consumer anywhere else in the bundle (verified by both string-literal and minified-symbol search) — reserved or dead at this tag; setting it has no effect. |
 | `ANT_OTEL_EXPORTER_OTLP_HEADERS` | string | — | Declared in the typed env registry but with no consumer anywhere else in the bundle (verified by both string-literal and minified-symbol search) — reserved or dead at this tag; setting it has no effect. |
 | `ANT_OTEL_EXPORTER_OTLP_PROTOCOL` | string | — | Declared in the typed env registry but with no consumer anywhere else in the bundle (verified by both string-literal and minified-symbol search) — reserved or dead at this tag; setting it has no effect. |
-| `ANT_OTEL_LOGS_EXPORTER` | string | — | Declared in the typed env registry but with no consumer anywhere else in the bundle (verified by both string-literal and minified-symbol search) — reserved or dead at this tag; setting it has no effect. |
+| `ANT_OTEL_LOGS_EXPORTER` | string | — | Declared in the typed env registry with no reader anywhere in the bundle; setting it has no effect. Its name was added to a name registry at 2.1.224, so it now occurs twice rather than once — an occurrence count alone would wrongly suggest it came alive. |
 | `ANT_OTEL_METRICS_EXPORTER` | string | — | Declared in the typed env registry but with no consumer anywhere else in the bundle (verified by both string-literal and minified-symbol search) — reserved or dead at this tag; setting it has no effect. |
 | `ANT_OTEL_RESOURCE_ATTRIBUTES` | string | — | Declared in the typed env registry but with no consumer anywhere else in the bundle (verified by both string-literal and minified-symbol search) — reserved or dead at this tag; setting it has no effect. |
 | `ANT_OTEL_TRACES_EXPORTER` | string | — | Declared in the typed env registry but with no consumer anywhere else in the bundle (verified by both string-literal and minified-symbol search) — reserved or dead at this tag; setting it has no effect. |
@@ -559,7 +725,7 @@ Retained from the previous revision, which was itself a full re-derivation becau
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | string | — | OTLP collector endpoint URL |
 | `OTEL_EXPORTER_OTLP_HEADERS` | string | — | Custom OTLP headers |
 | `OTEL_EXPORTER_OTLP_INSECURE` | — | — | Skip TLS verification |
-| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT` | string | — | Per-signal OTLP endpoint for logs, overriding OTEL_EXPORTER_OTLP_ENDPOINT. |
+| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT` | string | — | Per-signal OTLP endpoint for logs. Declared in the typed env registry but with no consumer anywhere else in the bundle at 2.1.224 — the `ANT_`-prefixed counterpart is the one that is read. |
 | `OTEL_EXPORTER_OTLP_LOGS_HEADERS` | — | — | Logs-specific OTLP headers |
 | `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL` | string | — | Logs-specific OTLP protocol |
 | `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT` | string | — | Per-signal OTLP endpoint for metrics, overriding OTEL_EXPORTER_OTLP_ENDPOINT. |
@@ -568,7 +734,7 @@ Retained from the previous revision, which was itself a full re-derivation becau
 | `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | string | `delta` | Metrics temporality preference |
 | `OTEL_EXPORTER_OTLP_PROTOCOL` | string | — | OTLP protocol (`grpc`/`http`) |
 | `OTEL_EXPORTER_OTLP_TIMEOUT` | — | — | Global OTLP export timeout in milliseconds; signal-specific `OTEL_EXPORTER_OTLP_{TRACES |
-| `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` | string | — | Per-signal OTLP endpoint for traces, overriding OTEL_EXPORTER_OTLP_ENDPOINT. |
+| `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` | string | — | Per-signal OTLP endpoint for traces. Declared in the typed env registry but with no consumer anywhere else in the bundle at 2.1.224 — the `ANT_`-prefixed counterpart is the one that is read. |
 | `OTEL_EXPORTER_OTLP_TRACES_HEADERS` | — | — | Trace-specific OTLP headers |
 | `OTEL_EXPORTER_OTLP_TRACES_PROTOCOL` | string | — | Traces-specific OTLP protocol |
 | `OTEL_EXPORTER_PROMETHEUS_HOST` | — | `localhost` | Prometheus exporter host |
@@ -668,12 +834,12 @@ Retained from the previous revision, which was itself a full re-derivation becau
 | `CCR_OAUTH_TOKEN_FILE` | — | — | Marks the active OAuth token as one injected by the remote (CCR) host session rather than a local auth source. |
 | `CCR_ON_BRANCH_DEFAULT_GUARD` | enum enforce \| observe \| off | `enforce` | Guard policy for committing on the default branch in remote sessions. "enforce" blocks it, "observe" only records the event, "off" disables the guard. Falls back to "observe" when the tengu_on_branch_default_guard_observe gate is on, otherwise "enforce". |
 | `CCR_SPAWN_TIMESTAMP_MS` | — | — | Unix spawn timestamp (ms) injected by the Claude Code Remote launcher; used to compute `spawn_to_first_checkpoint_ms` / `spawn_to_exec_ms` startup-performance telemetry (v2.1.145) |
-| `CLAUDE_BRIDGE_BASE_URL` | string | — | Declared in the typed env registry but with no consumer anywhere else in the bundle (verified by both string-literal and minified-symbol search) — reserved or dead at this tag; setting it has no effect. |
-| `CLAUDE_BRIDGE_OAUTH_TOKEN` | string | — | Declared in the typed env registry but with no consumer anywhere else in the bundle (verified by both string-literal and minified-symbol search) — reserved or dead at this tag; setting it has no effect. |
+| `CLAUDE_BRIDGE_BASE_URL` | string | — | Declared in the typed env registry with no reader anywhere in the bundle; setting it has no effect. Its name was added to a name registry at 2.1.224, so it now occurs twice rather than once — an occurrence count alone would wrongly suggest it came alive. |
+| `CLAUDE_BRIDGE_OAUTH_TOKEN` | string | — | Declared in the typed env registry with no reader anywhere in the bundle; setting it has no effect. Its name was added to a name registry at 2.1.224, so it now occurs twice rather than once — an occurrence count alone would wrongly suggest it came alive. |
 | `CLAUDE_BRIDGE_REATTACH_GROUPING` | string | — | Grouping key used when the bridge reattaches sessions. Deleted from the environment after being read so it does not leak into children. |
 | `CLAUDE_BRIDGE_REATTACH_SEQ` | int | — | Sequence number passed when the TUI bridge reattaches to an existing session; consumed and deleted on read |
 | `CLAUDE_BRIDGE_REATTACH_SESSION` | string | — | Session ID used to reattach the TUI bridge to an existing session; consumed and deleted on read |
-| `CLAUDE_BRIDGE_SESSION_INGRESS_URL` | string | — | Declared in the typed env registry but with no consumer anywhere else in the bundle (verified by both string-literal and minified-symbol search) — reserved or dead at this tag; setting it has no effect. |
+| `CLAUDE_BRIDGE_SESSION_INGRESS_URL` | string | — | Declared in the typed env registry with no reader anywhere in the bundle; setting it has no effect. Its name was added to a name registry at 2.1.224, so it now occurs twice rather than once — an occurrence count alone would wrongly suggest it came alive. |
 | `CLAUDE_CODE_CONTAINER_ID` | string | — | Container ID for remote environments |
 | `CLAUDE_CODE_ENVIRONMENT_RUNNER_VERSION` | string | — | Attach an environment-runner version header in remote bridge mode |
 | `CLAUDE_CODE_REMOTE` | bool | `false` | Running in remote/headless mode |
@@ -691,6 +857,7 @@ Retained from the previous revision, which was itself a full re-derivation becau
 | `CLAUDE_CODE_WEBSOCKET_AUTH_FILE_DESCRIPTOR` | string | — | WebSocket auth file descriptor |
 | `CLAUDE_ENABLE_STREAM_WATCHDOG` | tri-bool | `false` | Enable stream watchdog |
 | `CLAUDE_REMOTE_CONTROL_SESSION_NAME_PREFIX` | string | — | Prefix for remote control session names |
+| `CLAUDE_REMOTE_TOOLS_BRIDGE_URL` | — | environment-derived | **New, between 2.1.224 and 2.1.226.** Intended override for the new device-bridge feature's base URL. The read (`qf.CLAUDE_REMOTE_TOOLS_BRIDGE_URL`, line 1186217) is currently inert: its backing accessor object is always empty, so the property is always `undefined` regardless of what is set in the real environment — see *Changes since v2.1.224* for the evidence. Proxy/host-managed. |
 | `CLAUDE_REMOTE_WORKFLOW_ARGS` | string | — | JSON-encoded arguments for the workflow named by `CLAUDE_REMOTE_WORKFLOW_SCRIPT` in a remote session; rejected if it exceeds a size cap. |
 | `CLAUDE_REMOTE_WORKFLOW_SCRIPT` | string | — | Names the Workflow-tool script that is the deterministic entry point for a remote session launched with an environment-delivered workflow. |
 | `CLAUDE_SESSION_INGRESS_TOKEN_FILE` | string | — | Path to session ingress token file |
@@ -736,6 +903,67 @@ Retained from the previous revision, which was itself a full re-derivation becau
 | `CLAUDE_CODE_SYNTAX_HIGHLIGHT` | string | — | Control syntax highlighting (`false` to disable); falls back to `BAT_THEME` |
 | `CLAUDE_CODE_TUI_JUST_SWITCHED` | string | — | Internal: track TUI mode switch state (set/dropped across process restarts) |
 | `CLI_WIDTH` | — | ambient | Override terminal width detection |
+
+## Self-Hosted Runner
+
+New at 2.1.223-2.1.224. `claude self-hosted-runner` is a long-lived worker that accepts assigned sessions, checks out repositories and spawns child CLI processes, for self-hosted CI/agent fleets. The bundle ships a complete `--help` text for this subsystem, which is the source of the descriptions below.
+
+Read these three rules before using the tables:
+
+1. **`SELF_HOSTED_RUNNER_*` are operator knobs**, each read at runner startup and nearly all of them a fallback for an explicit command-line flag.
+2. **Most `CLAUDE_RUNNER_*` names are injected into child sessions, not read.** Setting them yourself does nothing; they are values a child *receives*. Only the four listed in the second table are genuine inputs.
+3. **Every `*_MS` variable takes milliseconds** while its paired flag takes seconds or minutes — `--drain-wait-sec` pairs with `SELF_HOSTED_RUNNER_DRAIN_WAIT_MS`. The sole exception is `SELF_HOSTED_RUNNER_RETIRE_AT`, which is an absolute Unix timestamp **in seconds**.
+
+| Variable | Type | Default | Description |
+|---|---|---|---|
+| `SELF_HOSTED_RUNNER_ENVIRONMENT_SECRET` | — | — | Registration secret; the only mandatory setting. Startup aborts when neither this nor `--environment-secret-file` is supplied. Treat as a credential |
+| `SELF_HOSTED_RUNNER_POOL_SECRET` | — | — | Deprecated alias for `SELF_HOSTED_RUNNER_ENVIRONMENT_SECRET`, still accepted |
+| `SELF_HOSTED_RUNNER_LOCK_TO_ACCOUNT` | — | any account | Locks the runner to one account id at registration so only that account's sessions are assigned, for webhook-driven on-demand spawn |
+| `SELF_HOSTED_RUNNER_BASE_DIR` | — | built-in path | Base directory for repository checkouts |
+| `SELF_HOSTED_RUNNER_EXEC_PATH` | — | this process's binary | Binary to spawn for child sessions |
+| `SELF_HOSTED_RUNNER_HOOKS_DIR` | — | unset | Directory of lifecycle hook scripts (checkout, command, post-session). An absent hook falls through to built-in behavior, so a partial directory is valid |
+| `SELF_HOSTED_RUNNER_HOST_CONFIG_DIR` | — | `~/.claude` | Directory seeded into each session's `CLAUDE_CONFIG_DIR` — settings, `agents/`, `skills/`, with runtime state excluded. Point at an empty directory to disable |
+| `SELF_HOSTED_RUNNER_HEALTH_PORT` | — | built-in | Port for the `/healthz` listener; `0` disables. A non-integer or out-of-range value is a hard startup error |
+| `SELF_HOSTED_RUNNER_LOG_FILE` | — | unset | Tees runner logs to a file in append mode, created mode `0600`; stdout is unchanged |
+| `SELF_HOSTED_RUNNER_TRUST_WORKSPACE` | — | build-dependent | **Security-relevant.** Seeds persisted trust for each session's repo paths so repo-level `.claude/settings.json` `permissions.allow` and `additionalDirectories` are honored by the child. Set to `0` for the stricter gate, where repo-committed grants are dropped with an "Ignoring N permissions.allow" diagnostic and host-level grants must come from the host-config directory. Accepts `1/true/yes/on` or `0/false/no/off`; anything else is a startup error |
+| `SELF_HOSTED_RUNNER_CONFINE_REPO_SETTINGS` | — | `warn` | Repo-committed-settings confine guard: `warn` logs a would-refuse diagnostic and still spawns, `enforce` refuses to spawn, `off` disables the scan. Invalid values fail closed |
+| `SELF_HOSTED_RUNNER_CONFIGURE_GIT` | — | unset | `1` writes `~/.gitconfig` at startup, setting git identity to `Claude <noreply@anthropic.com>` and enabling commit signing via Anthropic's signing service. Without it the image must supply its own identity |
+| `SELF_HOSTED_RUNNER_PUSH_OUTCOME_ON_RELEASE` | — | unset | `1` pushes tracked outcome branches to origin before deleting them on runner-initiated session end, so in-flight commits survive a restart. Carries an explicit caveat: the resume path trusts `refs/heads/<outcome-branch>` on the source remote, so anyone with push access to that ref can place content into a resumed workspace. Adds 30s to the shutdown budget |
+| `SELF_HOSTED_RUNNER_SESSION_STOP_GRACE_MS` | — | built-in | How long to wait for the Claude process to exit cleanly after a session ends, before force-killing. The post-session hook runs after this |
+| `SELF_HOSTED_RUNNER_POST_SESSION_HOOK_TIMEOUT_MS` | — | built-in | SIGTERM budget for the post-session hook, on every session end including runner shutdown |
+| `SELF_HOSTED_RUNNER_DRAIN_WAIT_MS` | — | `0` | On SIGTERM/SIGINT, how long to wait for each session's in-flight turn and background tasks before SIGTERM-ing the session process. Max 86400s |
+| `SELF_HOSTED_RUNNER_DRAIN_WAIT_BG_TASKS_MS` | — | — | Deprecated alias for `SELF_HOSTED_RUNNER_DRAIN_WAIT_MS` |
+| `SELF_HOSTED_RUNNER_DRAIN_GRACE_MS` | — | `0` | After active sessions finish, how long to stay warm and re-poll the locked account's queue before exiting. `0` exits immediately without polling — effectively one-shot at capacity 1 |
+| `SELF_HOSTED_RUNNER_IDLE_SHUTDOWN_MS` | — | never | Exit the runner if never assigned work within this window (autoscaler scale-down) |
+| `SELF_HOSTED_RUNNER_RETIRE_AT` | — | never | Absolute Unix timestamp **in seconds** at which to release every active session server-side, stop taking work and exit 0. Set it far enough before a hard host kill to cover a typical turn plus the entire shutdown budget |
+| `SELF_HOSTED_RUNNER_SESSION_IDLE_MS` | — | never | Release a session slot after this long with no user input. The runner exits if this drops it to zero active sessions |
+| `SELF_HOSTED_RUNNER_STARTUP_TIMEOUT_MS` | — | 15 min | Release a session slot if the child has not finished initializing — covers a child hung during `--resume` hydration or MCP connect. Cleared once the child emits `system:init`; `0` disables |
+| `SELF_HOSTED_RUNNER_MAX_LIFETIME_MS` | — | never | SIGTERM a session child after this much wall-clock time (runaway backstop). A kill due mid-turn is deferred until the turn finishes |
+| `SELF_HOSTED_RUNNER_MAX_LIFETIME_GRACE_MS` | — | 15 min | Hard cap on that deferral. Documented only inside the `--kill-session-after-min` help entry, never as a flag of its own |
+| `SELF_HOSTED_RUNNER_SIGKILL_GRACE_MS` | — | `30000` | Floor for the computed SIGKILL grace, clamped upward so it always covers the post-session hook timeout plus any push-outcome window. Read only through the runner's own name-parameterized reader, so it is invisible to a `process.env.NAME` grep |
+| `SELF_HOSTED_RUNNER_DEBUG_DIR` | — | unset | Debug output directory |
+| `SELF_HOSTED_RUNNER_DEBUG_TOKEN_DIR` | — | unset | **Debug only — writes live tokens to disk.** The help text says explicitly not to use it in production |
+| `SELF_HOSTED_RUNNER_TOOLS` | — | — | Runner-side tool configuration; present as an object key rather than a `process.env` read |
+| `SELF_HOSTED_RUNNER_TOOL_NAMES` | — | — | Companion to the above, carrying the tool name list |
+| `SELF_HOSTED_RUNNER_SIGKILL_TIMEOUT_MS` | — | — | **Rejected name.** Renamed to `SELF_HOSTED_RUNNER_SESSION_STOP_GRACE_MS`; if set, the runner prints the rename and exits 1 |
+| `SELF_HOSTED_RUNNER_RELEASE_IDLE_SESSION_MIN` | — | — | **Rejected name.** Warned about and ignored; use `SELF_HOSTED_RUNNER_SESSION_IDLE_MS` |
+| `SELF_HOSTED_RUNNER_SESSION_IDLE_MIN` | — | — | **Rejected name.** Warned about and ignored; use `SELF_HOSTED_RUNNER_SESSION_IDLE_MS` |
+| `SELF_HOSTED_RUNNER_SESSION_IDLE_SEC` | — | — | **Rejected name.** Warned about and ignored; use `SELF_HOSTED_RUNNER_SESSION_IDLE_MS` |
+| `RUNNER_RELEASE_IDLE_SESSION_MIN` | — | — | **Rejected name.** Warned about and ignored; use `SELF_HOSTED_RUNNER_SESSION_IDLE_MS` |
+
+Runner inputs actually read from the environment:
+
+| Variable | Type | Default | Description |
+|---|---|---|---|
+| `CLAUDE_RUNNER_USE_GIT_PROXY` | — | unset | `1` clones through Anthropic's git proxy using the session creator's stored GitHub OAuth token (or the org's GitHub App installation token for bot sessions), so the runner holds no git credentials. Supersedes both URL-rewrite flags |
+| `CLAUDE_RUNNER_SKIP_GIT_VERIFY` | — | unset | Skips git verification during checkout |
+| `CLAUDE_RUNNER_TRUST_CANONICAL_PREWARM` | — | unset | **Security-relevant.** Skips canonical git-state sanitization for a trusted one-shot prewarm. Combined with a non-zero drain grace it is a fatal startup error, because a second session could otherwise reuse a VM whose canonical `.git/` a previous child wrote to, bypassing cross-session isolation. If drain-grace is raised later it is ignored with a warning rather than silently honored |
+| `CLAUDE_RUNNER_ACTIVITY_FD` | — | unset | File descriptor the child writes activity heartbeats to. The only member of this family predating 2.1.223 |
+| `CLAUDE_RUNNER_FETCH_DEPTH` | int | — | Git fetch depth for session checkouts. Declared but unconsumed at 2.1.222; it has a real reader at 2.1.224, which logs `Ignoring CLAUDE_RUNNER_FETCH_DEPTH='<value>'` for a malformed value |
+| `CLAUDE_RUNNER_DISABLE_AWAITING_ACTION_OVERRIDE` | bool | unset | Suppresses the awaiting-action state override. Also declared-but-unconsumed at 2.1.222 and read (negated) at 2.1.224 |
+| `CCR_SHR_SSE_HINTS` | — | unset | Opens the server-sent-events hint stream. An in-code `sseHintsEnabledOverride` takes precedence over it |
+
+Injected into child sessions — **not inputs**; setting them has no effect on the runner: `CLAUDE_RUNNER_ACCOUNT_EMAIL`, `CLAUDE_RUNNER_ACCOUNT_ID`, `CLAUDE_RUNNER_API_BASE_URL`, `CLAUDE_RUNNER_ATTEMPT`, `CLAUDE_RUNNER_CHECKOUT_PATH`, `CLAUDE_RUNNER_CLAUDE_BIN`, `CLAUDE_RUNNER_CORRELATION_ID`, `CLAUDE_RUNNER_DEBUG_LOG_PATH`, `CLAUDE_RUNNER_EXIT_REASON`, `CLAUDE_RUNNER_FAIL_FAST_FETCH`, `CLAUDE_RUNNER_GIT_MOUNT_URL`, `CLAUDE_RUNNER_ORDER_ID`, `CLAUDE_RUNNER_ORDER_SERVER_TIME`, `CLAUDE_RUNNER_POOL_ID`, `CLAUDE_RUNNER_PRIMARY_REPO_REVISION`, `CLAUDE_RUNNER_PRIMARY_REPO_URL`, `CLAUDE_RUNNER_REPO_REF`, `CLAUDE_RUNNER_REPO_SOURCES`, `CLAUDE_RUNNER_REPO_URL`, `CLAUDE_RUNNER_SESSION_ID`, `CLAUDE_RUNNER_SESSION_UUID`, `CLAUDE_RUNNER_WORKSPACE_PATHS`, `CLAUDE_RUNNER_WORK_ORDER_FILE`. Note that `CLAUDE_RUNNER_SESSION_ID` is normalized before injection, with the `cse_` prefix rewritten to `session_`.
 
 ## Sandbox
 
@@ -908,10 +1136,10 @@ Retained from the previous revision, which was itself a full re-derivation becau
 | `CLAUDE_CODE_ARTIFACT_DIRECT_UPLOAD` | bool | — | Enables direct upload of artifact content instead of the default proxied path; otherwise the `tengu_cobalt_plinth_direct` experiment decides (default on). |
 | `CLAUDE_CODE_ATTRIBUTION_HEADER` | string | — | Custom attribution header |
 | `CLAUDE_CODE_AUTO_MODE_EXTERNAL_PERMISSIONS` | bool | — | Declared in the typed env registry but with no consumer anywhere else in the bundle — reserved or dead at this tag; setting it has no effect. |
-| `CLAUDE_CODE_AUTO_MODE_MODEL` | string | — | Declared in the typed env registry but with no consumer anywhere else in the bundle — reserved or dead at this tag; setting it has no effect. |
+| `CLAUDE_CODE_AUTO_MODE_MODEL` | string | — | No accessor reads its value, so setting it still configures nothing. It is not inert to the runtime, however: since 2.1.222 it belongs to the provider-sensitive set (`Apg`) and the model-override strip set (`Jfg`), so a host-managed CLI refuses it from a `settings.json` `env` block and deletes it from `process.env` on the warm-spare claim path. |
 | `CLAUDE_CODE_BASE_REF` | string | — | Override base git ref for diffs |
 | `CLAUDE_CODE_BASE_REFS` | string | — | Override base git refs (comma-separated list) |
-| `CLAUDE_CODE_BG_CLASSIFIER_MODEL` | string | — | Declared in the typed env registry but with no consumer anywhere else in the bundle — reserved or dead at this tag; setting it has no effect. |
+| `CLAUDE_CODE_BG_CLASSIFIER_MODEL` | string | — | No accessor reads its value, so setting it still configures nothing. As of 2.1.222 it joined the provider-sensitive set (`Apg`) and the model-override strip set (`Jfg`), with the same handling as `CLAUDE_CODE_AUTO_MODE_MODEL`. |
 | `CLAUDE_CODE_BG_TASKS_REPORT_RUNNING` | bool | — | Controls whether active teammates, running background tasks or pending notifications keep the session reported as running rather than idle. |
 | `CLAUDE_CODE_BRIDGE_SESSION_ID` | string | — | Session id for a bridge-attached session. Written by the parent and removed when the bridge detaches. |
 | `CLAUDE_CODE_CHILD_SESSION` | bool | — | Marks the process as a child session spawned by another Claude Code instance (for example in a tmux pane), which suppresses duplicate transcript persistence. Also read back out of the tmux global environment. |
@@ -942,14 +1170,14 @@ Retained from the previous revision, which was itself a full re-derivation becau
 | `CLAUDE_CODE_HFI_BEARER_TOKEN` | string | — | Declared in the typed env registry but with no consumer anywhere else in the bundle — reserved or dead at this tag; setting it has no effect. |
 | `CLAUDE_CODE_HIDE_SETTINGS_HINT` | string | — | Suppresses the settings hint line for entrypoints that are not already excluded from it. |
 | `CLAUDE_CODE_HOST_CREDS_FILE` | string | — | Path to a host-provided credentials file, used when `CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST` is set. Ignored with a warning if the file's permissions or owner are wrong. Redacted from logs. |
-| `CLAUDE_CODE_INVESTIGATE_FIRST` | bool | — | Controls the "investigate first" prelude mode; accepts `additive`, `compact`, or a boolean-style toggle |
 | `CLAUDE_CODE_INVOKED_SKILLS` | — | — | Present in the allowlist of variables forwarded to Bash-tool shell-snapshot subprocesses, but nothing in this bundle writes its value — treat it as a passthrough slot rather than a knob. |
 | `CLAUDE_CODE_IS_COWORK` | bool | `false` | Mark the session as cowork/bridge mode for eager flushing and related behaviors |
 | `CLAUDE_CODE_JSONL_TRANSCRIPT` | string | — | Declared in the typed env registry but with no consumer anywhere else in the bundle — reserved or dead at this tag; setting it has no effect. |
 | `CLAUDE_CODE_KB_COHESION_FIXES` | bool | — | Enables keybinding-cohesion fixes so custom `app:interrupt` / `app:exit` bindings are honored instead of falling back to hardcoded Ctrl-C / Ctrl-D. |
 | `CLAUDE_CODE_LOOP_KEEPALIVE` | bool | — | Forces on the `tengu_kairos_loop_keepalive` experiment (default off), keeping the agentic loop alive between iterations. |
 | `CLAUDE_CODE_MANAGED_SETTINGS_PATH` | string | — | Overrides the directory managed (enterprise policy) settings are read from. Set internally for sandboxed subprocesses. |
-| `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` | int | `200` | Caps how many subagents (Task tool invocations) a single session may spawn. Settings-injectable. |
+| `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` | — | `200` | Caps how many subagents (Task tool invocations) a single session may spawn. **Its typed declaration was removed at 2.1.224**, so the Type column is now `—`; the name survives only in the settings-injectable registry, meaning it can still be injected from a `settings.json` `env` block but no longer has a typed read path. Verify before relying on it. Settings-injectable. |
+| `CLAUDE_CODE_MESSAGING_SOCKET` | string | — | **New at 2.1.224.** Path to a Unix socket used for inter-process messaging. Read through a destructured environment alias rather than `process.env`, so a naive grep misses it. Forwarded into child sessions by the subprocess-forwarding registry while simultaneously listed in the host-managed strip set — i.e. passed down to children the CLI spawns, but not honored from an untrusted parent. |
 | `CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION` | int | `200` | Caps how many WebSearch calls a single session may make. Settings-injectable. |
 | `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS` | int | `120000` | Milliseconds after which a slow MCP tool call is automatically backgrounded, clamped to [0, 2147483647]. Settings-injectable. |
 | `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT` | int | `1800000` stdio / `300000` other | Idle milliseconds before an MCP tool call with no response or progress is aborted; the default differs by transport and `0` disables the timeout. Settings-injectable. |
@@ -1006,7 +1234,7 @@ Retained from the previous revision, which was itself a full re-derivation becau
 | `CLAUDE_CODE_WORKER_EPOCH` | int | — | Worker epoch for process management |
 | `CLAUDE_CODE_WORKSPACE_HOST_PATHS` | string | — | Pipe-separated host workspace paths attached to telemetry events |
 | `CLAUDE_CONTEXT_COLLAPSE` | bool | — | Declared in the typed env registry but with no consumer anywhere else in the bundle (verified by both string-literal and minified-symbol search) — reserved or dead at this tag; setting it has no effect. |
-| `CLAUDE_CONTEXT_COLLAPSE_MODEL` | string | — | Declared in the typed env registry but with no consumer anywhere else in the bundle (verified by both string-literal and minified-symbol search) — reserved or dead at this tag; setting it has no effect. |
+| `CLAUDE_CONTEXT_COLLAPSE_MODEL` | string | — | No accessor reads its value, so setting it still configures nothing. As of 2.1.222 it joined the provider-sensitive set (`Apg`) and the model-override strip set (`Jfg`), with the same handling as `CLAUDE_CODE_AUTO_MODE_MODEL`. |
 | `CLAUDE_DISABLE_ADOPT` | bool | — | Disables adopting an existing session; when unset adoption is enabled. |
 | `CLAUDE_EFFORT` | — | — | Injected into hook and Bash subprocess environments (and `${CLAUDE_EFFORT}` template substitutions) with the turn's active reasoning effort: `low`, `medium`, `high`, `xhigh` or `max`. |
 | `CLAUDE_FORCE_DISPLAY_SURVEY` | bool | `false` | Force the feedback survey to appear when the user is otherwise eligible |
@@ -1022,8 +1250,8 @@ Retained from the previous revision, which was itself a full re-derivation becau
 | `CLAUDE_PROJECT_UUID` | string | — | Associates the working directory with a claude.ai Project by UUID so that Project's context is fetched and synced. The value is trimmed; an empty string counts as unset. |
 | `CLAUDE_REPL_VARIANT` | string | — | REPL variant identifier |
 | `CLAUDE_RUNNER_ACTIVITY_FD` | int | — | File descriptor number the runner writes activity heartbeats to, so the supervising process can tell the run is alive. |
-| `CLAUDE_RUNNER_DISABLE_AWAITING_ACTION_OVERRIDE` | bool | — | Declared in the typed env registry but with no consumer anywhere else in the bundle (verified by both string-literal and minified-symbol search) — reserved or dead at this tag; setting it has no effect. |
-| `CLAUDE_RUNNER_FETCH_DEPTH` | string | — | Declared in the typed env registry but with no consumer anywhere else in the bundle (verified by both string-literal and minified-symbol search) — reserved or dead at this tag; setting it has no effect. |
+| `CLAUDE_RUNNER_DISABLE_AWAITING_ACTION_OVERRIDE` | bool | — | Suppresses the awaiting-action state override in the self-hosted runner. Declared but unconsumed at 2.1.222; it gained a real reader at 2.1.224, consumed negated so an unset value leaves the override active. |
+| `CLAUDE_RUNNER_FETCH_DEPTH` | string | — | Git fetch depth for self-hosted-runner session checkouts. Declared but unconsumed at 2.1.222; it gained a real reader at 2.1.224 which logs `Ignoring CLAUDE_RUNNER_FETCH_DEPTH=<value>` and falls back when the value is not a valid depth. |
 | `CLAUDE_SDK_CAN_USE_TOOL_SHADOWED` | — | — | **Not an environment variable.** This is the `code` of a Node process warning emitted when bare `allowedTools` entries shadow the SDK `canUseTool` callback. Listed here only because the name appears env-var-shaped; setting it does nothing. |
 | `CLAUDE_SNIP` | string | — | Declared in the typed env registry but with no consumer anywhere else in the bundle (verified by both string-literal and minified-symbol search) — reserved or dead at this tag; setting it has no effect. |
 | `CLAUDE_SSH_LOCAL_BINARY` | string | — | Declared in the typed env registry but with no consumer anywhere else in the bundle (verified by both string-literal and minified-symbol search) — reserved or dead at this tag; setting it has no effect. |
@@ -1031,7 +1259,7 @@ Retained from the previous revision, which was itself a full re-derivation becau
 | `CLAUDE_STAGE_FILE_ROOT` | string | `/mnt/user-data/uploads` | Staging root that file-write tools use for staging-kind writes instead of the real filesystem (e.g. remote or read-only-FS mode). Must be an absolute path — a relative value throws. |
 | `CLAUDE_WORKFLOW_NAME_ONLY` | bool | — | Restricts the Workflow tool to named bundled workflows, blocking `workflow({scriptPath})` invocations. |
 | `COREPACK_ENABLE_AUTO_PIN` | — | forced to `0` | Corepack auto-pin is disabled by Claude Code at startup |
-| `DATABASE_URL` | string | — | Not read by the CLI. It appears only as an example row ("Postgres connection string") inside an embedded documentation template, plus a declaration in the typed env registry. Setting it has no effect. |
+| `DATABASE_URL` | — | — | Not read by the CLI. At 2.1.222 it appears only as an example row ("Postgres connection string") inside an embedded documentation template; the typed-schema declaration it carried through 2.1.221 was dropped this release. Setting it has no effect, and had none before. |
 | `DEMO_VERSION` | string | — | Demo mode version string |
 | `DO_NOT_TRACK` | string | — | Standard signal to disable telemetry (respects the do-not-track convention) |
 | `DS_CHROMIUM_PATH` | — | — | Overrides the Chromium `executablePath` Puppeteer uses when the bundled design-agent renders Storybook component previews. |
@@ -1080,8 +1308,11 @@ Each of these forces on a server-side experiment gate that would otherwise be de
 | `CLAUDE_CODE_HERON_TALLOW` | bool | — | Forces on the `tengu_heron_tallow` experiment. |
 | `CLAUDE_CODE_JUNIPER_SUNDIAL` | int | `10` | Number of non-meta user turns that must elapse in ultra-effort mode before the sparse `ultra_effort_enter` maintenance reminder is re-injected. When unset the value falls through the cached `tengu_juniper_sundial` dynamic config, then the same-named experiment flag, then the built-in `TURNS_BETWEEN_MAINTENANCE` of 10; non-integer values are discarded at each step (lines 714479-714492, 716799). |
 | `CLAUDE_CODE_LANTERN_PRISM` | bool | — | Forces on the `tengu_lantern_prism` experiment, gating an internal UI feature tied to plugin display (paired with `tengu_walnut_spire`). |
+| `CLAUDE_CODE_ARTIFACT_DB` | tri-bool | experiment `tengu_umber_lattice` (`false`) | **New at 2.1.224.** Enables the artifact database backend; unset defers to the experiment, which is off by default. |
+| `CLAUDE_CODE_HARBOR_KITE` | bool | experiment `tengu_harbor_kite` (`false`) | **New at 2.1.224.** Enables the harbor-kite capability. Note the operator: it is read as `experiment || Boolean(env)`, so unlike the tri-bool gates it can only force the feature **on** and cannot disable it once the experiment is enabled. A companion `tengu_harbor_kite_limits` object drives a peer guard. |
 | `CLAUDE_CODE_LARCH_CISTERN` | bool | — | Forces on the `tengu_larch_cistern` experiment, which adds the "overcorrection" system-prompt section. |
-| `CLAUDE_CODE_MARL_CORMORANT` | bool | — | Forces on the `tengu_marl_cormorant` experiment, which adds a system-prompt note that command output is shown to the agent but not reliably to the user. |
+| `CLAUDE_CODE_PARCHMENT_FERN` | tri-bool | — | **New at 2.1.223.** Gates an unnamed capability behind a codename. Checked at two sites that first exclude a set of older models; the second additionally requires the `tengu_velvet_mallet` experiment for the specific model in play. |
+| `CLAUDE_CODE_PLAN_ARTIFACTS` | tri-bool | experiment `tengu_basalt_loom` (`false`) | **New at 2.1.223.** Enables plan artifacts; unset defers to the experiment, off by default. |
 | `CLAUDE_CODE_NANKEEN_KESTREL` | bool | — | Forces on the `tengu_nankeen_kestrel` experiment, which enables Windows sandbox support for the Bash tool. |
 | `CLAUDE_CODE_PEWTER_OWL` | tri-bool | — | Tri-state override for the pewter-owl experiment family (brief, model-scoped tool descriptions), overriding the per-model rollout. |
 | `CLAUDE_CODE_PEWTER_OWL_TOOL` | tri-bool | — | Tri-state override for the `pewter_owl_tool` sub-experiment specifically; falls back to `CLAUDE_CODE_PEWTER_OWL` and then the flag when unset. |
@@ -1106,6 +1337,7 @@ Each of these forces on a server-side experiment gate that would otherwise be de
 | `CLAUDE_CODE_TEST_NO_GIT_BASH` | string | — | Declared in the typed env registry but with no consumer anywhere else in the bundle — reserved or dead at this tag; setting it has no effect. |
 | `CLAUDE_CODE_TEST_NO_PWSH` | string | — | Declared in the typed env registry but with no consumer anywhere else in the bundle — reserved or dead at this tag; setting it has no effect. |
 | `CLAUDE_CODE_ULTRAREVIEW_PREFLIGHT_FIXTURE` | string | — | Override the preflight fixture path for ultrareview |
+| `CLAUDE_CODE_ULTRAREVIEW_QUOTA_FIXTURE` | string | — | **New at 2.1.224.** JSON fixture that replaces the `GET /v1/ultrareview/quota` call outright. The value is parsed and schema-validated; a malformed value returns `null` rather than falling back to the network, so a bad fixture disables the quota check instead of being ignored |
 | `CLAUDE_MOCK_HEADERLESS_429` | bool | — | Declared in the typed env registry but with no consumer anywhere else in the bundle (verified by both string-literal and minified-symbol search) — reserved or dead at this tag; setting it has no effect. |
 | `FORCE_VCR` | bool | — | Declared in the typed env registry but with no consumer anywhere else in the bundle (verified by both string-literal and minified-symbol search) — reserved or dead at this tag; setting it has no effect. |
 | `IS_DEMO` | string | `false` | Running in demo mode |
@@ -1363,10 +1595,12 @@ Each of these forces on a server-side experiment gate that would otherwise be de
 
 ## Removed / Legacy
 
-Documented in earlier revisions of this file but no longer present anywhere in `cli.unpack.js` at `2.1.221` (verified with `rg -c`, zero matches). Setting these has no effect.
+Documented in earlier revisions of this file but no longer present anywhere in `cli.unpack.js` at `2.1.224` (verified with a whole-token occurrence count, zero matches). Setting these has no effect. Every entry below was re-confirmed at 2.1.224 and none reappeared. `DATABASE_URL` is deliberately not listed here despite having lost its declaration at 2.1.222: one occurrence survives inside an embedded documentation template, so it fails this section's zero-match definition and stays in *Miscellaneous*. The same distinction excludes `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION`, which lost its typed declaration at 2.1.224 but is still named in the settings-injectable registry.
 
 | Variable | Last seen | Note |
 |---|---|---|
+| `CLAUDE_CODE_MARL_CORMORANT` | 2.1.223 | Forced on the `tengu_marl_cormorant` experiment, which added a system-prompt note that command output is shown to the agent but not reliably to the user. The experiment name is gone from the bundle along with the variable |
+| `CLAUDE_CODE_INVESTIGATE_FIRST` | 2.1.222 | Controlled the "investigate first" prelude mode, accepting `additive`, `compact`, or a boolean-style toggle. No successor name exists |
 | `CLAUDE_CODE_POST_FOR_SESSION_INGRESS_V2` | 2.1.220 | Used POST transport for session-ingress v2 websocket URLs. The surrounding session-ingress machinery survives (`SESSION_INGRESS_URL`, `CLAUDE_SESSION_INGRESS_TOKEN_FILE`, `CLAUDE_BRIDGE_SESSION_INGRESS_URL` are all still read); only this transport toggle was dropped, with no successor name found |
 | `CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE` | 2.1.154 | Truthy forces the "Opus 4.6 fast mode" override label/model selection |
 | `BEDROCK_BASE_URL` | 2.1.154 | Alternative Bedrock endpoint URL (checked in addition to `ANTHROPIC_BEDROCK_BASE_URL`) |
