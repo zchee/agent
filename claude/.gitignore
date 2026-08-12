@@ -1,3 +1,9 @@
-plugins/claude-hud/config-cache/
-plugins/claude-hud/transcript-cache/
+plugins/.last_inuse_sweep
+plugins/cache/
+plugins/data/
 plugins/install-counts-cache.json
+plugins/marketplaces/
+plugins/oh-my-claudecode/
+plugins/plugin-catalog-cache.json
+projects/
+todos/
