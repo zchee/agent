@@ -1,0 +1,248 @@
+{
+  "$schema": "file:///Users/zchee/src/github.com/zchee/schema/opencode-theme.schema.json",
+  "defs": {
+    "claudeBrand": "#d77757",
+    "darkPermission": "#b1b9f9",
+    "darkAutoAccept": "#af87ff",
+    "darkPlanMode": "#48968c",
+    "darkText": "#ffffff",
+    "darkInactive": "#999999",
+    "darkSubtle": "#505050",
+    "darkPromptBorder": "#888888",
+    "darkPromptBorderShimmer": "#a6a6a6",
+    "darkSuccess": "#4eba65",
+    "darkError": "#ff6b80",
+    "darkWarning": "#ffc107",
+    "darkClawdBackground": "#000000",
+    "darkUserMessageBackground": "#373737",
+    "darkUserMessageBackgroundHover": "#464646",
+    "darkDiffAddedBg": "#225c2b",
+    "darkDiffRemovedBg": "#7a2936",
+    "darkDiffAddedDimmed": "#47584a",
+    "darkDiffRemovedDimmed": "#69484d",
+    "darkDiffAddedWord": "#38a660",
+    "darkDiffRemovedWord": "#b3596b",
+    "lightPermission": "#5769f7",
+    "lightAutoAccept": "#8700ff",
+    "lightPlanMode": "#006666",
+    "lightText": "#000000",
+    "lightInactive": "#666666",
+    "lightSubtle": "#afafaf",
+    "lightPromptBorder": "#999999",
+    "lightPromptBorderShimmer": "#b7b7b7",
+    "lightSuccess": "#2c7a39",
+    "lightError": "#ab2b3f",
+    "lightWarning": "#966c1e",
+    "lightBackground": "#ffffff",
+    "lightUserMessageBackground": "#f0f0f0",
+    "lightUserMessageBackgroundHover": "#fcfcfc",
+    "lightDiffAddedBg": "#69db7c",
+    "lightDiffRemovedBg": "#ffa8b4",
+    "lightDiffAddedDimmed": "#c7e1cb",
+    "lightDiffRemovedDimmed": "#fdd2d8",
+    "lightDiffAddedWord": "#2f9d44",
+    "lightDiffRemovedWord": "#d1454b"
+  },
+  "theme": {
+    "primary": {
+      "dark": "claudeBrand",
+      "light": "claudeBrand"
+    },
+    "secondary": {
+      "dark": "darkPermission",
+      "light": "lightPermission"
+    },
+    "accent": {
+      "dark": "darkAutoAccept",
+      "light": "lightAutoAccept"
+    },
+    "error": {
+      "dark": "darkError",
+      "light": "lightError"
+    },
+    "warning": {
+      "dark": "darkWarning",
+      "light": "lightWarning"
+    },
+    "success": {
+      "dark": "darkSuccess",
+      "light": "lightSuccess"
+    },
+    "info": {
+      "dark": "darkPlanMode",
+      "light": "lightPlanMode"
+    },
+    "text": {
+      "dark": "darkText",
+      "light": "lightText"
+    },
+    "textMuted": {
+      "dark": "darkInactive",
+      "light": "lightInactive"
+    },
+    "background": {
+      "dark": "darkClawdBackground",
+      "light": "lightBackground"
+    },
+    "backgroundPanel": {
+      "dark": "darkUserMessageBackground",
+      "light": "lightUserMessageBackground"
+    },
+    "backgroundElement": {
+      "dark": "darkUserMessageBackgroundHover",
+      "light": "lightUserMessageBackgroundHover"
+    },
+    "border": {
+      "dark": "darkPromptBorder",
+      "light": "lightPromptBorder"
+    },
+    "borderActive": {
+      "dark": "darkPromptBorderShimmer",
+      "light": "lightPromptBorderShimmer"
+    },
+    "borderSubtle": {
+      "dark": "darkSubtle",
+      "light": "lightSubtle"
+    },
+    "diffAdded": {
+      "dark": "darkDiffAddedWord",
+      "light": "lightDiffAddedWord"
+    },
+    "diffRemoved": {
+      "dark": "darkDiffRemovedWord",
+      "light": "lightDiffRemovedWord"
+    },
+    "diffContext": {
+      "dark": "darkInactive",
+      "light": "lightInactive"
+    },
+    "diffHunkHeader": {
+      "dark": "darkInactive",
+      "light": "lightInactive"
+    },
+    "diffHighlightAdded": {
+      "dark": "darkDiffAddedWord",
+      "light": "lightDiffAddedWord"
+    },
+    "diffHighlightRemoved": {
+      "dark": "darkDiffRemovedWord",
+      "light": "lightDiffRemovedWord"
+    },
+    "diffAddedBg": {
+      "dark": "darkDiffAddedBg",
+      "light": "lightDiffAddedBg"
+    },
+    "diffRemovedBg": {
+      "dark": "darkDiffRemovedBg",
+      "light": "lightDiffRemovedBg"
+    },
+    "diffContextBg": {
+      "dark": "darkUserMessageBackground",
+      "light": "lightUserMessageBackground"
+    },
+    "diffLineNumber": {
+      "dark": "darkInactive",
+      "light": "lightInactive"
+    },
+    "diffAddedLineNumberBg": {
+      "dark": "darkDiffAddedDimmed",
+      "light": "lightDiffAddedDimmed"
+    },
+    "diffRemovedLineNumberBg": {
+      "dark": "darkDiffRemovedDimmed",
+      "light": "lightDiffRemovedDimmed"
+    },
+    "markdownText": {
+      "dark": "darkText",
+      "light": "lightText"
+    },
+    "markdownHeading": {
+      "dark": "claudeBrand",
+      "light": "claudeBrand"
+    },
+    "markdownLink": {
+      "dark": "darkPermission",
+      "light": "lightPermission"
+    },
+    "markdownLinkText": {
+      "dark": "darkPlanMode",
+      "light": "lightPlanMode"
+    },
+    "markdownCode": {
+      "dark": "darkSuccess",
+      "light": "lightSuccess"
+    },
+    "markdownBlockQuote": {
+      "dark": "darkWarning",
+      "light": "lightWarning"
+    },
+    "markdownEmph": {
+      "dark": "darkWarning",
+      "light": "lightWarning"
+    },
+    "markdownStrong": {
+      "dark": "claudeBrand",
+      "light": "claudeBrand"
+    },
+    "markdownHorizontalRule": {
+      "dark": "darkInactive",
+      "light": "lightInactive"
+    },
+    "markdownListItem": {
+      "dark": "claudeBrand",
+      "light": "claudeBrand"
+    },
+    "markdownListEnumeration": {
+      "dark": "darkPlanMode",
+      "light": "lightPlanMode"
+    },
+    "markdownImage": {
+      "dark": "darkPermission",
+      "light": "lightPermission"
+    },
+    "markdownImageText": {
+      "dark": "darkPlanMode",
+      "light": "lightPlanMode"
+    },
+    "markdownCodeBlock": {
+      "dark": "darkText",
+      "light": "lightText"
+    },
+    "syntaxComment": {
+      "dark": "darkInactive",
+      "light": "lightInactive"
+    },
+    "syntaxKeyword": {
+      "dark": "darkPermission",
+      "light": "lightPermission"
+    },
+    "syntaxFunction": {
+      "dark": "claudeBrand",
+      "light": "claudeBrand"
+    },
+    "syntaxVariable": {
+      "dark": "darkText",
+      "light": "lightText"
+    },
+    "syntaxString": {
+      "dark": "darkSuccess",
+      "light": "lightSuccess"
+    },
+    "syntaxNumber": {
+      "dark": "darkWarning",
+      "light": "lightWarning"
+    },
+    "syntaxType": {
+      "dark": "darkPlanMode",
+      "light": "lightPlanMode"
+    },
+    "syntaxOperator": {
+      "dark": "darkInactive",
+      "light": "lightInactive"
+    },
+    "syntaxPunctuation": {
+      "dark": "darkText",
+      "light": "lightText"
+    }
+  }
+}

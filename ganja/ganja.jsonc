@@ -1,0 +1,76 @@
+{
+  "$schema": "file:///Users/zchee/rust/src/github.com/zchee/ganja-code/schema/ganja-config.schema.json",
+  "model": "openai/gpt-5.6-sol",
+  "small_model": "openai/gpt-5.6-luna",
+  "effort": "xhigh",
+  "default_provider": "openai",
+  "default_agent": "build",
+  "memory": true,
+  "agent": {},
+  "agents": {
+    "concurrency": 10
+  },
+  "permission": {},
+  "instructions": [],
+  "theme": "claude",
+  "theme_mode": "dark",
+  "keybinds": {},
+  "shell": "/opt/homebrew/bin/zsh",
+  "command": {},
+  "mcp": {
+    "context7": {
+      "oauth": {},
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp"
+    }
+  },
+  "lsp": true,
+  "provider": {},
+  "webfetch": {
+    "allow_private": true
+  },
+  "skills": {
+    "paths": [],
+    "urls": []
+  },
+  "snapshot": true,
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "imectl set -q com.apple.keylayout.ABC"
+          }
+        ]
+      }
+    ]
+  },
+  "tui": {
+    "notifications": true,
+    "notification_method": "osc9",
+    "statusline": {
+      "elements": [
+        "activity",
+        "git",
+        "model",
+        "cwd",
+        "context",
+        "rate",
+        "tokens",
+        "session",
+        "agent",
+        "effort",
+        "todos",
+        "queued",
+        "jobs",
+        "tasks",
+        "dialogs",
+        "notice",
+        "hints"
+      ],
+      "detail": true
+    }
+  }
+}
