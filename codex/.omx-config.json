@@ -1,5 +1,4 @@
 {
-  "env": {
-    "OMX_LORE_COMMIT_GUARD": "0"
-  }
+  "$schema": "file:///Users/zchee/src/github.com/zchee/schema/omx-config.schema.json",
+  "env": {}
 }
