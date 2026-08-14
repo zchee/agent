@@ -1,0 +1,19 @@
+{
+  "marketplaces": {
+    "claude-community": {
+      "origin": "https://github.com/anthropics/claude-plugins-community"
+    },
+    "claude-plugins-official": {
+      "origin": "https://github.com/anthropics/claude-plugins-official"
+    },
+    "mcp-gemini-search": {
+      "origin": "https://github.com/zchee/mcp-gemini-search"
+    }
+  },
+  "plugins": {
+    "mcp-gemini-search": {
+      "marketplace": "mcp-gemini-search",
+      "enabled": true
+    }
+  }
+}
