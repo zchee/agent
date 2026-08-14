@@ -23,8 +23,7 @@ from urllib.parse import quote
 from rich.console import Console
 from rich.table import Table
 
-
-DEFAULT_STATE_DB = Path.home() / ".config/codex/sqlite/state_5.sqlite"
+DEFAULT_STATE_DB = Path.home() / ".config/codex/state_5.sqlite"
 TABLE_THREADS = "threads"
 TABLE_THREAD_DYNAMIC_TOOLS = "thread_dynamic_tools"
 TABLE_THREAD_SPAWN_EDGES = "thread_spawn_edges"
