@@ -1,6 +1,6 @@
-model = "gpt-5.5"
+model = "gpt-5.6-sol"
 review_model = "gpt-5.6-sol"
-model_reasoning_effort = "xhigh"
+model_reasoning_effort = "max"
 model_context_window = 1000000
 model_auto_compact_token_limit = 900000
 model_auto_compact_token_limit_scope = "body_after_prefix"
@@ -23,10 +23,10 @@ web_search = "live"
 project_root_markers = [".git"]
 suppress_unstable_features_warning = true
 approvals_reviewer = "guardian_subagent"
-include_collaboration_mode_instructions = false
-include_permissions_instructions = false
-include_apps_instructions = false
-include_environment_context = false
+include_collaboration_mode_instructions = true
+include_permissions_instructions = true
+include_apps_instructions = true
+include_environment_context = true
 personality = "pragmatic"
 service_tier = "priority"
 disable_paste_burst = true
@@ -142,6 +142,7 @@ request_permissions_tool = true
 network_proxy = true
 respect_system_proxy = true
 apps = false
+psp = true
 mcp_2026_07_28 = true
 enable_mcp_apps = true
 deferred_tool_world_state = true
@@ -159,15 +160,20 @@ default_mode_request_user_input = true
 terminal_visualization_instructions = true
 terminal_resize_reflow = false
 guardian_reuse_parent_compaction = true
+guardian_enhanced_node_repl_transcripts = true
+guardian_node_repl_transcript_images = true
 guardianv2 = true
-token_budget = false
+token_budget = true
 current_time_reminder = true
 auth_elicitation = true
 realtime_conversation = true
 prevent_idle_sleep = true
+retain_client_developer_messages = true
 use_agent_identity = false
 js_repl = false
 
+plugin_hooks = true
+goals = true
 [features.multi_agent_v2]
 enabled = true
 max_concurrent_threads_per_session = 7
@@ -199,12 +205,12 @@ home = true
 "/Users/zchee" = 1777_661126
 
 [marketplaces.openai-bundled]
-last_updated = "2026-08-11T14:13:01Z"
+last_updated = "2026-08-14T11:29:02Z"
 source_type = "local"
 source = "/Users/zchee/src/github.com/zchee/agent/codex/.tmp/bundled-marketplaces/openai-bundled"
 
 [marketplaces.openai-primary-runtime]
-last_updated = "2026-08-06T05:58:08Z"
+last_updated = "2026-08-14T08:02:39Z"
 source_type = "local"
 source = "/Users/zchee/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
@@ -215,8 +221,8 @@ source_type = "git"
 source = "https://github.com/zilliztech/memsearch.git"
 
 [marketplaces.langsmith-codex-plugins]
-last_updated = "2026-08-07T12:56:13Z"
-last_revision = "42ed6e8d8f2e94221b9ede8b73b3982d4dc19660"
+last_updated = "2026-08-14T04:06:13Z"
+last_revision = "5b589c76360ceb3e5b425c6aa980aec515dd48f1"
 source_type = "git"
 source = "https://github.com/langchain-ai/langsmith-codex-plugins.git"
 
