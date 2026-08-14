@@ -231,6 +231,12 @@ Co-Authored-By: (Claude Opus 4.8 (1M context) or Claude Fable 5) <noreply@anthro
 
 ## Tool
 
+### Shell command conventions
+
+- Never use `find` for file search. Always use `fd`.
+    - e.g. `find . -name "*.js"` → `fd -e js`
+    - e.g. `find . -type d -name node_modules` → `fd -t d node_modules`
+
 ### Python scripts
 
 **When creating a temporary Python script for a specific task, you can use the `uv` shebang to make any necessary third-party packages available for that task.**
