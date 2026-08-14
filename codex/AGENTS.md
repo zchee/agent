@@ -189,17 +189,21 @@ Keep runtime marker contracts stable and non-destructive when overlays are appli
 Default posture: work directly.
 
 Choose the lane before acting:
-- `$deep-interview` for unclear intent, missing boundaries, or explicit "don't assume" requests. It clarifies and hands off; it does not implement.
-- `$ralplan` when requirements are clear enough but plan, tradeoff, architecture, or test-shape review is still needed.
-- `$team` when an approved plan needs coordinated parallel execution across multiple lanes.
-- `$ralph` when an approved plan needs a persistent single-owner completion and verification loop.
+- Default posture: work directly. The ordinary workflow is `understand -> execute -> verify -> report`.
+- Use `$autopilot` for explicit hands-off orchestration. Its defining default chain is `$deep-interview -> $ralplan -> $ultragoal`; these supervised stages must not be hollowed into optional hints.
+- Use `$deep-interview` when requirements, intent, non-goals, or decision boundaries are materially ambiguous; it is the independent Ouroboros-style Socratic deep interview stage before planning.
+- Use `$plan` for lightweight planning when a deep interview is unnecessary.
+- Use `$team` when an approved plan needs coordinated parallel execution across multiple lanes.
+- Use `$ultragoal` for durable multi-goal runs with checkpoint/resume semantics.
 - Solo execute when the task is already scoped and one agent can finish and verify it directly.
 - Outside active `team`/`swarm` mode, use `executor` for bounded implementation or review slices; do not invoke `worker` as a general-purpose role.
 - Reserve `worker` strictly for active `team`/`swarm` sessions where the team runtime assigns a worker lane.
 - `worker` is a team-runtime surface, not a general-purpose child role.
+- Autopilot owns the canonical staged path `$deep-interview -> $ralplan -> $ultragoal`; stages may also be invoked independently when their input contract is already satisfied. `$deep-interview` is not `$plan --interview`.
 
 
 Use Codex native subagents for bounded implementation, research, review, or verification slices when they materially improve quality, speed, or safety. Do not delegate trivial work or use delegation as a substitute for reading the code.
+- While a Conductor workflow is active, native children are verification/advice-only: they may perform positively classified reads, but child-to-leader reporting also requires separate host-authenticated caller, parent, and target proof. Codex 0.145.0 does not expose that proof, so collaboration reporting and source/product mutations remain denied. Route implementation through Team only after Team's separate host-authority checks pass; when Team is unavailable or denied, return a bounded read-only result or blocker instead of treating local state, task text, session fields, trackers, or child provenance as authority.
 </delegation_rules>
 
 <child_agent_protocol>
@@ -208,17 +212,6 @@ Worker responsibilities: execute the assigned slice, stay inside scope, and repo
 Leader vs worker: leaders own mode selection, integration, verification, and stop/escalate calls; workers execute assigned slices and escalate from worker to leader for blockers, shared-file conflicts, scope expansion, missing authority, or mode mismatch.
 Rules: max 6 concurrent child agents; child prompts remain under AGENTS.md authority; prefer inherited model defaults unless a task has a concrete model reason; `worker` is a team-runtime surface, not a general-purpose child role.
 </child_agent_protocol>
-
-<subagent_transport_protocol>
-Native subagent transport baseline (verified 2026-07-25 UTC):
-- A fresh OMX session successfully completed spawn, child-to-parent and parent-to-child nonce delivery, final-answer delivery, and lifecycle completion. Treat native subagents as currently usable.
-- Earlier sessions emitted `stream disconnected before completion: Encrypted function output content could not be decrypted or decoded.` Treat that as a real transport/decryption failure and the later success as recovery evidence, not proof of a permanent fix.
-Operational rules:
-- When role routing requires an explicit `agent_type`, use `fork_turns:"none"`; full-history forks inherit the parent agent type and reject an explicit override. Classify that rejection as invocation validation, not transport failure.
-- For health checks, use unique nonces and prove spawn, both message directions, final-answer delivery, and `completed` lifecycle state.
-- Inspect structured `task_complete.error.message` fields in the exact current rollout; broad text search can match error strings embedded in prompts.
-- Report status as `currently healthy`, `currently failing`, or `intermittent/recovered`; re-verify live before relying on transport for critical work.
-</subagent_transport_protocol>
 
 
 <invocation_conventions>
@@ -252,10 +245,12 @@ Keyword routing is implemented primarily by native `UserPromptSubmit` hooks and 
 
 Fallback behavior when hook context is unavailable:
 - Explicit `$name` invocations run left-to-right and override implicit keywords.
-- Bare skill names do not activate skills by themselves; skill-name activation requires explicit `$skill` invocation. Natural-language routing phrases may still map to a workflow. Examples: `analyze` / `investigate` → `$analyze` for read-only deep analysis with ranked synthesis, explicit confidence, and concrete file references; `deep interview`, `interview`, `don't assume`, or `ouroboros` → `$deep-interview` for Socratic deep interview requirements clarification.
+- Bare skill names do not activate skills by themselves; skill-name activation requires explicit `$skill` invocation. Natural-language routing phrases may still map to a workflow. Examples: `analyze` / `investigate` → `$analyze` for read-only deep analysis with ranked synthesis, explicit confidence, and concrete file references.
 - Keep the detailed keyword list in `src/hooks/keyword-registry.ts`; do not duplicate it here.
 
-Runtime workflows such as `autopilot`, `ralph`, `ultrawork`, `ultraqa`, `team`/`swarm`, and `ecomode` require OMX CLI runtime support. In Codex App, outside-tmux, or plain Codex sessions without OMX tmux runtime, explain that those workflows are not directly available there and continue with the nearest App-safe surface unless the user explicitly wants to launch OMX CLI from shell first.
+Runtime workflows such as `autopilot`, `ultraqa`, `team`, and `ultragoal` require OMX CLI runtime support. In Codex App, outside-tmux, or plain Codex sessions without OMX tmux runtime, explain that those workflows are not directly available there and continue with the nearest App-safe surface unless the user explicitly wants to launch OMX CLI from shell first.
+- Route explicit `$autopilot` to its supervised `$deep-interview -> $ralplan -> $ultragoal` chain.
+- `$ralph`, `$ultrawork`, `$pipeline`, `ecomode`, and `swarm` remain removed or deprecated sunset stubs; do not route users there.
 - When deep-interview is active in attached-tmux OMX CLI/runtime, ask each interview round via `omx question`; after launching `omx question` in a background terminal, wait for that terminal to finish and read the JSON answer before continuing; preserve the leader pane with `OMX_QUESTION_RETURN_PANE=$TMUX_PANE` when invoking it through Bash/tool paths. Outside tmux or native surfaces that cannot render `omx question` should use the native structured question path when available; otherwise ask exactly one concise plain-text question and wait for the answer.
 
 </keyword_detection>
@@ -302,11 +297,7 @@ Auto-generated by `omx setup` from the current `config.toml` plus OMX model over
 | `git-master` | `gpt-5.6-sol` | high | Commit strategy, history hygiene, rebasing (deep-worker, standard) |
 | `code-simplifier` | `gpt-5.6-sol` | high | Simplifies recently modified code for clarity and consistency without changing behavior (deep-worker, frontier) |
 | `researcher` | `gpt-5.6-terra` | high | External documentation and reference research (fast-lane, standard) |
-| `prometheus-strict-metis` | `gpt-5.6-sol` | high | Prometheus Strict requirements interviewer and ambiguity mapper (frontier-orchestrator, frontier) |
-| `prometheus-strict-momus` | `gpt-5.6-sol` | high | Prometheus Strict adversarial plan critic and risk challenger (frontier-orchestrator, frontier) |
-| `prometheus-strict-oracle` | `gpt-5.6-sol` | high | Prometheus Strict implementation readiness verifier and handoff judge (frontier-orchestrator, standard) |
 | `critic` | `gpt-5.6-sol` | high | Plan/design critical challenge and review (frontier-orchestrator, frontier) |
-| `scholastic` | `gpt-5.6-sol` | high | Ontology-first reasoning reviewer: category mistakes, hidden assumptions, modality separation, scholastic critique, and minimal-repair proposals (frontier-orchestrator, frontier) |
 | `vision` | `gpt-5.6-sol` | low | Image/screenshot/diagram analysis (fast-lane, frontier) |
 <!-- OMX:MODELS:END -->
 
@@ -323,7 +314,7 @@ Verification loop: define the claim and success criteria, run the smallest valid
 </verification>
 
 <execution_protocols>
-Mode selection: use `$deep-interview` for unclear intent/boundaries; `$ralplan` for consensus on architecture, tradeoffs, or tests; `$team` for approved multi-lane work; `$ralph` for persistent single-owner completion/verification loops; otherwise execute directly in solo mode. Switch modes only when evidence shows the current lane is mismatched or blocked.
+Mode selection: use `$autopilot` when explicitly requested for the supervised `$deep-interview -> $ralplan -> $ultragoal` chain; use `$deep-interview` for standalone material requirements ambiguity, `$ralplan` for standalone architecture/consensus planning, `$team` for approved multi-lane parallel work, and `$ultragoal` for standalone durable multi-goal runs. Otherwise execute directly in solo mode. Switch modes only when evidence shows the current lane is mismatched or blocked.
 
 Command routing: use normal Codex repository inspection tools/subagents as the default surface for simple read-only repository lookup tasks; use `omx sparkshell` only for explicit shell-native read-only evidence or bounded verification.
 When to use what:
@@ -343,7 +334,7 @@ Stop / escalate: stop when the task is verified complete, the user says stop/can
 Output contract: Default update/final shape: state current mode, action/result, and evidence or blocker/next step. Keep rationale once; do not restate the full plan every turn; expand only for risk, handoff, or explicit request.
 
 Anti-slop workflow:
-- Cleanup/refactor/deslop work still follows the same `$deep-interview` -> `$ralplan` -> `$team`/`$ralph` path; use `$ai-slop-cleaner` as a bounded helper inside the chosen execution lane, not as a competing top-level workflow.
+- Cleanup/refactor/deslop work follows the same lightweight workflow (`understand -> execute -> verify -> report`); use `$ai-slop-cleaner` as a bounded helper inside the chosen execution lane, not as a competing top-level workflow.
 - Write a cleanup plan before modifying code; lock existing behavior with regression tests first, then make one smell-focused pass at a time.
 - Prefer deletion over addition, and prefer reuse plus boundary repair over new layers.
 - No new dependencies without explicit request.
@@ -358,8 +349,38 @@ Use the `cancel` skill to end active execution modes when work is done and verif
 </cancellation>
 
 <state_management>
-Hooks own normal skill-active and workflow-state persistence under `.omx/state/`. OMX runtime state lives under `.omx/`; do not manually duplicate hook-owned activation state unless recovering from missing or stale state.
+See [Durable Runtime Invariants](#durable-runtime-invariants-canonical-ssot) for state ownership and hook boundaries. OMX runtime state lives under `.omx/`.
 </state_management>
+
+## Durable Runtime Invariants (canonical SSOT)
+
+This section is the single source of truth for durable state ownership, hook boundaries, cancellation, and Team coordination. Skills and role prompts reference it; they must not restate or weaken these rules.
+
+### State and hook ownership
+
+- Durable state is authoritative only in the current, proven session or Team scope. Compatibility discovery is read-only and never grants write authority.
+- Hooks own normal skill activation and workflow-state persistence under `.omx/state/`; skills do not duplicate or mutate hook-owned state except through documented recovery paths.
+- Native hook payloads, prompt labels, task text, cwd, environment, pointers, transcripts, markers, and local trackers are routing or diagnostic data, not ownership or write authority.
+- The Team state files and `omx team api ... --json` are the source of truth for task lifecycle and mailbox coordination.
+
+### Cancellation boundary
+
+- Cancellation parses and validates arguments before mutation, resolves one exact writable scope, freezes and revalidates target identity, mutates only proven targets, and leaves unrelated sessions, legacy roots, Team artifacts, and tmux sessions untouched.
+- Ralph cancellation must satisfy its documented terminal post-conditions in the same scope; linked modes are handled only when the link is proven.
+- `--force` does not widen cancellation scope; it only removes the selected exact-session native-stop entry after the same authority checks. `--all` is unsupported.
+- Team cancellation requires exact frozen Team root, internal name, session, leader pane, and runtime identity. It fails closed when that proof is unavailable or changes; it must not enumerate or broadly kill Team sessions or recursively delete unrelated Team state.
+
+### Team protocol
+
+- Team runtime is explicit and outside the default workflow. Ultragoal does not auto-launch Team, and ordinary workflows do not silently become Team runs.
+- Workers ACK startup, claim before work, transition task status through the lifecycle API, use release only for rollback, and report verification evidence. Leaders own integration, final verification, and shutdown decisions.
+- Prefer durable state writes and `omx team api ... --json` dispatch. Direct `tmux send-keys` is fallback-only, never primary dispatch; manual pane actions require prior state/evidence checks.
+- Team shutdown waits for terminal task state and uses exact Team authority. It does not shut down active work unless explicitly aborting.
+
+### Ultragoal ownership
+
+- `.omx/ultragoal/goals.json` is the leader-owned plan and `.omx/ultragoal/ledger.jsonl` is its durable audit trail. Workers report task evidence only; they do not create worker ledgers, mutate Ultragoal artifacts, or checkpoint goals.
+- Shell commands and hooks do not mutate hidden Codex goal state. The active agent uses `get_goal`, `create_goal`, and `update_goal` only at the documented gates, then checkpoints with a fresh `get_goal` snapshot.
 
 ## Setup
 
@@ -417,31 +438,4 @@ Example:
 import numpy as np
 import requests
 from rich.pretty import pprint
-
-### Code Search
-
-Use `semble search` to find code by describing what it does or naming a symbol/identifier, instead of grep:
-
-```shell
-semble search "authentication flow" ./my-project
-semble search "save_pretrained" ./my-project
-semble search "save model to disk" ./my-project --top-k 10
-```
-
-Use `semble find-related` to discover code similar to a known location (pass `file_path` and `line` from a prior search result):
-
-```shell
-semble find-related src/auth.py 42 ./my-project
-```
-
-`path` defaults to the current directory when omitted; git URLs are accepted.
-
-If `semble` is not on `$PATH`, use `uvx --from "semble[mcp]" semble` in its place.
-
-### Workflow
-
-1. Start with `semble search` to find relevant chunks.
-2. Inspect full files only when the returned chunk is not enough context.
-3. Optionally use `semble find-related` with a promising result's `file_path` and `line` to discover related implementations.
-4. Use grep only when you need exhaustive literal matches or quick confirmation of an exact string.
 </tools>
