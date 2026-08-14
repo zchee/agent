@@ -1,9 +1,10 @@
-#:schema https://raw.githubusercontent.com/openai/codex/refs/heads/main/codex-rs/core/config.schema.json
-
-model = "gpt-5.6-sol"
+model = "gpt-5.5"
 review_model = "gpt-5.6-sol"
-model_reasoning_effort = "max"
-model_auto_compact_token_limit_scope = "total"
+model_reasoning_effort = "xhigh"
+model_context_window = 1000000
+model_auto_compact_token_limit = 900000
+model_auto_compact_token_limit_scope = "body_after_prefix"
+model_catalog_json = "model_catalog.json"
 approval_policy = "never"
 tool_output_token_limit = 40000
 project_doc_max_bytes = 46080
@@ -22,76 +23,15 @@ web_search = "live"
 project_root_markers = [".git"]
 suppress_unstable_features_warning = true
 approvals_reviewer = "guardian_subagent"
-include_permissions_instructions = true
-include_apps_instructions = true
-include_environment_context = true
+include_collaboration_mode_instructions = false
+include_permissions_instructions = false
+include_apps_instructions = false
+include_environment_context = false
 personality = "pragmatic"
 service_tier = "priority"
 disable_paste_burst = true
-notify = [
-  "/Users/zchee/src/github.com/zchee/agent/codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient",
-  "turn-ended"
-]
-developer_instructions = "<omx version=\"1\">You have oh-my-codex installed through Codex plugin mode. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing and $name workflow invocation. When the native surface exposes `agent_type` role routing, set `agent_type` to an installed role and never omit it for OMX work. When it reports `role_routing_unavailable` and adapted Ralplan authority is requested, do not fabricate `agent_type`; run `omx ralplan preflight --json` and stop on `unsupported_documented_leader_proof`. Ordinary work remains under its own workflow gates. Never fake the role via a prompt label or infer authority from session/thread/pointer/transcript/cwd state. Registered Codex plugin marketplace surfaces supply OMX workflows and plugin-scoped companion resources when the plugin is installed; native agent roles are installed as setup-owned Codex agent TOML files in plugin mode so agent_type routing works. User-installed skills may still live under ~/.codex/skills. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail.</omx>"
-
-[desktop]
-sansFontSize = 20
-codeFontSize = 16
-usePointerCursors = true
-dictationDictionary = []
-composerEnterBehavior = "cmdIfMultiline"
-reviewDelivery = "detached"
-preventSleepWhileRunning = true
-keepRemoteControlAwakeWhilePluggedIn = true
-git-branch-prefix = "codex-"
-git-pull-request-merge-method = "squash"
-git-show-sidebar-pr-icons = true
-notifications-turn-mode = "always"
-dock-icon-preference = "app-default"
-appearanceTheme = "system"
-show-context-window-usage = true
-hotkey-window-projectless-default-enabled = true
-useFontSmoothing = true
-appshotSoundEnabled = true
-followUpQueueMode = "queue"
-appearanceDiffMarkerStyle = "color"
-enabled-reasoning-efforts = ["low", "medium", "high", "xhigh", "ultra", "max"]
-show-ultra-in-model-picker-slider = false
-
-[desktop.appearanceLightChromeTheme]
-accent = "#339cff"
-contrast = 45
-ink = "#1a1c1f"
-opaqueWindows = false
-surface = "#ffffff"
-
-[desktop.appearanceLightChromeTheme.fonts]
-code = "MonoLisaCode Nerd Font"
-ui = "MonoLisaText"
-
-[desktop.appearanceLightChromeTheme.semanticColors]
-diffAdded = "#00a240"
-diffRemoved = "#ba2623"
-skill = "#924ff7"
-
-[desktop.appearanceDarkChromeTheme]
-accent = "#339cff"
-contrast = 60
-ink = "#ffffff"
-opaqueWindows = false
-surface = "#181818"
-
-[desktop.appearanceDarkChromeTheme.fonts]
-code = "MonoLisaCode Nerd Font"
-ui = "MonoLisaText,-apple-system"
-
-[desktop.appearanceDarkChromeTheme.semanticColors]
-diffAdded = "#40c977"
-diffRemoved = "#fa423e"
-skill = "#ad7bf9"
-
-[desktop.open-in-target-preferences]
-global = "cursor"
+notify = ["/Users/zchee/src/github.com/zchee/agent/codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+developer_instructions = '<omx version="1">You have oh-my-codex installed through Codex plugin mode. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing and $name workflow invocation. When the native surface exposes `agent_type` role routing, set `agent_type` to an installed role and never omit it for OMX work. When it reports `role_routing_unavailable` and adapted Ralplan authority is requested, do not fabricate `agent_type`; run `omx ralplan preflight --json` and stop on `unsupported_documented_leader_proof`. Ordinary work remains under its own workflow gates. Never fake the role via a prompt label or infer authority from session/thread/pointer/transcript/cwd state. Registered Codex plugin marketplace surfaces supply OMX workflows and plugin-scoped companion resources when the plugin is installed; native agent roles are installed as setup-owned Codex agent TOML files in plugin mode so agent_type routing works. User-installed skills may still live under ~/.codex/skills. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail.</omx>'
 
 [model_providers.oai]
 name = "openai"
@@ -132,16 +72,15 @@ inherit = "all"
 experimental_use_profile = false
 
 [shell_environment_policy.set]
-OMX_LORE_COMMIT_GUARD = "0"
-COMPACT_PLUS_PRIMARY_BACKEND = "tmp=$(mktemp \"${TMPDIR:-/tmp}/compact-plus-codex.XXXXXX\"); { printf \"%s\\n\\n\" \"$SYSTEM_PROMPT\"; cat; } | codex exec --model gpt-5.3-codex-spark --sandbox read-only --skip-git-repo-check --dangerously-bypass-hook-trust --ignore-user-config --ephemeral --output-last-message \"$tmp\" - >/dev/null && cat \"$tmp\"; status=$?; rm -f \"$tmp\"; exit \"$status\""
+COMPACT_PLUS_PRIMARY_BACKEND = 'tmp=$(mktemp "${TMPDIR:-/tmp}/compact-plus-codex.XXXXXX"); { printf "%s\n\n" "$SYSTEM_PROMPT"; cat; } | codex exec --model gpt-5.3-codex-spark --skip-git-repo-check --dangerously-bypass-approvals-and-sandbox --dangerously-bypass-hook-trust --ignore-user-config --ephemeral --output-last-message "$tmp" - >/dev/null && cat "$tmp"; status=$?; rm -f "$tmp"; exit "$status"'
 COMPACT_PLUS_CODEX_WARN_THRESHOLD = "75"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "028a14b6eaa6d98dac2aae00764345ab9f244801ed8493d42b9af3be5575006e,f204d340535055781952b10ed396de20b842f00a19e430852f7e121ad1ce91f6"
-NODE_REPL_TRUSTED_CODE_PATHS = "/Users/zchee/.config/codex"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "e7fc907079d6797973cb63f97d2562c965aad8d33f52fb726005bf6702f30afc"
+NODE_REPL_TRUSTED_CODE_PATHS = "/Users/zchee/.config/codex:/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
 
 [history]
 persistence = "save-all"
-max_bytes = 104857600
+max_bytes = 104_857_600
 
 [tui]
 notifications = true
@@ -151,7 +90,6 @@ animations = true
 alternate_screen = "always"
 show_tooltips = true
 status_line_use_colors = true
-# https://github.com/openai/codex/blob/main/codex-rs/tui/src/bottom_pane/status_line_setup.rs
 status_line = [
   "model-with-reasoning",
   "git-branch",
@@ -159,7 +97,7 @@ status_line = [
   "context-remaining",
   "context-window-size",
   "five-hour-limit",
-  "weekly-limit"
+  "weekly-limit",
 ]
 
 [tui.model_availability_nux]
@@ -177,25 +115,28 @@ max_rollout_age_days = 42
 max_rollouts_per_startup = 9
 min_rollout_idle_hours = 24
 disable_on_external_context = false
-extract_model = "gpt-5.3-codex-spark"
+extract_model = "gpt-5.6-terra"
 consolidation_model = "gpt-5.6-sol"
 
 [features]
 shell_zsh_fork = false
-unified_exec_zsh_fork = true
+unified_exec_zsh_fork = false
 deferred_executor = true
 executed_tool_call_metadata = true
 code_mode = true
 code_mode_buffered_exec = true
 code_mode_host = true
+code_mode_interrupt = true
 code_mode_only = false
 standalone_web_search = true
 runtime_metrics = true
 memories = true
 external_agent_memory_import = true
 local_thread_store_compression = true
+background_paginated_rollout_migration = true
 chronicle = true
 apply_patch_streaming_events = true
+apply_patch_preserve_line_endings = true
 exec_permission_approvals = true
 request_permissions_tool = true
 network_proxy = true
@@ -208,13 +149,16 @@ non_prefixed_mcp_tool_names = true
 recommended_plugins = true
 executor_capability_discovery = true
 in_app_browser = true
-in_app_updates = true
+in_app_updates = false
 image_generation = false
 item_ids = true
+image_resize_notice = true
+unified_image_budget = true
 concurrent_reasoning_summaries = true
 default_mode_request_user_input = true
 terminal_visualization_instructions = true
 terminal_resize_reflow = false
+guardian_reuse_parent_compaction = true
 guardianv2 = true
 token_budget = false
 current_time_reminder = true
@@ -252,27 +196,27 @@ home_last_prompted_at = 1777661006
 home = true
 
 [notice.external_config_migration_prompts.project_last_prompted_at]
-"/Users/zchee" = 1777661126
+"/Users/zchee" = 1777_661126
 
 [marketplaces.openai-bundled]
-last_updated = "2026-08-03T20:58:11Z"
+last_updated = "2026-08-11T14:13:01Z"
 source_type = "local"
 source = "/Users/zchee/src/github.com/zchee/agent/codex/.tmp/bundled-marketplaces/openai-bundled"
 
 [marketplaces.openai-primary-runtime]
-last_updated = "2026-08-02T20:02:36Z"
+last_updated = "2026-08-06T05:58:08Z"
 source_type = "local"
 source = "/Users/zchee/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.memsearch-plugins]
-last_updated = "2026-07-31T10:40:46Z"
-last_revision = "b734a142ea017657959dfe918ecfe9e1a16c6654"
+last_updated = "2026-08-12T09:47:04Z"
+last_revision = "d5809d77ef7792dc5eb15fdd549b457ead88e0ad"
 source_type = "git"
 source = "https://github.com/zilliztech/memsearch.git"
 
 [marketplaces.langsmith-codex-plugins]
-last_updated = "2026-07-25T22:20:32Z"
-last_revision = "73bedbbd0a86880586e46ec731fb1939483648a5"
+last_updated = "2026-08-07T12:56:13Z"
+last_revision = "42ed6e8d8f2e94221b9ede8b73b3982d4dc19660"
 source_type = "git"
 source = "https://github.com/langchain-ai/langsmith-codex-plugins.git"
 
@@ -419,6 +363,7 @@ startup_timeout_sec = 15.0
 
 [mcp_servers.context7]
 url = "https://mcp.context7.com/mcp"
+startup_timeout_sec = 15.0
 
 [mcp_servers.datadog]
 url = "https://mcp.us5.datadoghq.com/api/unstable/mcp-server/mcp"
@@ -477,28 +422,170 @@ args = ["--app", "cursor", "--agent", "codexCLI"]
 enabled = false
 
 [mcp_servers.computer-use]
-command = "/Users/zchee/.config/codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient"
+command = "./Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient"
 args = ["mcp"]
 cwd = "."
-enabled = true
+enabled = false
 
 [mcp_servers.node_repl]
 args = []
 command = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
-startup_timeout_sec = 120.0
+startup_timeout_sec = 120
 
 [mcp_servers.node_repl.env]
 NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
 NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
 NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
-NODE_REPL_TRUSTED_CODE_PATHS = "/Users/zchee/.config/codex"
+NODE_REPL_TRUSTED_CODE_PATHS = "/Users/zchee/.config/codex:/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
 CODEX_HOME = "/Users/zchee/.config/codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "028a14b6eaa6d98dac2aae00764345ab9f244801ed8493d42b9af3be5575006e,f204d340535055781952b10ed396de20b842f00a19e430852f7e121ad1ce91f6"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "e7fc907079d6797973cb63f97d2562c965aad8d33f52fb726005bf6702f30afc"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
 NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = "Control desktop apps on macOS through Computer Use."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.727.51351"
+BROWSER_USE_CODEX_APP_VERSION = "26.803.81509"
 SKY_CUA_SERVICE_PATH = "/Users/zchee/.config/codex/computer-use/Codex Computer Use.app"
 CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
+
+[desktop]
+sansFontSize = 20
+codeFontSize = 16
+usePointerCursors = true
+dictationDictionary = []
+composerEnterBehavior = "cmdIfMultiline"
+reviewDelivery = "detached"
+preventSleepWhileRunning = true
+keepRemoteControlAwakeWhilePluggedIn = true
+git-branch-prefix = "codex-"
+git-pull-request-merge-method = "squash"
+git-show-sidebar-pr-icons = true
+notifications-turn-mode = "always"
+dock-icon-preference = "app-default"
+appearanceTheme = "system"
+show-context-window-usage = true
+hotkey-window-projectless-default-enabled = true
+useFontSmoothing = true
+appshotSoundEnabled = true
+followUpQueueMode = "queue"
+appearanceDiffMarkerStyle = "color"
+enabled-reasoning-efforts = ["low", "medium", "high", "xhigh", "ultra", "max"]
+show-ultra-in-model-picker-slider = false
+
+[desktop.appearanceLightChromeTheme]
+accent = "#339cff"
+contrast = 45
+ink = "#1a1c1f"
+opaqueWindows = false
+surface = "#ffffff"
+
+[desktop.appearanceLightChromeTheme.fonts]
+code = "MonoLisaCode Nerd Font"
+ui = "MonoLisaText"
+
+[desktop.appearanceLightChromeTheme.semanticColors]
+diffAdded = "#00a240"
+diffRemoved = "#ba2623"
+skill = "#924ff7"
+
+[desktop.appearanceDarkChromeTheme]
+accent = "#339cff"
+contrast = 60
+ink = "#ffffff"
+opaqueWindows = false
+surface = "#181818"
+
+[desktop.appearanceDarkChromeTheme.fonts]
+code = "MonoLisaCode Nerd Font"
+ui = "MonoLisaText,-apple-system"
+
+[desktop.appearanceDarkChromeTheme.semanticColors]
+diffAdded = "#40c977"
+diffRemoved = "#fa423e"
+skill = "#ad7bf9"
+
+[desktop.open-in-target-preferences]
+global = "cursor"
+
+[[hooks.PreToolUse]]
+matcher = "*"
+[[hooks.PreToolUse.hooks]]
+type = "command"
+command = "agu api hooks"
+timeout = 60
+
+[[hooks.PermissionRequest]]
+matcher = "*"
+[[hooks.PermissionRequest.hooks]]
+type = "command"
+command = "agu api hooks"
+timeout = 60
+
+[[hooks.PostToolUse]]
+matcher = "*"
+[[hooks.PostToolUse.hooks]]
+type = "command"
+command = "agu api hooks"
+timeout = 60
+
+[[hooks.PostToolUse]]
+matcher = "apply_patch"
+[[hooks.PostToolUse.hooks]]
+type = "command"
+command = "codex-wakatime --hook"
+timeout = 60
+
+[[hooks.PreCompact]]
+matcher = "*"
+[[hooks.PreCompact.hooks]]
+type = "command"
+command = "agu api hooks"
+timeout = 60
+
+[[hooks.PostCompact]]
+matcher = "*"
+[[hooks.PostCompact.hooks]]
+type = "command"
+command = "agu api hooks"
+timeout = 60
+
+[[hooks.SessionStart]]
+matcher = "*"
+[[hooks.SessionStart.hooks]]
+type = "command"
+command = "agu api hooks"
+timeout = 60
+
+[[hooks.UserPromptSubmit]]
+[[hooks.UserPromptSubmit.hooks]]
+type = "command"
+command = "imectl set -q 'com.apple.keylayout.ABC'"
+timeout = 60
+[[hooks.UserPromptSubmit.hooks]]
+type = "command"
+command = "agu api hooks"
+timeout = 60
+
+[[hooks.SubagentStart]]
+matcher = "*"
+[[hooks.SubagentStart.hooks]]
+type = "command"
+command = "agu api hooks"
+timeout = 60
+
+[[hooks.SubagentStop]]
+matcher = "*"
+[[hooks.SubagentStop.hooks]]
+type = "command"
+command = "agu api hooks"
+timeout = 60
+
+[[hooks.Stop]]
+[[hooks.Stop.hooks]]
+type = "command"
+command = "codex-wakatime --hook"
+timeout = 60
+[[hooks.Stop.hooks]]
+type = "command"
+command = "agu api hooks"
+timeout = 60
