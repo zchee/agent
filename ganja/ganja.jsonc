@@ -1,10 +1,24 @@
 {
   "$schema": "file:///Users/zchee/rust/src/github.com/zchee/ganja-code/schema/ganja-config.schema.json",
   "model": "openai/gpt-5.6-sol",
-  "small_model": "openai/gpt-5.6-luna",
-  "effort": "xhigh",
+  "small_model": "cursor/gpt-5.6-luna-medium-fast",
+  "effort": "max",
   "default_provider": "openai",
   "default_agent": "build",
+  "openrouter": {
+    "server_tools": [
+      "advisor",
+      "apply_patch",
+      "datetime",
+      "experimental__search_models",
+      "fusion",
+      "image_generation",
+      "shell",
+      "subagent",
+      "web_fetch",
+      "web_search"
+    ]
+  },
   "memory": true,
   "agent": {},
   "agents": {
@@ -16,6 +30,7 @@
   "theme_mode": "dark",
   "keybinds": {},
   "shell": "/opt/homebrew/bin/zsh",
+  "tool_defer_threshold": 32,
   "command": {},
   "mcp": {
     "context7": {
@@ -25,7 +40,13 @@
     }
   },
   "lsp": true,
-  "provider": {},
+  "provider": {
+    "ollama": {
+      "dialect": "openai-chat-completions",
+      "base_url": "http://127.0.0.1:11434/v1",
+      "key_env": "LOCAL_OLLAMA_KEY"
+    }
+  },
   "webfetch": {
     "allow_private": true
   },
