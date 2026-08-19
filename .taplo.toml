@@ -1,3 +1,22 @@
+# Formatting rules, mirroring ~/.config/taplo/taplo.toml. They have to be
+# declared here because taplo does not merge configs: the nearest one wins
+# outright, so this file's presence would otherwise drop the whole personal
+# config and fall back to taplo's defaults (column_width = 80,
+# array_auto_expand = true), which wraps long single-line arrays such as
+# codex/config.toml's `notify`.
+#
+# Must stay above the [[rule]] blocks -- a bare [formatting] placed after one
+# would be parsed as a table belonging to the preceding rule.
+[formatting]
+column_width = 200
+array_auto_expand = false
+array_auto_collapse = false
+indent_string = "  "
+trailing_newline = false
+reorder_keys = false
+reorder_arrays = false
+allowed_blank_lines = 1
+
 [[rule]]
 include = ["grok/config.toml"]
 
