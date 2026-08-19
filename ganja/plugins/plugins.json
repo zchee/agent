@@ -1,8 +1,5 @@
 {
   "marketplaces": {
-    "claude-community": {
-      "origin": "https://github.com/anthropics/claude-plugins-community"
-    },
     "claude-plugins-official": {
       "origin": "https://github.com/anthropics/claude-plugins-official"
     },
@@ -11,6 +8,10 @@
     }
   },
   "plugins": {
+    "mattpocock-skills": {
+      "marketplace": "claude-plugins-official",
+      "enabled": true
+    },
     "mcp-gemini-search": {
       "marketplace": "mcp-gemini-search",
       "enabled": true
