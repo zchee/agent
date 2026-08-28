@@ -20,7 +20,7 @@ for vt in ${VER_TIMESTAMP}; do
   jq 'del(.scripts.prepare)' package.json | sponge package.json
   npm i
 
-  claude --effort=xhigh --model=claude-sonnet-5 --dangerously-skip-permissions --debug --verbose --include-partial-messages --output-format stream-json -p "/extract-cli-from-claude-exe"
+  claude --effort=xhigh --model=claude-sonnet-5 --dangerously-skip-permissions --verbose --include-partial-messages --output-format stream-json -p "/extract-cli-from-claude-exe"
   NODE_OPTIONS='--max-old-space-size=8192' webcrack --no-jsx cli.js >cli.unpack.js && rm -f cli.js
 
   rm -rf node_modules package-lock.json
