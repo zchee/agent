@@ -24,7 +24,7 @@
 //                this program is indistinguishable from `int main(){return 0;}`.
 //   Linux        a freestanding static build has no interpreter at all, so the
 //                floor is just execve + page-in: 343 us p50 for the glibc
-//                dynamic build, 217 us for an empty static-glibc main, 77 us
+//                dynamic build, 217 us for an empty static-glibc main, 76 us
 //                here (Xeon 8481C). Ship the freestanding build there.
 //
 // The program itself carries zero libc symbol imports on every supported
@@ -40,16 +40,30 @@
 // Build, macOS arm64:
 //   clang -O3 -fno-stack-protector -fno-unwind-tables \
 //     -fno-asynchronous-unwind-tables -Wl,-dead_strip -Wl,-x \
-//     -o scripts/cc-search-hook hooks/src/cc-search-hook.c
-//   strip -x scripts/cc-search-hook
-//   codesign -f -s - scripts/cc-search-hook
+//     -o /opt/local/bin/cc-search-hook hooks/src/cc-search-hook.c
+//   llvm-strip --strip-all /opt/local/bin/cc-search-hook
+//   codesign -f -s - /opt/local/bin/cc-search-hook
 //
-// Build, Linux (freestanding: no libc, no dynamic loader):
+// Build, Linux (freestanding: no libc, no dynamic loader). The link flags
+// collapse the four PT_LOAD segments into two and drop the section headers,
+// worth ~4% of startup and 5256 -> 4056 bytes:
 //   clang -O3 -march=native -DCC_FREESTANDING -ffreestanding -nostdlib -static \
-//     -no-pie -fno-stack-protector -fno-unwind-tables \
-//     -fno-asynchronous-unwind-tables -Wl,--build-id=none \
-//     -o scripts/cc-search-hook hooks/src/cc-search-hook.c
-//   strip scripts/cc-search-hook
+//     -fno-stack-protector -fno-unwind-tables -fno-asynchronous-unwind-tables \
+//     -fno-ident -fuse-ld=lld -Wl,--build-id=none -Wl,--no-rosegment \
+//     -Wl,-z,noseparate-code -Wl,-z,norelro -Wl,-z,nosectionheader -Wl,-s \
+//     -o /opt/local/bin/cc-search-hook hooks/src/cc-search-hook.c
+//
+// -z norelro costs nothing here: a static binary with no relocations has no
+// .data.rel.ro worth protecting, and dropping the segment is what takes the
+// PT_LOAD count from three to two. Segment count trades against buffer layout,
+// and the crossover sits at 2..20 KB of payload: two PT_LOADs win by 3 us at
+// the 300 B payloads Claude Code actually sends, and lose 5 us at 100 KB and
+// 44 us at 900 KB. -Wl,-z,nosectionheader leaves objdump and gdb unable to see
+// sections, so drop it and -Wl,-s while debugging; with GNU ld drop
+// --no-rosegment and -z nosectionheader as well. Two further options were
+// measured and rejected: -Wl,-N collapses to a single PT_LOAD but makes the
+// mapping RWX and loses section alignment, and -flto=full saves 4 us of
+// startup while costing 35 us of scan.
 //
 // -march=native only widens the JSON scan; drop it for a portable binary and
 // the SSE2/NEON baseline still applies. On macOS strip invalidates the linker's
@@ -248,8 +262,10 @@ static inline uint64_t ld64(const char *p) {
 }
 
 #define IN_CAP (1u << 20)
-// Slack past IN_CAP absorbs the NUL plus the over-reads of ld32/ld64.
-static char inbuf[IN_CAP + 64];
+// Slack past IN_CAP absorbs the NUL plus the over-reads of ld32/ld64. The
+// explicit alignment keeps the vector loop off split cache lines: worth 1-3% of
+// a large-payload scan under AVX-512, and free everywhere else.
+__attribute__((aligned(64))) static char inbuf[IN_CAP + 64];
 
 static const char OUT_HEAD[] = "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"updatedInput\":";
 static const char OUT_TAIL[] = "}}";
