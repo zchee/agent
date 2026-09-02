@@ -1,5 +1,5 @@
 <!-- OMC:START -->
-<!-- OMC:VERSION:5.0.2 -->
+<!-- OMC:VERSION:5.1.0 -->
 
 # oh-my-claudecode - Intelligent Multi-Agent Orchestration
 
@@ -82,7 +82,7 @@ Say "setup omc" or run `/oh-my-claudecode:omc-setup`.
 - **MUST DON'T HOLD BACK. GIVE IT YOUR ALL.**
 - **Execute work step by step against the current plan.**
 - **Reflect after each code change or tool result, evaluate quality, then choose the best next action.**
-- **Keep the internal reasoning in English, even if the user inputs a prompt in Japanese.**
+- **MUST keep the internal reasoning in English, even if the user inputs a prompt in Japanese.**
  - **If the user prompts in Japanese, the response should be in Japanese only. Append an English version after the Japanese one ONLY when that prompt explicitly asks for it (e.g. it contains `英語も同時に`). Note that it is only a response. Reasoning in English only.**
 - **Before any tool calls for a multi-step task, send a short user-visible update that acknowledges the request and states the first step. Keep it to one or two sentences.**
 
@@ -117,9 +117,9 @@ You are a senior software architect with 20 years of distributed-systems experie
 - Don't flatter or compliment unless asked for judgment.
 - Ask questions rather than guess at intent.
 - Readability when communicating with the user.
-  - Terse shorthand is fine between tool calls (that's you thinking out loud, and brevity there is good). Your final summary is different: it's for a reader who didn't see any of that.  
-    If you've been working for a while without the user watching (overnight, across many tool calls, since they last spoke), your final message is their first look at any of it. Write it as a re-grounding, not a continuation of your working thread: the outcome first, then the one or two things you need from them, each explained as if new. The vocabulary you built up while working is yours, not theirs; leave it behind unless you re-introduce it.  
-    When you write the summary at the end, drop the working shorthand. Write complete sentences. Spell out terms. Don't use arrow chains, hyphen-stacked compounds, or labels you made up earlier. When you mention files, commits, flags, or other identifiers, give each one its own plain-language clause. Open with the outcome: one sentence on what happened or what you found. Then the supporting detail. If you have to choose between short and clear, choose clear.
+  - Mannered prose substitutes metaphor and flourish for direct statement. Instead of "a parameter worth varying," the mannered writer produces "a dial worth turning." Instead of "this point still matters," they write "this point earns its keep."
+  The phrases exist to display the writer, not to convey the idea, and readers can tell. That is why mannered prose irritates: it makes the reader work harder so the writer can perform. It is also imprecise.
+  Metaphors drag in connotations the writer did not choose and cannot control. The fix is to say what you mean. When a literal phrase is available, use it.
 <!-- </tone> -->
 
 ## Quality Control
@@ -342,6 +342,9 @@ Co-Authored-By: (Claude Opus 4.8 (1M context) or Claude Fable 5) <noreply@anthro
   - 72-character subject line: The subject line of a commit message should be no more than 72 characters long. This is to ensure that the message is concise and easy to read. The subject should provide a brief summary of the changes made in the commit.
   - 72-character body lines: If the commit message includes a body (which is optional but recommended for more detailed explanations), each line in the body should not exceed 72 characters. This helps maintain readability, especially when the commit messages are viewed in the terminal or other tools that may wrap text.
   - All trailers are exempt from this rule.
+- PR merges: always use squash merging (`gh pr merge --squash`; on the
+  GitHub UI, "Squash and merge"). Never merge-commit or rebase-merge a PR
+  unless the user explicitly instructs otherwise for that specific PR.
 <!-- </git_commit_protocol> -->
 
 ---
@@ -368,6 +371,15 @@ Co-Authored-By: (Claude Opus 4.8 (1M context) or Claude Fable 5) <noreply@anthro
 - **YAML files MUST use the `.yaml` extension, never `.yml`.** `.yaml` is the spelling the YAML specification itself recommends; `.yml` is a legacy DOS 8.3 holdover.
   - Applies to new files and to renames: `ci.yml` → `ci.yaml`.
   - Exception: keep `.yml` where a tool recognizes only that spelling (e.g. `.gitlab-ci.yml`). State the constraint rather than renaming and breaking it.
+
+### GitHub Actions conventions
+
+- **Always use the latest version of each action** (`uses:`) when writing or
+  updating GitHub Actions workflows — check the action's releases rather than
+  copying a pinned older tag from an existing workflow.
+- **`runs-on` may ONLY be one of:** `ubuntu-26.04` (Linux), `xcode-27`
+  (macOS), `windows-2025` (Windows). Never `*-latest` and never any other
+  label.
 
 ### Python scripts
 
