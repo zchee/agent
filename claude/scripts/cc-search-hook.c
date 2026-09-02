@@ -7,12 +7,8 @@
 // execs the selected binary DIRECTLY: no cc-applet trampoline, no
 // CLAUDE_CODE_EXECPATH indirection.
 //
-// Cost model (Apple silicon, macOS 27). A hook invocation costs ~1.5 ms of
-// fork/exec/dyld that no userspace code can remove: macOS 27/arm64 SIGKILLs
-// non-dyld static executables and ld refuses dynamic ones that do not link
-// libSystem, so the dyld+libSystem floor is mandatory. Measured, this program
-// is indistinguishable from `int main(void){return 0;}`. The wins that remain
-// are therefore in what it EMITS, and they are large:
+// Cost model. A hook invocation is dominated by process startup, so the wins
+// are in what it EMITS, and they are large:
 //
 //   * inject nothing unless the command actually names grep/find/rg
 //   * define only the functions the command actually names
@@ -20,19 +16,40 @@
 //     function, no `local`, no arrays, no `eval`
 //     (39.2 us -> 5.9 us per search call, 27 us -> 8..17 us of prefix parse)
 //
-// The binary itself sits on the floor: zero libSystem symbol imports (raw arm64
-// svc syscalls), no output buffer at all (one writev(2) of constant and input
-// slices), and a NEON JSON scan. Build:
+// How low startup goes is a platform property, not a code property:
 //
+//   macOS/arm64  ~1.5 ms, irreducible. The kernel SIGKILLs non-dyld static
+//                executables and ld refuses dynamic ones that do not link
+//                libSystem, so dyld + libSystem init is mandatory. Measured,
+//                this program is indistinguishable from `int main(){return 0;}`.
+//   Linux        a freestanding static build has no interpreter at all, so the
+//                floor is just execve + page-in: 343 us p50 for the glibc
+//                dynamic build, 217 us for an empty static-glibc main, 77 us
+//                here (Xeon 8481C). Ship the freestanding build there.
+//
+// The program itself carries zero libc symbol imports on every supported
+// target (raw syscalls), has no output buffer at all (one writev(2) of
+// constant and input slices), and scans JSON with the widest vector unit the
+// build targets: NEON, SSE2, AVX2 or AVX-512BW. Measured string scan:
+// 10.7 GB/s SSE2, 12.8 AVX2, 15.3 AVX-512BW, 40.0 NEON on Apple silicon.
+//
+// Build, macOS arm64:
 //   clang -O3 -fno-stack-protector -fno-unwind-tables \
 //     -fno-asynchronous-unwind-tables -Wl,-dead_strip -Wl,-x \
 //     -o cc-search-hook cc-search-hook.c
 //   strip -x cc-search-hook && codesign -f -s - cc-search-hook
 //
-// -march=native buys nothing (NEON is baseline on arm64) and would risk an
-// illegal instruction on another Mac. strip invalidates the linker's ad-hoc
-// signature, so the codesign step is mandatory, not cosmetic: arm64 SIGKILLs
-// unsigned binaries.
+// Build, Linux (freestanding: no libc, no dynamic loader):
+//   clang -O3 -march=native -DCC_FREESTANDING -ffreestanding -nostdlib -static \
+//     -no-pie -fno-stack-protector -fno-unwind-tables \
+//     -fno-asynchronous-unwind-tables -Wl,--build-id=none \
+//     -o cc-search-hook cc-search-hook.c
+//   strip cc-search-hook
+//
+// -march=native only widens the JSON scan; drop it for a portable binary and
+// the SSE2/NEON baseline still applies. On macOS strip invalidates the linker's
+// ad-hoc signature, so the codesign step is mandatory, not cosmetic: arm64
+// SIGKILLs unsigned binaries. Any other target falls back to libc read/writev.
 //
 // CLAUDE_CODE_{UGREP,BFS,RG} select executables; unset or empty values use the
 // paths below. The matching *_ARGS variables hold trusted shell words. They are
@@ -42,25 +59,16 @@
 
 #include <stdint.h>
 
+// ---------------------------------------------------------------- syscalls --
+// EINTR is 4 on every target here, so -4 is the retry sentinel everywhere.
+#define CC_EINTR 4
+
 #if defined(__APPLE__) && defined(__aarch64__)
 #define CC_RAW 1
-#endif
-#if defined(__ARM_NEON)
-#include <arm_neon.h>
-#define CC_NEON 1
-#endif
-
-#define IN_CAP (1u << 20)
-#define EINTR_ 4
-
-struct cc_iov {
-    const void *base;
-    unsigned long len;
-};
-
-#ifdef CC_RAW
-// arm64 macOS: syscall number in x16, BSD errors reported through the carry
-// flag. Returns -errno on failure, mirroring the Linux convention.
+#define CC_SYS_READ 3
+#define CC_SYS_WRITEV 121
+#define CC_SYS_EXIT 1
+// arm64 macOS: number in x16, errors flagged by the carry bit.
 static inline long cc_syscall(long num, long a0, long a1, long a2) {
     register long x0 __asm__("x0") = a0;
     register long x1 __asm__("x1") = a1;
@@ -73,10 +81,54 @@ static inline long cc_syscall(long num, long a0, long a1, long a2) {
                        "x10", "x11", "x12", "x13", "x14", "x15", "x17");
     return x0;
 }
-static inline long cc_read(void *buf, unsigned long n) { return cc_syscall(3, 0, (long)buf, (long)n); }
-static inline long cc_writev(const struct cc_iov *v, long n) { return cc_syscall(121, 1, (long)v, n); }
+
+#elif defined(__linux__) && defined(__x86_64__)
+#define CC_RAW 1
+#define CC_SYS_READ 0
+#define CC_SYS_WRITEV 20
+#define CC_SYS_EXIT 231 /* exit_group */
+// x86-64 Linux: number in rax, args in rdi/rsi/rdx, -errno in rax.
+static inline long cc_syscall(long num, long a0, long a1, long a2) {
+    long ret;
+    __asm__ volatile("syscall"
+                     : "=a"(ret)
+                     : "a"(num), "D"(a0), "S"(a1), "d"(a2)
+                     : "rcx", "r11", "memory");
+    return ret;
+}
+
+#elif defined(__linux__) && defined(__aarch64__)
+#define CC_RAW 1
+#define CC_SYS_READ 63
+#define CC_SYS_WRITEV 66
+#define CC_SYS_EXIT 94 /* exit_group */
+static inline long cc_syscall(long num, long a0, long a1, long a2) {
+    register long x0 __asm__("x0") = a0;
+    register long x1 __asm__("x1") = a1;
+    register long x2 __asm__("x2") = a2;
+    register long x8 __asm__("x8") = num;
+    __asm__ volatile("svc #0"
+                     : "+r"(x0), "+r"(x1), "+r"(x2), "+r"(x8)
+                     :
+                     : "cc", "memory");
+    return x0;
+}
+#endif
+
+struct cc_iov {
+    const void *base;
+    unsigned long len;
+};
+
+#ifdef CC_RAW
+static inline long cc_read(void *buf, unsigned long n) {
+    return cc_syscall(CC_SYS_READ, 0, (long)buf, (long)n);
+}
+static inline long cc_writev(const struct cc_iov *v, long n) {
+    return cc_syscall(CC_SYS_WRITEV, 1, (long)v, n);
+}
 __attribute__((noreturn)) static void cc_exit(void) {
-    cc_syscall(1, 0, 0, 0);
+    cc_syscall(CC_SYS_EXIT, 0, 0, 0);
     __builtin_unreachable();
 }
 #else
@@ -86,15 +138,101 @@ __attribute__((noreturn)) static void cc_exit(void) {
 #include <unistd.h>
 static inline long cc_read(void *buf, unsigned long n) {
     long r = (long)read(0, buf, (size_t)n);
-    return r < 0 ? (errno == EINTR ? -EINTR_ : -1) : r;
+    return r < 0 ? (errno == EINTR ? -CC_EINTR : -1) : r;
 }
 static inline long cc_writev(const struct cc_iov *v, long n) {
     long r = (long)writev(1, (const struct iovec *)v, (int)n);
-    return r < 0 ? (errno == EINTR ? -EINTR_ : -1) : r;
+    return r < 0 ? (errno == EINTR ? -CC_EINTR : -1) : r;
 }
 __attribute__((noreturn)) static void cc_exit(void) { _exit(0); }
 #endif
 
+// ------------------------------------------------------------------ vector --
+// One uniform interface over NEON / SSE2 / AVX2 / AVX-512BW: load CC_VEC bytes,
+// return a mask of the lanes equal to any of the given bytes, walk it lowest
+// first. NEON has no movemask, so its mask carries four bits per lane and the
+// index and clear helpers absorb the difference.
+typedef uint64_t cc_mask;
+
+#if defined(__ARM_NEON)
+#include <arm_neon.h>
+#define CC_VEC 16
+#define CC_SIMD "neon"
+static inline cc_mask cc_m(uint8x16_t m) {
+    return vget_lane_u64(vreinterpret_u64_u8(vshrn_n_u16(vreinterpretq_u16_u8(m), 4)), 0);
+}
+static inline cc_mask cc_eq2(const char *p, char a, char b) {
+    uint8x16_t v = vld1q_u8((const uint8_t *)p);
+    return cc_m(vorrq_u8(vceqq_u8(v, vdupq_n_u8(a)), vceqq_u8(v, vdupq_n_u8(b))));
+}
+static inline cc_mask cc_eq3(const char *p, char a, char b, char c) {
+    uint8x16_t v = vld1q_u8((const uint8_t *)p);
+    return cc_m(vorrq_u8(vorrq_u8(vceqq_u8(v, vdupq_n_u8(a)), vceqq_u8(v, vdupq_n_u8(b))),
+                         vceqq_u8(v, vdupq_n_u8(c))));
+}
+#define CC_IDX(m) ((unsigned)__builtin_ctzll(m) >> 2)
+#define CC_CLR(m, i) ((m) & ~(0xFULL << ((i) * 4)))
+
+#elif defined(__AVX512BW__)
+#include <immintrin.h>
+#define CC_VEC 64
+#define CC_SIMD "avx512bw"
+static inline cc_mask cc_eq2(const char *p, char a, char b) {
+    __m512i v = _mm512_loadu_si512((const void *)p);
+    return (cc_mask)(_mm512_cmpeq_epi8_mask(v, _mm512_set1_epi8(a)) |
+                     _mm512_cmpeq_epi8_mask(v, _mm512_set1_epi8(b)));
+}
+static inline cc_mask cc_eq3(const char *p, char a, char b, char c) {
+    __m512i v = _mm512_loadu_si512((const void *)p);
+    return (cc_mask)(_mm512_cmpeq_epi8_mask(v, _mm512_set1_epi8(a)) |
+                     _mm512_cmpeq_epi8_mask(v, _mm512_set1_epi8(b)) |
+                     _mm512_cmpeq_epi8_mask(v, _mm512_set1_epi8(c)));
+}
+#define CC_IDX(m) ((unsigned)__builtin_ctzll(m))
+#define CC_CLR(m, i) ((m) & ((m) - 1))
+
+#elif defined(__AVX2__)
+#include <immintrin.h>
+#define CC_VEC 32
+#define CC_SIMD "avx2"
+static inline cc_mask cc_eq2(const char *p, char a, char b) {
+    __m256i v = _mm256_loadu_si256((const __m256i *)p);
+    return (uint32_t)(_mm256_movemask_epi8(_mm256_or_si256(
+        _mm256_cmpeq_epi8(v, _mm256_set1_epi8(a)), _mm256_cmpeq_epi8(v, _mm256_set1_epi8(b)))));
+}
+static inline cc_mask cc_eq3(const char *p, char a, char b, char c) {
+    __m256i v = _mm256_loadu_si256((const __m256i *)p);
+    __m256i m = _mm256_or_si256(_mm256_or_si256(_mm256_cmpeq_epi8(v, _mm256_set1_epi8(a)),
+                                                _mm256_cmpeq_epi8(v, _mm256_set1_epi8(b))),
+                                _mm256_cmpeq_epi8(v, _mm256_set1_epi8(c)));
+    return (uint32_t)_mm256_movemask_epi8(m);
+}
+#define CC_IDX(m) ((unsigned)__builtin_ctzll(m))
+#define CC_CLR(m, i) ((m) & ((m) - 1))
+
+#elif defined(__SSE2__)
+#include <emmintrin.h>
+#define CC_VEC 16
+#define CC_SIMD "sse2"
+static inline cc_mask cc_eq2(const char *p, char a, char b) {
+    __m128i v = _mm_loadu_si128((const __m128i *)p);
+    return (uint16_t)_mm_movemask_epi8(
+        _mm_or_si128(_mm_cmpeq_epi8(v, _mm_set1_epi8(a)), _mm_cmpeq_epi8(v, _mm_set1_epi8(b))));
+}
+static inline cc_mask cc_eq3(const char *p, char a, char b, char c) {
+    __m128i v = _mm_loadu_si128((const __m128i *)p);
+    __m128i m = _mm_or_si128(
+        _mm_or_si128(_mm_cmpeq_epi8(v, _mm_set1_epi8(a)), _mm_cmpeq_epi8(v, _mm_set1_epi8(b))),
+        _mm_cmpeq_epi8(v, _mm_set1_epi8(c)));
+    return (uint16_t)_mm_movemask_epi8(m);
+}
+#define CC_IDX(m) ((unsigned)__builtin_ctzll(m))
+#define CC_CLR(m, i) ((m) & ((m) - 1))
+#else
+#define CC_SIMD "scalar"
+#endif
+
+// ------------------------------------------------------------------- bytes --
 // Little-endian packing so multi-byte literal compares fold to one load+cmp.
 #define PACK4(s)                                                                                   \
     ((uint32_t)(uint8_t)(s)[0] | ((uint32_t)(uint8_t)(s)[1] << 8) |                                \
@@ -112,8 +250,9 @@ static inline uint64_t ld64(const char *p) {
     return v;
 }
 
-// Slack past IN_CAP absorbs the NUL plus the 8-byte over-reads of ld32/ld64.
-static char inbuf[IN_CAP + 32];
+#define IN_CAP (1u << 20)
+// Slack past IN_CAP absorbs the NUL plus the over-reads of ld32/ld64.
+static char inbuf[IN_CAP + 64];
 
 static const char OUT_HEAD[] =
     "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"updatedInput\":";
@@ -123,7 +262,7 @@ static const char NOOP[] = "{}";
 // Injected shell text. The \" sequences are literal backslash-quote bytes so
 // the surrounding JSON string stays valid; Claude decodes them to plain " for
 // the shell. MARKER makes re-entry a no-op and must stay in sync with the
-// three 8-byte compares in main().
+// three 8-byte compares in cc_run().
 static const char MARKER[] = ": __cc_search_override; ";
 static const char FN_GREP[] =
     "grep(){ command \\\"${CLAUDE_CODE_UGREP:-/opt/homebrew/bin/ugrep}\\\" "
@@ -148,7 +287,7 @@ static void emit(struct cc_iov *v, long n) {
     while (n > 0) {
         long w = cc_writev(v, n);
         if (w <= 0) {
-            if (w == -EINTR_) continue;
+            if (w == -CC_EINTR) continue;
             return;
         }
         while (n > 0 && (unsigned long)w >= v->len) {
@@ -167,13 +306,6 @@ __attribute__((noreturn)) static void reply_noop(void) {
     emit(&v, 1);
     cc_exit();
 }
-
-#ifdef CC_NEON
-// One nibble per lane; ctz(mask)>>2 is the matching byte index.
-static inline uint64_t movemask(uint8x16_t v) {
-    return vget_lane_u64(vreinterpret_u64_u8(vshrn_n_u16(vreinterpretq_u16_u8(v), 4)), 0);
-}
-#endif
 
 static const char *skip_ws(const char *p) {
     while (*p == ' ' || *p == '\t' || *p == '\n' || *p == '\r') p++;
@@ -194,18 +326,16 @@ static const char *find_lit(const char *p, const char *end, const char *lit, uns
 
 // Closing quote of a JSON string starting at p, honouring backslash escapes.
 static const char *str_end(const char *p, const char *end) {
-#ifdef CC_NEON
-    const uint8x16_t vq = vdupq_n_u8('"'), vb = vdupq_n_u8('\\');
-    while (p + 16 <= end) {
-        uint8x16_t v = vld1q_u8((const uint8_t *)p);
-        uint64_t m = movemask(vorrq_u8(vceqq_u8(v, vq), vceqq_u8(v, vb)));
+#ifdef CC_VEC
+    while (p + CC_VEC <= end) {
+        cc_mask m = cc_eq2(p, '"', '\\');
         if (m) {
-            p += (unsigned)__builtin_ctzll(m) >> 2;
+            p += CC_IDX(m);
             if (*p == '"') return p;
             p += 2;
             continue;
         }
-        p += 16;
+        p += CC_VEC;
     }
 #endif
     while (p < end) {
@@ -253,18 +383,16 @@ static unsigned tok_at(const char *s, const char *p, const char *end) {
 static unsigned scan_tokens(const char *s, const char *end) {
     unsigned hit = 0;
     const char *p = s;
-#ifdef CC_NEON
-    const uint8x16_t vg = vdupq_n_u8('g'), vf = vdupq_n_u8('f'), vr = vdupq_n_u8('r');
-    while (p + 16 <= end) {
-        uint8x16_t v = vld1q_u8((const uint8_t *)p);
-        uint64_t m = movemask(vorrq_u8(vorrq_u8(vceqq_u8(v, vg), vceqq_u8(v, vf)), vceqq_u8(v, vr)));
+#ifdef CC_VEC
+    while (p + CC_VEC <= end) {
+        cc_mask m = cc_eq3(p, 'g', 'f', 'r');
         while (m) {
-            unsigned i = (unsigned)__builtin_ctzll(m) >> 2;
+            unsigned i = CC_IDX(m);
             hit |= tok_at(s, p + i, end);
-            m &= ~(0xFULL << (i * 4));
+            m = CC_CLR(m, i);
         }
         if (hit == HIT_ALL) return hit;
-        p += 16;
+        p += CC_VEC;
     }
 #endif
     for (; p < end; p++) {
@@ -314,18 +442,18 @@ static const char *walk_object(const char *p, const char *end, const char **cb, 
     }
 }
 
-int main(void) {
+__attribute__((noreturn)) static void cc_run(void) {
     unsigned long len = 0;
     for (;;) {
         long r = cc_read(inbuf + len, IN_CAP - len);
         if (r <= 0) {
-            if (r == -EINTR_) continue;
+            if (r == -CC_EINTR) continue;
             break;
         }
         len += (unsigned long)r;
         // Oversized payload: drain so the writer never sees EPIPE, then no-op.
         if (len >= IN_CAP) {
-            while ((r = cc_read(inbuf, IN_CAP)) > 0 || r == -EINTR_) {}
+            while ((r = cc_read(inbuf, IN_CAP)) > 0 || r == -CC_EINTR) {}
             reply_noop();
         }
     }
@@ -372,3 +500,35 @@ int main(void) {
     emit(v, nv);
     cc_exit();
 }
+
+// ------------------------------------------------------------------- entry --
+#if defined(CC_FREESTANDING)
+#if !defined(__linux__)
+#error "CC_FREESTANDING is Linux-only: macOS refuses to exec non-dyld binaries"
+#endif
+// No libc, so no _start from crt1.o: take the raw process entry. The kernel
+// hands us a 16-byte aligned stack with no return address, which is one slot
+// off what a compiled function expects, so realign before calling in.
+__attribute__((used, noreturn)) void cc_entry(void) { cc_run(); }
+#if defined(__x86_64__)
+__asm__(".globl _start\n"
+        ".type _start,@function\n"
+        "_start:\n\t"
+        "xor %ebp, %ebp\n\t"
+        "and $-16, %rsp\n\t"
+        "call cc_entry\n\t"
+        "hlt\n");
+#elif defined(__aarch64__)
+__asm__(".globl _start\n"
+        ".type _start,%function\n"
+        "_start:\n\t"
+        "mov x29, #0\n\t"
+        "mov x30, #0\n\t"
+        "bl cc_entry\n\t"
+        "brk #0\n");
+#else
+#error "CC_FREESTANDING: unsupported architecture"
+#endif
+#else
+int main(void) { cc_run(); }
+#endif
