@@ -35,5 +35,6 @@ daemon.log
 daemon.status.json
 gh-pr-status-cache.json
 history.jsonl
+scripts/cc-fmt-hook
 scripts/cc-search-hook
 stats-cache.json
