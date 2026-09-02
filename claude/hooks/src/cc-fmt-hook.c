@@ -141,13 +141,26 @@ static const struct fmt TABLE[] = {
     {"css",   A(DFMT)},
     {"scss",  A(DFMT)},
     {"less",  A(DFMT)},
-    {"md",    A(DFMT)},
     {"sh",    A("shfmt", "-w")},
     {"bash",  A("shfmt", "-w")},
     {"lua",   A("stylua")},
     {"toml",  A("taplo", "format")},
 };
 // clang-format on
+
+// Two things are deliberately absent, both because the fast option produces
+// output this repo does not want, and both a one-line fmt-hooks.json entry away:
+//
+//   md      deno fmt rewrites markdown hard -- 192 changed lines in a 117-line
+//           instruction file here, converting * bullets to -, re-wrapping prose
+//           at 80 columns and re-indenting nested lists. Hand-formatted docs do
+//           not survive that. Turn it on with {"md": ["deno", "fmt", "--quiet"]}.
+//   taplo   `taplo format` spends 61 of its 77 ms searching upward for a config
+//           file (system time 49.7 of 77). Passing -c makes it 16.1 ms, but the
+//           hook cannot know which project's .taplo.toml applies, and pinning
+//           the personal one would format a fork with the wrong style. Anyone
+//           willing to make that trade writes
+//           {"toml": ["taplo", "format", "-c", "${HOME}/.config/taplo/taplo.toml"]}.
 
 #define PACK8(s)                                                                                               \
   ((uint64_t)(uint8_t)(s)[0] | ((uint64_t)(uint8_t)(s)[1] << 8) | ((uint64_t)(uint8_t)(s)[2] << 16) |          \
