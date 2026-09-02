@@ -4,7 +4,8 @@ chrome/
 daemon/
 debug/
 file-history/
-hooks/
+hooks/*
+!hooks/src/
 hud/
 jobs/
 plugins/.last_inuse_sweep

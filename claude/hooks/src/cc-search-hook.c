@@ -33,18 +33,23 @@
 // build targets: NEON, SSE2, AVX2 or AVX-512BW. Measured string scan:
 // 10.7 GB/s SSE2, 12.8 AVX2, 15.3 AVX-512BW, 40.0 NEON on Apple silicon.
 //
+// The source lives in hooks/src/ and the binary is deployed to scripts/, which
+// is the path settings.json registers; both commands below run from the Claude
+// config dir (~/.claude, or $CLAUDE_CONFIG_DIR).
+//
 // Build, macOS arm64:
 //   clang -O3 -fno-stack-protector -fno-unwind-tables \
 //     -fno-asynchronous-unwind-tables -Wl,-dead_strip -Wl,-x \
-//     -o cc-search-hook cc-search-hook.c
-//   strip -x cc-search-hook && codesign -f -s - cc-search-hook
+//     -o scripts/cc-search-hook hooks/src/cc-search-hook.c
+//   strip -x scripts/cc-search-hook
+//   codesign -f -s - scripts/cc-search-hook
 //
 // Build, Linux (freestanding: no libc, no dynamic loader):
 //   clang -O3 -march=native -DCC_FREESTANDING -ffreestanding -nostdlib -static \
 //     -no-pie -fno-stack-protector -fno-unwind-tables \
 //     -fno-asynchronous-unwind-tables -Wl,--build-id=none \
-//     -o cc-search-hook cc-search-hook.c
-//   strip cc-search-hook
+//     -o scripts/cc-search-hook hooks/src/cc-search-hook.c
+//   strip scripts/cc-search-hook
 //
 // -march=native only widens the JSON scan; drop it for a portable binary and
 // the SSE2/NEON baseline still applies. On macOS strip invalidates the linker's
