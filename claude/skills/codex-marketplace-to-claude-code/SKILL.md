@@ -1,12 +1,6 @@
 ---
 name: codex-marketplace-to-claude-code
 description: Generate a Claude Code .claude-plugin/marketplace.json from a Codex .agents/plugins/marketplace.json, pulling per-entry metadata from each plugin's .codex-plugin/plugin.json and categories from the official Claude Code marketplace.
-triggers:
-  - generate .claude-plugin/marketplace.json from .agents/plugins/marketplace.json
-  - convert a Codex/OpenAI plugin marketplace to Claude Code
-  - openai/plugins synced, refresh the Claude Code marketplace
-  - a plugin dir has .codex-plugin/plugin.json but no .claude-plugin/plugin.json
-  - claude plugin validate fails on a converted marketplace
 ---
 
 # Codex marketplace → Claude Code marketplace
@@ -21,14 +15,18 @@ marketplace, and `generate.py` beside this file performs the join.
 ## Run
 
 ```bash
-python3 ~/.claude/skills/codex-marketplace-to-claude-code/generate.py --repo <repo>
+~/.claude/skills/codex-marketplace-to-claude-code/generate.py --repo <repo>
 ```
+
+It is a `uv run --script` file: the shebang resolves `orjson` and `jsonschema`
+itself, so run it directly rather than through `python3`.
 
 `--official <path>` points at a clone of
 `anthropics/claude-plugins-official/.claude-plugin/marketplace.json` when it is
 not at `~/src/github.com/anthropics/claude-plugins-official`. On a repository's
-first conversion, set the header once with `--description`, `--owner-name`, and
-`--owner-url`; later runs keep whatever the output file already carries,
+first conversion, set the header with `--owner-name`, `--owner-url`, and
+`--description`; `owner` is schema-required, so a first run without it stops on
+a validation error. Later runs keep whatever the output file already carries,
 `$schema` included, so a hand-picked schema URL survives.
 
 The script writes the whole file. Behaviour changes belong in `generate.py`, not
@@ -37,8 +35,15 @@ preserves.
 
 ## Verify
 
-1. `claude plugin validate --strict <repo>` passes. Plain `validate` tolerates
-   unrecognized fields; `--strict` is what proves the entry shape.
+The script validates the document against the published JSON Schema
+(schemastore, cached under `~/.cache/codex-marketplace/`) **before** writing, so
+a rejected result leaves the previous file intact. That schema trails the CLI —
+it does not know `displayName`, and its `owner` requirement is stricter — so it
+is a pre-check, not the authority. Two checks follow it:
+
+1. `claude plugin validate --strict <repo>` passes. This is the authoritative
+   validator, the CLI's own schema. Plain `validate` tolerates unrecognized
+   fields; `--strict` is what proves the entry shape.
 2. One representative plugin installs and resolves its components, in a
    throwaway config so the real `~/.claude` state stays untouched:
 
