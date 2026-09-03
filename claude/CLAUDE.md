@@ -372,6 +372,19 @@ Co-Authored-By: (Claude Opus 4.8 (1M context) or Claude Fable 5) <noreply@anthro
   - Applies to new files and to renames: `ci.yml` → `ci.yaml`.
   - Exception: keep `.yml` where a tool recognizes only that spelling (e.g. `.gitlab-ci.yml`). State the constraint rather than renaming and breaking it.
 
+### C/C++/Objective-C formatting
+
+- **Format C, C++, and Objective-C sources with the global style:**
+  `clang-format -style=file:~/.config/llvm/.clang-format -i <files>`
+  - **Only for codebases you own.** In a fork of an upstream project, follow the
+    upstream's own style (its `.clang-format`, or its existing conventions) so
+    diffs stay reviewable against upstream.
+  - The style is Google-based with `IndentWidth: 2`, `ColumnLimit: 120`, and the
+    `AlignConsecutive*` options enabled.
+  - Pass `-style=file:...` explicitly. A bare `clang-format -i` only picks this
+    up when a `.clang-format` happens to exist in the tree; otherwise it silently
+    falls back to LLVM defaults (4-space, 80 columns) and reformats against you.
+
 ### GitHub Actions conventions
 
 - **Always use the latest version of each action** (`uses:`) when writing or
