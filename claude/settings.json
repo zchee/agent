@@ -1,38 +1,32 @@
 {
   "$schema": "file:///Users/zchee/src/github.com/zchee/schema/claude-code-settings.schema.json",
-  "cleanupPeriodDays": 999999,
+  "gcpAuthRefresh": "gcloud auth application-default login",
+  "cleanupPeriodDays": 99999,
   "env": {
+    "CLAUDE_CODE_SHELL": "/opt/homebrew/bin/bash",
     "CLAUDE_CODE_SCROLL_SPEED": "3",
-    "CLAUDE_CODE_NO_FLICKER": "1",
-    "GCLOUD_ACCESS_TOKEN": "$(gcloud auth print-access-token 2>/dev/null)",
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
-    "COMPACT_PLUS_PRIMARY_BACKEND": "tmp=$(mktemp \"${TMPDIR:-/tmp}/compact-plus-codex.XXXXXX\"); { printf \"%s\\n\\n\" \"$SYSTEM_PROMPT\"; cat; } | codex exec --model gpt-5.6-luna --sandbox read-only --skip-git-repo-check --dangerously-bypass-approvals-and-sandbox --ignore-user-config --ephemeral --output-last-message \"$tmp\" - >/dev/null && cat \"$tmp\"; status=$?; rm -f \"$tmp\"; exit \"$status\"",
-    "TRACE_TO_LANGSMITH": "true",
-    "CC_LANGSMITH_PROJECT": "claude-code"
+    "TRACE_TO_LANGSMITH": "false",
+    "OMC_PLUGIN_ROOT": "/Users/zchee/src/github.com/Yeachan-Heo/oh-my-claudecode"
   },
   "includeCoAuthoredBy": true,
   "permissions": {
     "deny": [
-      "Read(**/third_party/**)",
       "Read(**/_tmp/**)",
       "Read(**/.backup/**)",
       "Read(**/.ruff_cache/**)",
-      "Read(**/.pytest_cache/**)",
-      "Read(**/.venv/**)",
-      "Read(**/target/**)",
-      "Read(**/node_modules/**)",
-      "Read(**/.git/objects/**)"
+      "Read(**/.pytest_cache/**)"
     ],
     "defaultMode": "bypassPermissions"
   },
-  "model": "claude-fable-5[1m]",
+  "model": "claude-fable-5-1[1m]",
+  "fallbackModel": [
+    "claude-opus-5"
+  ],
   "enableAllProjectMcpServers": false,
   "deniedMcpServers": [
     {
       "serverName": "claude.ai workspace-developer"
-    },
-    {
-      "serverName": "claude.ai Cloudflare Developer Platform"
     },
     {
       "serverName": "claude.ai Datadog"
@@ -93,35 +87,105 @@
         "hooks": [
           {
             "type": "command",
-            "command": "imectl set com.apple.keylayout.ABC"
+            "command": "imectl set -q com.apple.keylayout.ABC"
+          },
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/keyword-detector.mjs\""
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/opt/local/bin/cc-search-hook",
+            "args": []
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/opt/local/bin/cc-fmt-hook",
+            "args": []
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/session-start.mjs\""
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/post-tool-use-failure.mjs\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/persistent-mode.mjs\""
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/code-simplifier.mjs\""
           }
         ]
       }
     ]
   },
+  "defaultShell": "bash",
   "statusLine": {
     "type": "command",
     "command": "sh ${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hud/omc-hud-cache.sh ${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hud/omc-hud.mjs"
   },
   "enabledPlugins": {
+    "beads@beads-rust": true,
+    "clangd-lsp@claude-plugins-official": true,
+    "codspeed@codspeed-plugin-marketplace": true,
+    "compact-plus@compact-plus-local": true,
+    "fable-advisor@fable-advisor": false,
+    "gopls-lsp@claude-plugins-official": true,
     "langsmith-tracing@langsmith-claude-code-plugins": true,
+    "lua-lsp@claude-plugins-official": true,
+    "mattpocock-skills@claude-plugins-official": true,
+    "mcp-gemini-search@mcp-gemini-search": true,
+    "modern-go-guidelines@goland-claude-marketplace": true,
+    "modern-web-guidance@googlechrome": true,
+    "oh-my-claudecode@omc": true,
+    "plugin-dev@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true,
+    "rust-analyzer-lsp@claude-plugins-official": true,
     "rust-reverse-engineering@jingjing2222-plugins": false,
     "security-guidance@claude-plugins-official": false,
     "skill-creator@claude-plugins-official": true,
-    "clangd-lsp@claude-plugins-official": true,
-    "gopls-lsp@claude-plugins-official": true,
-    "lua-lsp@claude-plugins-official": true,
-    "pyright-lsp@claude-plugins-official": true,
-    "rust-analyzer-lsp@claude-plugins-official": true,
     "swift-lsp@claude-plugins-official": true,
-    "typescript-lsp@claude-plugins-official": true,
-    "compact-plus@compact-plus-local": true,
-    "plugin-dev@claude-plugins-official": false,
-    "mcp-gemini-search@mcp-gemini-search": true,
-    "oh-my-claudecode@omc": true,
-    "mattpocock-skills@claude-plugins-official": true,
-    "fable-advisor@fable-advisor": true,
-    "modern-go-guidelines@goland-claude-marketplace": true
+    "typescript-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "goland-claude-marketplace": {
@@ -154,10 +218,10 @@
         "repo": "DannyMac180/fable-advisor"
       }
     },
-    "mcp-gemini-search": {
+    "googlechrome": {
       "source": {
         "source": "github",
-        "repo": "zchee/mcp-gemini-search"
+        "repo": "GoogleChrome/modern-web-guidance"
       }
     },
     "omc": {
@@ -171,20 +235,46 @@
         "source": "github",
         "repo": "anthropics/claude-plugins-official"
       }
+    },
+    "beads-rust": {
+      "source": {
+        "source": "github",
+        "repo": "Dicklesworthstone/beads_rust"
+      }
+    },
+    "codspeed-plugin-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "CodSpeedHQ/codspeed"
+      }
     }
   },
   "outputStyle": "Proactive",
   "viewMode": "verbose",
+  "feedbackSurveyRate": 0,
   "spinnerTipsEnabled": true,
+  "subagentPromptCacheTtl": "5m",
   "alwaysThinkingEnabled": true,
   "effortLevel": "xhigh",
+  "modelSettings": {
+    "claude-fable-5": {
+      "effortLevel": "xhigh"
+    },
+    "claude-fable-5-1": {
+      "effortLevel": "xhigh"
+    }
+  },
   "fastModePerSessionOptIn": true,
+  "awaySummaryEnabled": false,
+  "askUserQuestionTimeout": "never",
+  "dialogExpiry": "never",
   "autoUpdatesChannel": "latest",
   "tui": "fullscreen",
   "voice": {
     "enabled": true,
     "mode": "tap"
   },
+  "prefersReducedMotion": false,
   "autoMemoryEnabled": true,
   "autoDreamEnabled": true,
   "showThinkingSummaries": true,
@@ -197,12 +287,48 @@
   "autoScrollEnabled": true,
   "teammateMode": "tmux",
   "remoteControlAtStartup": true,
+  "crossSessionInbound": "accept",
   "autoUploadSessions": true,
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
   "useAutoModeDuringPlan": true,
+  "autoMode": {
+    "environment": [
+      "### Org-wide",
+      "**Organization**: None configured",
+      "**Cloud provider(s)**: None configured",
+      "**Repository visibility**: not queryable here — assuming private per shipped default (no evidence of public visibility)",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: None configured",
+      "**Default / protected branches**: not queryable here — origin/HEAD unset, no branch protection data available",
+      "**CI/CD deploy targets**: None configured",
+      "**Network posture**: None configured",
+      "**Source control**: The trusted repo (github.com:zchee/mcp-crates.git) and its remote only — no additional orgs configured",
+      "**Trusted internal domains**: None configured",
+      "**Trusted cloud buckets**: None configured",
+      "**Key internal services**: None configured",
+      "**Internal package registry**: None configured",
+      "**Sensitive data locations & audiences**: any file or store holding personal data, confidential business data, credentials, regulated data, or similarly sensitive material; preserve exact handles when known and share only with audiences cleared at the [named+specifics] bar",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment (hyphen/underscore/dot-delimited — e.g. matches `prod-db`, not `producer`)",
+      "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
+      "### User-specific",
+      "**Primary use of Claude Code**: software development",
+      "**Trusted repo**: /Users/zchee/rust/src/github.com/zchee/mcp-crates and its remote github.com:zchee/mcp-crates.git (visibility unverified — treat as private by default per shipped-default fallback; only this repo's own work should be pushed there)",
+      "**Org-specific CLIs**: None configured — shell history shows generic dev tooling (git, cargo, gh, rg, fd) with no org-specific CLI observed"
+    ]
+  },
   "voiceEnabled": true,
+  "$comment": "https://code.claude.com/docs/en/settings-reference",
+  "autoCompactThreshold": 0.9,
+  "autoCompactTiming": "after-response",
+  "omc": {
+    "deepInterview": {
+      "ambiguityThreshold": 0.2
+    }
+  },
   "omcHud": {
     "elements": {
       "cwd": false,
