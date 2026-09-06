@@ -1,6 +1,5 @@
 {
   "$schema": "file:///Users/zchee/src/github.com/zchee/schema/claude-code-settings.schema.json",
-  "gcpAuthRefresh": "gcloud auth application-default login",
   "cleanupPeriodDays": 99999,
   "env": {
     "CLAUDE_CODE_SHELL": "/opt/homebrew/bin/bash",
@@ -96,6 +95,16 @@
         ]
       }
     ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/session-start.mjs\""
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Bash",
@@ -106,26 +115,22 @@
             "args": []
           }
         ]
-      }
-    ],
-    "PostToolUse": [
+      },
       {
-        "matcher": "Write|Edit",
         "hooks": [
           {
             "type": "command",
-            "command": "/opt/local/bin/cc-fmt-hook",
-            "args": []
+            "command": "node \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/pre-tool-use.mjs\""
           }
         ]
       }
     ],
-    "SessionStart": [
+    "PostToolUse": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/session-start.mjs\""
+            "command": "node \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/post-tool-use.mjs\""
           }
         ]
       }
@@ -169,7 +174,6 @@
     "clangd-lsp@claude-plugins-official": true,
     "codspeed@codspeed-plugin-marketplace": true,
     "compact-plus@compact-plus-local": true,
-    "fable-advisor@fable-advisor": false,
     "gopls-lsp@claude-plugins-official": true,
     "langsmith-tracing@langsmith-claude-code-plugins": true,
     "lua-lsp@claude-plugins-official": true,
@@ -185,7 +189,8 @@
     "security-guidance@claude-plugins-official": false,
     "skill-creator@claude-plugins-official": true,
     "swift-lsp@claude-plugins-official": true,
-    "typescript-lsp@claude-plugins-official": true
+    "typescript-lsp@claude-plugins-official": true,
+    "build-macos-apps@openai-curated": true
   },
   "extraKnownMarketplaces": {
     "goland-claude-marketplace": {
@@ -210,12 +215,6 @@
       "source": {
         "source": "github",
         "repo": "u-ichi/compact-plus"
-      }
-    },
-    "fable-advisor": {
-      "source": {
-        "source": "github",
-        "repo": "DannyMac180/fable-advisor"
       }
     },
     "googlechrome": {
@@ -246,6 +245,12 @@
       "source": {
         "source": "github",
         "repo": "CodSpeedHQ/codspeed"
+      }
+    },
+    "openai-curated": {
+      "source": {
+        "source": "github",
+        "repo": "zchee/openai-plugins"
       }
     }
   },
