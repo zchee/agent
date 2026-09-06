@@ -1,5 +1,5 @@
 <!-- OMC:START -->
-<!-- OMC:VERSION:5.1.0 -->
+<!-- OMC:VERSION:5.3.0 -->
 
 # oh-my-claudecode - Intelligent Multi-Agent Orchestration
 
@@ -196,7 +196,7 @@ Workers run via Claude Code's native `tmux` teammateMode through the
 
 ### Security-gated work: keep the lead(orchestrator) off the credential path
 
-When you are the lead running on Fable 5, and a step involves handling a
+When you are the lead running on Fable 5.1, and a step involves handling a
 live credential — reading a stored auth token, adding a Bearer token to an
 outbound request, or probing an authenticated endpoint — running that step
 **myself** can trigger a dual-use security check whose fallback path lands on
@@ -208,7 +208,7 @@ OMC team runtime** — invoke the `/oh-my-claudecode:team` skill with that agent
 type as the worker — rather than running it in the lead context. The
 worker holds the token and performs the network/auth work; the lead
 receives only the derived facts (observed wire fields, a verdict, a decision)
-and never reads the raw secret. This keeps the whole run on Fable 5 and
+and never reads the raw secret. This keeps the whole run on Fable 5.1 and
 preserves the "workers are Fable, not Opus" routing.
 
 Alternatives, in order of preference:
@@ -232,7 +232,7 @@ assigns, record it as a numbered deviation in that contract's ledger.
 
 Security-review work — anything framed as a 'security review', 'security
 findings', vulnerability hunting, or triaging/remediating such findings —
-must NOT run in the Fable 5 lead context: those workloads can trip
+must NOT run in the Fable 5.1 lead context: those workloads can trip
 the dual-use security check whose fallback lands on Opus 4.8 (expensive,
 unwanted). Instead, ALWAYS stand up an **opus-5 worker via the team
 runtime** (e.g. the `/oh-my-claudecode:team` flow, or an Agent-tool spawn
@@ -241,13 +241,13 @@ security-review execution there. The lead receives the findings
 report and rules on it; it never performs the review itself. This is a
 global rule for all projects.
 
-### Detect a Fable 5 → Opus 4.8 fallback yourself, then flag the switch-back point
+### Detect a Fable 5.1 → Opus 4.8 fallback yourself, then flag the switch-back point
 
 **Detection is the assistant's job, not the user's.** Do not wait to be told
 a fallback happened. The reliable signal is self-identity: the model
 generating a turn knows which model it is, and the session's configured model
 is stated in the environment block. When those disagree — the environment
-says Fable 5 and the turn is being served by Opus 4.8 — a fallback has fired.
+says Fable 5.1 and the turn is being served by Opus 4.8 — a fallback has fired.
 Check that at the start of any turn following dual-use-adjacent material
 (security findings, vulnerability triage, credential handling, exploit
 mechanics). Secondary signals, less reliable and to be treated as hints
@@ -324,7 +324,7 @@ Every commit message must follow the Git protocol.
 
 <optional concise body: constraints and approach rationale>
 
-Co-Authored-By: (Claude Opus 4.8 (1M context) or Claude Fable 5) <noreply@anthropic.com>
+Co-Authored-By: (Claude Opus 4.8 (1M context) or Claude Fable 5.1) <noreply@anthropic.com>
 ```
 
 </example>
