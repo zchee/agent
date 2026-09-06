@@ -1,0 +1,78 @@
+#:schema file:///Users/zchee/rust/src/github.com/zchee/ganja-code/schema/ganja-config.schema.json
+
+default_provider = "openai"
+model = "openai/gpt-5.6-sol"
+small_model = "openai/gpt-5.6-luna"
+# model = "cursor/claude-fable-5-1-xhigh"
+# model = "cursor/gpt-5.6-sol-xhigh-fast"
+# small_model = "cursor/gpt-5.6-luna-high-fast"
+effort = "xhigh"
+default_agent = "build"
+memory = true
+instructions = []
+theme = "claude"
+theme_mode = "dark"
+shell = "/opt/homebrew/bin/zsh"
+lsp = true
+tool_defer_threshold = 0
+
+snapshot = true
+teamless_send = "unasked"
+cross_session_inbound = "accept"
+
+[openrouter]
+server_tools = [
+  "advisor",
+  "apply_patch",
+  "datetime",
+  "experimental__search_models",
+  "fusion",
+  "image_generation",
+  "shell",
+  "subagent",
+  "web_fetch",
+  "web_search",
+]
+
+[agents]
+concurrency = 10
+
+[permission]
+
+[keybinds]
+
+[command]
+
+[mcp.context7]
+type = "remote"
+url = "https://mcp.context7.com/mcp"
+
+[provider.ollama]
+dialect = "openai-responses"
+base_url = "http://127.0.0.1:11434/v1"
+key_env = "LOCAL_OLLAMA_KEY"
+
+[teammates]
+pane_share = 65
+shell = "/opt/homebrew/bin/zsh"
+
+[webfetch]
+allow_private = true
+
+[skills]
+paths = []
+urls = []
+
+[[hooks.UserPromptSubmit]]
+matcher = ".*"
+[[hooks.UserPromptSubmit.hooks]]
+type = "command"
+command = "imectl set -q com.apple.keylayout.ABC"
+
+[tui]
+notifications = true
+notification_method = "osc9"
+
+[tui.statusline]
+elements = ["agent", "activity", "git", "model", "effort", "context", "rate", "tokens", "session", "todos", "queued", "jobs", "tasks", "dialogs", "notice", "hints"]
+detail = true
