@@ -1,0 +1,85 @@
+# betterleaks configuration for the zchee/agent repository.
+#
+# Picked up automatically by `betterleaks dir .` from the repository root
+# (resolution order: --config > BETTERLEAKS_CONFIG > BETTERLEAKS_CONFIG_TOML >
+# ./.betterleaks.toml).
+#
+# Why this file exists: this repository stores agent configuration alongside the
+# local runtime state those agents produce. An unfiltered `betterleaks dir . -v`
+# reads ~28 GB and reports ~17,700 findings, none of which are in a git-tracked
+# file.
+#
+# The invariant every exclusion below holds to: no pattern may match a
+# git-tracked file, so committed content is never exempted from scanning. Note
+# that `betterleaks dir` does not consult .gitignore, so these paths must be
+# listed here even once git ignores them. Re-check the invariant after editing:
+#
+#   git ls-files | while read -r f; do \
+#     betterleaks dir "$f" --no-banner -f json -r - >/dev/null || true; done
+#
+# or more directly, match every `paths` regex in this file against the output of
+# `git ls-files` and require zero hits. `gjc/agent` is the trap: it holds two
+# tracked files (config.yml, models.yml) next to the runtime state, which is why
+# that block enumerates subpaths instead of excluding the directory.
+
+[extend]
+useDefault = true
+
+# --- Agent runtime state -----------------------------------------------------
+#
+# Conversation transcripts, session rollouts, shell snapshots, file history and
+# scratch databases. High-entropy strings in these files are content the agents
+# read or wrote (hashes, UUIDs, row keys, documentation samples), not stored
+# credentials. This is the bulk of the noise: 17,580 of the 17,718 findings.
+[[allowlists]]
+description = "Agent runtime state: transcripts, sessions, snapshots, local databases"
+paths = [
+  '''(?:^|/)codex/(?:sessions|archived_sessions|backups|logs|sqlite|\.tmp)(?:/|$)''',
+  '''(?:^|/)codex/history\.jsonl$''',
+  '''(?:^|/)codex/logs_2\.sqlite(?:-wal|-shm)?$''',
+  '''(?:^|/)codex/\.codex-global-state\.json(?:\.bak)?$''',
+  '''(?:^|/)claude/(?:projects|backups|file-history|shell-snapshots|sessions|daemon)(?:/|$)''',
+  # gjc/agent holds tracked config.yml and models.yml, so enumerate the runtime
+  # entries rather than the directory. sdk/broker.json carries a live local IPC
+  # broker token; it is regenerated per run, not an account credential.
+  '''(?:^|/)gjc/agent/(?:sessions|blobs|retired|resident-cache|sdk)(?:/|$)''',
+  '''(?:^|/)gjc/agent/(?:agent|history|models)\.db(?:-wal|-shm)?$''',
+  '''(?:^|/)gjc/agent/(?:gjc-crash\.log|credential-auto-import-state\.json)$''',
+  '''(?:^|/)\.omc/state(?:/|$)''',
+  '''(?:^|/)\.backup(?:/|$)''',
+]
+
+# --- Vendored third-party content --------------------------------------------
+#
+# Plugin marketplaces, plugin caches and vendored skill bundles. The matches are
+# documentation examples (`Authorization: Bearer <token>`, connection-string
+# templates) and sample fixtures shipped by upstream projects. Not our content
+# and not ours to rotate.
+[[allowlists]]
+description = "Vendored plugin marketplaces, plugin caches and imported skill bundles"
+paths = [
+  '''(?:^|/)(?:claude|codex|ganja)/plugins/(?:cache|marketplaces)(?:/|$)''',
+  '''(?:^|/)codex/vendor_imports(?:/|$)''',
+]
+
+# --- Local credential stores -------------------------------------------------
+#
+# NOT false positives. These files hold real credentials; the findings in them
+# are correct. They are excluded by exact path so that the scan stays useful,
+# on the basis that a credential in its designated store is not a leak.
+#
+# Deliberately scoped to exact paths (and one directory that exists only to hold
+# credentials), so a secret appearing anywhere else still fires — including a
+# sibling file in the same directory. All six are covered by .gitignore, so this
+# allowlist quiets the scan rather than being the only thing between them and a
+# commit; keep it that way when adding an entry here.
+[[allowlists]]
+description = "Local credential stores (real secrets, excluded deliberately)"
+paths = [
+  '''(?:^|/)codex/auth\.json$''',
+  '''(?:^|/)codex/\.credentials\.json$''',
+  '''(?:^|/)codex/\.env$''',
+  '''(?:^|/)codex/multi-auth(?:/|$)''',
+  '''(?:^|/)claude/\.env$''',
+  '''(?:^|/)opencode/service-v2\.json$''',
+]
