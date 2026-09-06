@@ -1,4 +1,5 @@
+bun.lock
 node_modules
 package.json
-bun.lock
-.gitignore
+
+service-v2.json
