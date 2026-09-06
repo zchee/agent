@@ -1,16 +1,19 @@
 app-server-daemon/
+backups/
 cache/
 memories/
 memories_extensions/
 sessions/
 shell_snapshots/
 sqlite/
+vendor_imports/
 worktrees/
 
 .codex-chronicle-assets-to-install.marker
 .codex-global-state.json
 .codex-tape-recorder-assets-to-install.marker
 .credentials.json
+archived_sessions
 auth.json
 history.jsonl
 installation_id
