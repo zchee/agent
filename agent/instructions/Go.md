@@ -22,6 +22,8 @@ Remember:
 * **MUST use `any` instead of `interface{}`.**
 * **MUST use generic types when it makes sense.**
 * **MUST follow Go formatting with `gofmt -s -w .` and `gofumpt -w -extra .`**
+* **MUST keep `func` signature parameters on a single line — never wrap arguments across multiple lines.**
+    - Applies to function and method declarations. Prefer a long line, shorter parameter names, or grouping same-type parameters (`a, b string`) over inserting line breaks inside the parameter list.
 * **Always use the `modernize -fix -test ./...`.**
 * **MUST actively use third-party packages whenever possible, when performance or any requirement.**
     - However, prefer standard packages when they already provide the same behavior.
