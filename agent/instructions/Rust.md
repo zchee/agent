@@ -1,21 +1,24 @@
 # Agent Guidelines for Rust Code Quality
 
-This document provides guidelines for maintaining high-quality Rust code. These rules MUST be followed by all AI coding agents and contributors.
+This document provides guidelines for maintaining high-quality Rust code.
 
-## Your Core Principles
+<core_principles>
 
 All code you write MUST be fully optimized.
 
 "Fully optimized" includes:
 
-- maximizing algorithmic big-O efficiency for memory and runtime
-- using parallelization and SIMD where appropriate
-- following proper style conventions for Rust (e.g. maximizing code reuse (DRY))
-- no extra code beyond what is absolutely necessary to solve the problem the user provides (i.e. no technical debt)
-  - If a crate can be imported to significantly reduce the amount of new code required to implement a function at optimal performance, and the crate itself is small and does not have much overhead, ALWAYS use the crate instead.
+- Maximizing algorithmic Big-O efficiency for memory and runtime
+- Using parallelization and SIMD where appropriate
+- Following proper style conventions for Rust (e.g. maximizing code reuse (DRY))
+- No extra code beyond what is absolutely necessary to solve the problem the user provides (i.e. no technical debt)
+  - If a crate can be imported to significantly reduce the amount of new code required to implement a function at optimal performance, and the crate itself is does not have much overhead, ALWAYS use the crate instead.
+  - **Crates are the Rust idiom — search before you write.** Before hand-rolling ANY behavior, FIRST search the `crates` MCP server (`search_crates` / `get_crate_info` / `get_crate_documentation`) for an existing crate that fits the required behavior. Hand-roll only when no fitting crate passes the project's license policy and a basic maintenance check, and record that reason where the hand-rolled code lives. This is a global rule for all Rust work.
   - Before adding a crate, check whether the functionality has since been stabilized in `std` (e.g. `LazyLock`, `OnceLock`, async fn in traits). Prefer `std` over third-party crates when equivalent.
 
-## Edition and Toolchain
+</core_principles>
+
+<edition_toolchain>
 
 - **MUST** use Rust Edition 2024 (`edition = "2024"`) for all new projects.
 - **MUST** pin the toolchain with `rust-toolchain.toml` for reproducible builds.
@@ -26,7 +29,9 @@ All code you write MUST be fully optimized.
   - `extern` blocks require `unsafe extern`; attributes like `no_mangle` are written `#[unsafe(no_mangle)]`.
   - Return-position `impl Trait` captures all lifetimes by default; use `use<'a, T>` capture syntax when narrower capture is required.
 
-## Preferred Tools
+</edition_toolchain>
+
+<preferred_tools>
 
 - Use `cargo` for project management, building, and dependency management.
 - Use `indicatif` to track long-running operations with progress bars. The message should be contextually sensitive.
@@ -60,7 +65,10 @@ All code you write MUST be fully optimized.
   - **NEVER** use `Any` type unless absolutely necessary
   - **MUST** run `ty` and resolve all type errors
 
-## Code Style and Formatting
+</preferred_tools>
+
+<!-- # Code Style and Formatting -->
+<code_style>
 
 - **MUST** use meaningful, descriptive variable and function names
 - **MUST** follow Rust API Guidelines and idiomatic Rust conventions
@@ -72,7 +80,10 @@ All code you write MUST be fully optimized.
 - **MUST** avoid including redundant comments which are tautological or self-demonstrating (e.g. cases where it is easily parsable what the code does at a glance or its function name giving sufficient information as to what the code does, so the comment does nothing other than waste user time)
 - **MUST** avoid including comments which leak what this file contains, or leak the original user prompt, ESPECIALLY if it's irrelevant to the output code.
 
-## Documentation
+</code_style>
+
+<!-- # Documentation -->
+<documentation>
 
 - **MUST** include doc comments for all public functions, structs, enums, and methods
 - **MUST** document function parameters, return values, and errors
@@ -105,7 +116,9 @@ Example doc comment:
 pub fn calculate_total(items: &[Item], tax_rate: f64) -> Result<f64, CalculationError> {
 ```
 
-## Type System
+</documentation>
+
+<type_system>
 
 - **MUST** leverage Rust's type system to prevent bugs at compile time
 - **NEVER** use `.unwrap()` in library code; use `.expect()` only for invariant violations with a descriptive message
@@ -131,7 +144,12 @@ let Some(config) = load_config(path) else {
 };
 ```
 
-## Function Design
+</type_system>
+
+<!-- # Function Design -->
+<design>
+
+<design_function>
 
 - **MUST** keep functions focused on a single responsibility
 - **MUST** prefer borrowing (`&T`, `&mut T`) over ownership when possible
@@ -140,7 +158,10 @@ let Some(config) = load_config(path) else {
 - Use iterators and combinators over explicit loops where clearer
 - Use async closures (`async |x| { ... }`) instead of `|x| async move { ... }` when the closure needs to borrow from its environment
 
-## Struct and Enum Design
+</design_function>
+
+<!-- # Struct and Enum Design -->
+<design_struct_enum>
 
 - **MUST** keep types focused on a single responsibility
 - **MUST** derive common traits: `Debug`, `Clone`, `PartialEq` where appropriate
@@ -150,16 +171,33 @@ let Some(config) = load_config(path) else {
 - Make fields private by default; provide accessor methods when needed
 - Use `#[non_exhaustive]` on public enums/structs that may grow, to preserve semver compatibility
 
-## Testing
+</design_struct_enum>
+
+</design>
+
+<testing>
 
 - **MUST** write unit tests for all new functions and types
 - **MUST** mock external dependencies (APIs, databases, file systems)
 - **MUST** use the built-in `#[test]` attribute; run with `cargo nextest run` if available, otherwise `cargo test`
 - Follow the Arrange-Act-Assert pattern
 - Do not commit commented-out tests
-- Use `#[cfg(test)]` modules for test code
+- **MUST** keep unit tests in a sibling file, never inline. `foo.rs` ends with the declaration below and the test body lives in `foo_tests.rs` next to it (`lib.rs` → `lib_tests.rs`, `mod.rs` → `mod_tests.rs`). `tests` stays a child module of `foo`, so `use super::*;` resolves exactly as an inline module would. Integration tests stay under `tests/`.
 
-## Imports and Dependencies
+  ```rust
+  #[cfg(test)]
+  #[path = "foo_tests.rs"]
+  mod tests;
+  ```
+
+  - Never write `#[cfg(test)] mod tests { ... }` inline; when converting existing inline blocks, move the body verbatim (do not re-indent — multi-line string literals must keep their bytes) and let `cargo fmt` normalise the code.
+  - When a repo has a splitter (e.g. dolt-rs `tools/dev/split-tests.py --apply|--check`), use it and wire `--check` into CI.
+  - Under `src/bin/`, cargo autodiscovers `foo_tests.rs` as a binary target (E0601/E0433); explicit `[[bin]]` entries do not stop that — set `autobins = false` in `[package]` and list the binaries in `[[bin]]`.
+
+</testing>
+
+<!-- # Imports and Dependencies -->
+<imports_and_dependencies>
 
 - **MUST** avoid wildcard imports (`use module::*`) except for preludes, test modules (`use super::*`), and prelude re-exports
 - **MUST** document dependencies in `Cargo.toml` with version constraints
@@ -167,7 +205,10 @@ let Some(config) = load_config(path) else {
 - Organize imports: standard library, external crates, local modules; let `rustfmt` handle ordering
 - **NEVER** add `lazy_static` or `once_cell` as dependencies; use `std::sync::LazyLock` and `std::sync::OnceLock`
 
-## Rust Best Practices
+</imports_and_dependencies>
+
+<!-- # Rust Best Practices -->
+<best_practices>
 
 - **NEVER** use `unsafe` unless absolutely necessary; document safety invariants with `// SAFETY:` comments when used
 - Use `&raw const` / `&raw mut` instead of the `addr_of!` macros when raw pointers are unavoidable
@@ -179,7 +220,11 @@ let Some(config) = load_config(path) else {
 - Use `enumerate()` instead of manual counter variables
 - Prefer `if let` / `while let` for single-pattern matching, and `matches!` for boolean pattern checks
 
-## Memory and Performance
+</best_practices>
+
+<performance>
+<!-- # Memory and Performance -->
+<memory>
 
 - **MUST** avoid unnecessary allocations; prefer `&str` over `String` when possible
 - **MUST** use `Cow<'_, str>` when ownership is conditionally needed
@@ -188,7 +233,10 @@ let Some(config) = load_config(path) else {
 - Use `Arc` and `Rc` judiciously; prefer borrowing
 - Use `LazyLock` for lazily-initialized statics instead of runtime `Option<T>` + lock dances
 
-## Benchmarking and Optimization
+</memory>
+
+<!-- # Benchmarking and Optimization -->
+<benchmarking_and_optimization>
 
 - **NEVER** run benchmarks in parallel, as the benchmarks will compete for resources and the results will be invalid
 - **NEVER** game the benchmarks. Do not manipulate the benchmarks themselves to satisfy any required performance constraints
@@ -197,7 +245,10 @@ let Some(config) = load_config(path) else {
 - If benchmarking against another crate or library, ensure the benchmarks are apples-to-apples comparisons
 - Ensure benchmark tests are independent. If the tests are dependent due to a feature (e.g. caching), ensure the feature is disabled
 
-## Concurrency
+</benchmarking_and_optimization>
+
+<!-- # Concurrency -->
+<concurrency>
 
 - **MUST** use `Send` and `Sync` bounds appropriately
 - **MUST** prefer `tokio` for async runtime in async applications
@@ -206,7 +257,9 @@ let Some(config) = load_config(path) else {
 - Use channels for message passing: `tokio::sync::mpsc` in async code, `std::sync::mpsc` or `crossbeam` in sync code
 - Use `std::thread::scope` for scoped threads instead of `crossbeam::scope`
 
-## Security
+</performance>
+
+<security>
 
 - **NEVER** store secrets, API keys, or passwords in code. Only store them in `.env`
   - Ensure `.env` is declared in `.gitignore`
@@ -215,25 +268,35 @@ let Some(config) = load_config(path) else {
 - Use `secrecy` crate for sensitive data types
 - Run `cargo audit` (or `cargo deny check`) when adding new dependencies
 
-## Version Control
+</security>
+
+<version_control>
 
 - **MUST** write clear, descriptive commit messages
 - **NEVER** commit commented-out code; delete it
 - **NEVER** commit debug `println!` statements or `dbg!` macros
 - **NEVER** commit credentials or sensitive data
 
-## Tools
+</version_control>
+
+<tools>
 
 - **MUST** use `rustfmt` for code formatting
 - **MUST** use `clippy` for linting: `cargo clippy --all-targets --all-features -- -D warnings`
 - **MUST** ensure code compiles with no warnings (use `-D warnings` flag in CI, not `#![deny(warnings)]` in source)
 - Use `cargo` for building, testing, and dependency management
+- For dev/test profile work, use `cargo --config ~/.config/rust/config.dev.toml ...`
+- **MUST** pass `--config ~/.config/rust/config.dev.toml` to cargo for any dev/test-profile invocation (`cargo build`, `cargo test`, `cargo nextest run`, `cargo clippy`, `cargo check`), e.g. `cargo --config ~/.config/rust/config.dev.toml nextest run`. It redirects `target-dir` to tmpfs (`/Volumes/tmpfs/`) and disables incremental for dev/test. Do not pass it for release builds intended to produce artifacts in the project `target/`.
 - Use `cargo nextest run` (fall back to `cargo test`) for running tests
 - Use `cargo doc` for generating documentation
 - For projects which build a Python package, **NEVER** build with `cargo build --features python`: this will always fail. Instead, **ALWAYS** use `maturin`.
 - **NEVER** use the `Explore` tool for `Cargo.lock`: it is large and irrelevant. Read `Cargo.lock` **ONLY** if it's extremely relevant.
+- **GitHub Actions runner-label exception:** when a required tool rejects an allowed `runs-on` image (e.g. CodSpeed's runner refuses `ubuntu-26.04` with "Unsupported system"), pin that one job to the newest NAMED image the tool supports (never `*-latest`) and state the constraint and its retirement condition in a comment beside the pin.
 
-## Before Committing
+</tools>
+
+<!-- # Before Committing -->
+<pre_commit>
 
 - [ ] All tests pass (`cargo nextest run` if available, otherwise `cargo test`)
 - [ ] No compiler warnings (`cargo build`)
@@ -246,6 +309,10 @@ let Some(config) = load_config(path) else {
 - [ ] No commented-out code or debug statements
 - [ ] No hardcoded credentials
 
+</pre_commit>
+
+<!--
 ---
 
 **Remember:** Prioritize clarity and maintainability over cleverness. This is your core directive.
+-->
