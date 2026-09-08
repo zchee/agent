@@ -29,9 +29,13 @@ chk() { # label, expected substring, actual
   fi
 }
 # $1 path, $2 optional CC_FMT_CONFIG, $3 optional CC_FMT_TRUST
+# The developer's own CC_FMT_* must not reach the hook: CC_FMT_ASYNC=1 or
+# CC_FMT_TRUST in the ambient environment would silently rewrite these results.
+# Every case starts from a clean slate and sets only what it is testing.
+clean="env -u CC_FMT_CONFIG -u CC_FMT_TRUST -u CC_FMT_ASYNC -u CC_FMT_DRYRUN"
 run() {
   printf '{"session_id":"s","tool_input":{"file_path":"%s"}}' "$1" |
-    env PATH="$PATH" HOME="$HOME" CLAUDE_CONFIG_DIR="$T/cfgdir" \
+    $clean PATH="$PATH" HOME="$HOME" CLAUDE_CONFIG_DIR="$T/cfgdir" \
       ${2:+CC_FMT_CONFIG="$2"} ${3:+CC_FMT_TRUST="$3"} CC_FMT_DRYRUN=1 "$hook" |
     grep -v '^# config: '
 }
@@ -89,7 +93,7 @@ chk "an unmatched bare name does nothing" "no rule matches: LICENSE" "$(run "$T/
 echo '# a broken config rolls back rather than half-applying'
 printf 'not json at all' >"$T/repo/sub/deep/.fmt-hooks.json"
 out=$(printf '{"tool_input":{"file_path":"%s"}}' "$T/repo/sub/deep/a.rs" |
-  env PATH="$PATH" HOME="$HOME" CLAUDE_CONFIG_DIR="$T/cfgdir" CC_FMT_DRYRUN=1 "$hook")
+  $clean PATH="$PATH" HOME="$HOME" CLAUDE_CONFIG_DIR="$T/cfgdir" CC_FMT_DRYRUN=1 "$hook")
 chk "the file is reported under dryrun" "rejected (not an object" "$out"
 chk "rules loaded before it survive" SUB-rs "$out"
 printf '{"rs": ["echo","DEEP"], "toml": }' >"$T/repo/sub/deep/.fmt-hooks.json"
@@ -99,7 +103,7 @@ rm "$T/repo/sub/deep/.fmt-hooks.json"
 echo '# no config at all means no formatting at all'
 chk "an empty config dir is a no-op" "no rule matches: a.rs" \
   "$(printf '{"tool_input":{"file_path":"/none/a.rs"}}' |
-    env PATH="$PATH" CLAUDE_CONFIG_DIR="$T/empty" CC_FMT_DRYRUN=1 "$hook")"
+    $clean PATH="$PATH" CLAUDE_CONFIG_DIR="$T/empty" CC_FMT_DRYRUN=1 "$hook")"
 
 echo '# turning a rule off'
 echo '{ "rs": null, "go": [] }' >"$T/off.json"
@@ -135,7 +139,7 @@ if command -v rustfmt >/dev/null && rustfmt --version >/dev/null 2>&1; then
   printf 'fn main(){let x=1;}\n' >"$T/repo/real.rs"
   echo '{ "rs": ["rustfmt", "--edition", "2024"] }' >"$T/real.json"
   printf '{"tool_input":{"file_path":"%s"}}' "$T/repo/real.rs" |
-    env CLAUDE_CONFIG_DIR="$T/cfgdir" CC_FMT_CONFIG="$T/real.json" "$hook"
+    $clean CLAUDE_CONFIG_DIR="$T/cfgdir" CC_FMT_CONFIG="$T/real.json" "$hook"
   chk "the file is rewritten in place" '    let x = 1;' "$(cat "$T/repo/real.rs")"
 else
   echo 'skip the file is rewritten in place (no usable rustfmt)'
@@ -162,7 +166,7 @@ fast_or_slow() { [[ $1 -le 1 ]] && echo fast || echo "slow:${1}s"; }
 printf 'orig\n' >"$T/async.rs"
 t0=$SECONDS
 printf '{"tool_input":{"file_path":"%s"}}' "$T/async.rs" |
-  env CLAUDE_CONFIG_DIR="$T/cfgdir" CC_FMT_CONFIG="$T/slow.json" CC_FMT_ASYNC=1 "$hook" >"$T/async.out"
+  $clean CLAUDE_CONFIG_DIR="$T/cfgdir" CC_FMT_CONFIG="$T/slow.json" CC_FMT_ASYNC=1 "$hook" >"$T/async.out"
 chk "the hook process exits without waiting" fast "$(fast_or_slow $((SECONDS - t0)))"
 
 # Command substitution instead reads stdout until EOF, so it blocks for as long
@@ -171,7 +175,7 @@ chk "the hook process exits without waiting" fast "$(fast_or_slow $((SECONDS - t
 printf 'orig\n' >"$T/async2.rs"
 t0=$SECONDS
 _=$(printf '{"tool_input":{"file_path":"%s"}}' "$T/async2.rs" |
-  env CLAUDE_CONFIG_DIR="$T/cfgdir" CC_FMT_CONFIG="$T/slow.json" CC_FMT_ASYNC=1 "$hook")
+  $clean CLAUDE_CONFIG_DIR="$T/cfgdir" CC_FMT_CONFIG="$T/slow.json" CC_FMT_ASYNC=1 "$hook")
 chk "its stdio pipe closes with it" fast "$(fast_or_slow $((SECONDS - t0)))"
 chk "the file is untouched on return" orig "$(cat "$T/async.rs")"
 sleep 3
@@ -182,7 +186,7 @@ chk "an async formatter gets its own process group" separate \
 printf 'orig\n' >"$T/sync.rs"
 t0=$SECONDS
 printf '{"tool_input":{"file_path":"%s"}}' "$T/sync.rs" |
-  env CLAUDE_CONFIG_DIR="$T/cfgdir" CC_FMT_CONFIG="$T/slow.json" "$hook"
+  $clean CLAUDE_CONFIG_DIR="$T/cfgdir" CC_FMT_CONFIG="$T/slow.json" "$hook"
 sync_elapsed=$((SECONDS - t0))
 chk "without it the hook waits" waited "$([[ $sync_elapsed -ge 2 ]] && echo waited || echo "returned in ${sync_elapsed}s")"
 chk "and the work is done on return" formatted "$(cat "$T/sync.rs")"
