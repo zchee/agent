@@ -1,0 +1,13 @@
+{
+  "zig": ["zig", "fmt"],
+  "rs": ["rustfmt", "--edition", "2024"],
+  "go": ["gofumpt", "-w"],
+  "py,pyi": ["ruff", "format", "-q"],
+  "c,h,cc,cpp,cxx,hpp,hxx,m,mm": ["clang-format", "-i", "-style=file:${HOME}/.config/llvm/.clang-format"],
+  "js,jsx,mjs,cjs,ts,tsx,mts,cts": ["deno", "fmt", "--quiet"],
+  "json,jsonc": ["deno", "fmt", "--quiet"],
+  "css,scss,less": ["deno", "fmt", "--quiet"],
+  "sh,bash": ["shfmt", "-w"],
+  "lua": ["stylua"],
+  "toml": ["taplo", "format"]
+}
