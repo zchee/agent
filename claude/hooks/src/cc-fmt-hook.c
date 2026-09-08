@@ -16,11 +16,34 @@
 // Register as an EXEC-FORM hook (spawned directly, no shell):
 //   { "type":"command", "command":"/path/to/cc-fmt-hook", "args":[] }
 // matcher "Write|Edit", event PostToolUse. A missing formatter is a silent
-// no-op, and so is a formatter that fails: the hook always exits 0 so a file
-// that does not parse yet never turns into hook output. CC_FMT_ASYNC=1 does
-// not wait for the formatter. CC_FMT_CONFIG adds a config that overrides every
-// other, and CC_FMT_TRUST fences off where project configs are honoured -- see
-// the config section below for both.
+// no-op, and so is a formatter that fails: the hook always exits 0, and the
+// formatter's own stdin, stdout and stderr are /dev/null, so a file that does
+// not parse yet never turns into hook output. CC_FMT_CONFIG adds a config that
+// overrides every other, and CC_FMT_TRUST fences off where project configs are
+// honoured -- see the config section below for both.
+//
+// CC_FMT_ASYNC=1 returns without waiting for the formatter. Two things have to
+// be true for that to mean anything, and both are the reason the child gets
+// /dev/null and a process group of its own:
+//
+//   the descriptors  Claude Code collects a hook's stdout and stderr as
+//                    strings, so it waits for those pipes to reach EOF, not for
+//                    the hook to exit. A child that inherits them holds the
+//                    write ends open after the hook is gone and the wait
+//                    happens anyway: measured here, a 2 s formatter let the
+//                    hook exit in 4 ms and the pipes close at 2042 ms, which is
+//                    exactly when the synchronous path finished. Handing the
+//                    child /dev/null instead closes both at 4 ms. The same
+//                    inheritance deadlocks a caller that pipes stdio without
+//                    draining it -- 200 KB of formatter stderr fills the pipe,
+//                    the formatter blocks in write(), the hook blocks in
+//                    waitpid(), and neither ever returns.
+//   the process group  an unwaited formatter outlives the hook, so a timeout
+//                    that signals the hook's process group would reach it in
+//                    the middle of rewriting a file. POSIX_SPAWN_SETPGROUP puts
+//                    the async child in its own group; the synchronous child
+//                    stays in the hook's group on purpose, because there
+//                    abandoning the hook should abandon the formatter too.
 //
 // ------------------------------------------------------------------ config --
 // Config files are applied lowest precedence first. A later file overrides
@@ -106,7 +129,9 @@
 //                     it.
 //   process launch    fork+execve+wait4 costs 2.12 ms; posix_spawn+wait4 costs
 //                     1.46 ms for the same child, because there are no page
-//                     tables to copy. 0.66 ms saved.
+//                     tables to copy. 0.66 ms saved. The three /dev/null opens
+//                     ride along inside the spawn as file actions, which the
+//                     kernel performs in the child: no extra syscall here.
 //   the formatter     3-60 ms, i.e. everything else put together is noise next
 //                     to picking the right binary. clang-format from Xcode is
 //                     7.0 ms where Homebrew LLVM's is 40.8 ms.
@@ -153,14 +178,14 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-#if defined(__ARM_NEON)
-  #include <arm_neon.h>
-  #define CC_VEC 16
-#elif defined(__AVX2__)
+#if defined(__AVX2__)
   #include <immintrin.h>
   #define CC_VEC 32
 #elif defined(__SSE2__)
   #include <emmintrin.h>
+  #define CC_VEC 16
+#elif defined(__ARM_NEON)
+  #include <arm_neon.h>
   #define CC_VEC 16
 #endif
 
@@ -872,10 +897,32 @@ int main(int argc, char **argv, char **envp) {
     return 0;
   }
 
+  // The formatter talks to nobody: stdin is EOF so one that reads it cannot
+  // hang the hook, and stdout and stderr are discarded rather than inherited.
+  // Inheriting them is what makes CC_FMT_ASYNC a lie and what deadlocks a
+  // caller that does not drain the pipe -- see the async note in the header.
+  posix_spawn_file_actions_t fa;
+  posix_spawn_file_actions_t *fap = 0;
+  if (posix_spawn_file_actions_init(&fa) == 0 &&
+      posix_spawn_file_actions_addopen(&fa, 0, "/dev/null", O_RDONLY, 0) == 0 &&
+      posix_spawn_file_actions_addopen(&fa, 1, "/dev/null", O_WRONLY, 0) == 0 &&
+      posix_spawn_file_actions_addopen(&fa, 2, "/dev/null", O_WRONLY, 0) == 0)
+    fap = &fa;
+
+  // An async formatter outlives the hook, so it must not share the hook's
+  // process group: a timeout signalling that group would land on a formatter
+  // halfway through rewriting the file. A synchronous one stays in the group.
+  int async = env_get(envp, "CC_FMT_ASYNC", 12) != 0;
+  posix_spawnattr_t at;
+  posix_spawnattr_t *atp = 0;
+  if (async && posix_spawnattr_init(&at) == 0 && posix_spawnattr_setflags(&at, (short)POSIX_SPAWN_SETPGROUP) == 0 &&
+      posix_spawnattr_setpgroup(&at, 0) == 0)
+    atp = &at;
+
   pid_t pid;
-  if (posix_spawn(&pid, prog, 0, 0, (char *const *)args, envp) != 0)
+  if (posix_spawn(&pid, prog, fap, atp, (char *const *)args, envp) != 0)
     return 0;
-  if (!env_get(envp, "CC_FMT_ASYNC", 12)) {
+  if (!async) {
     int st;
     while (waitpid(pid, &st, 0) < 0 && errno == EINTR) {
     }
