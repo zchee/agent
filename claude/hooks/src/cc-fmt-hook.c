@@ -443,6 +443,25 @@ static const char *resolve(const char *name, const char *path, char *buf, size_t
   return 0;
 }
 
+// Claude Code turns a short read on the hook's stdin into an EPIPE, and reports
+// that as "Hook command closed stdin before hook input was fully written",
+// status 1 -- a warning on the user's screen. So the payload must be consumed
+// to the end even though the file path sits in the first chunk. What it does not
+// have to be is consumed *first*: a Write payload carries the file content
+// twice, and draining 8.6 MB of it costs 674 us here, which is 40% of the
+// hook's whole cost. Spawning the formatter before the drain hides all of it
+// behind a formatter that runs for tens of milliseconds.
+static void drain_stdin(void) {
+  for (;;) {
+    ssize_t r = read(0, inbuf, BUF_CAP);
+    if (r > 0)
+      continue;
+    if (r < 0 && errno == EINTR)
+      continue;
+    return;
+  }
+}
+
 static void put(const char *s) {
   (void)!write(1, s, strlen(s));
 }
@@ -812,9 +831,9 @@ int main(int argc, char **argv, char **envp) {
   (void)argc;
   (void)argv;
 
-  // Drain stdin whatever happens: Claude Code turns a short read into an EPIPE
-  // and reports the hook as failed, so stopping early is not an option even
-  // though the key is found in the first chunk.
+  // Read only as far as the file path. Everything after it is drained later,
+  // once the formatter is running -- see drain_stdin(). KEEP_CAP bytes are
+  // carried across reads so the key cannot be split by a chunk boundary.
   size_t keep = 0;
   int found = 0;
   for (;;) {
@@ -827,20 +846,15 @@ int main(int argc, char **argv, char **envp) {
     if (r == 0)
       break;
     size_t total = keep + (size_t)r;
-    if (found) {
-      keep = 0;
-      continue;
-    }
     if (find_path(inbuf, total, fpath, sizeof fpath)) {
       found = 1;
-      keep = 0;
-      continue;
+      break;
     }
     keep = total < KEEP_CAP ? total : KEEP_CAP;
     memmove(inbuf, inbuf + total - keep, keep);
   }
   dryrun = env_get(envp, "CC_FMT_DRYRUN", 13) != 0;
-  if (!found) {
+  if (!found) {  // the loop only leaves without a path at end of input
     if (dryrun)
       put("# no file path in the payload\n");
     return 0;
@@ -860,6 +874,7 @@ int main(int argc, char **argv, char **envp) {
   if (!fargv || !fargv[0]) {
     if (dryrun)
       put_line(fargv ? "# rule matched but disabled: " : "# no rule matches: ", base);
+    drain_stdin();
     return 0;
   }
 
@@ -871,6 +886,7 @@ int main(int argc, char **argv, char **envp) {
       if (a == fargv) {  // the program itself names a variable that is unset
         if (dryrun)
           put_line("# unset ${VAR} in the program name: ", *a);
+        drain_stdin();
         return 0;
       }
       continue;
@@ -884,6 +900,7 @@ int main(int argc, char **argv, char **envp) {
   if (!prog) {  // formatter not installed: nothing to do, silently
     if (dryrun)
       put_line("# not on PATH: ", args[0]);
+    drain_stdin();
     return 0;
   }
 
@@ -894,6 +911,7 @@ int main(int argc, char **argv, char **envp) {
       put(args[i]);
     }
     put("\n");
+    drain_stdin();
     return 0;
   }
 
@@ -920,9 +938,11 @@ int main(int argc, char **argv, char **envp) {
     atp = &at;
 
   pid_t pid;
-  if (posix_spawn(&pid, prog, fap, atp, (char *const *)args, envp) != 0)
-    return 0;
-  if (!async) {
+  int spawned = posix_spawn(&pid, prog, fap, atp, (char *const *)args, envp) == 0;
+
+  drain_stdin();  // concurrent with the formatter, which is the point
+
+  if (spawned && !async) {
     int st;
     while (waitpid(pid, &st, 0) < 0 && errno == EINTR) {
     }
