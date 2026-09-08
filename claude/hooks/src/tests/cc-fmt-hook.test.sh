@@ -141,5 +141,53 @@ else
   echo 'skip the file is rewritten in place (no usable rustfmt)'
 fi
 
+echo '# CC_FMT_ASYNC really does not wait'
+# A formatter that takes 2 s, and records the process group it ran in.
+cat >"$T/slowfmt" <<'F'
+#!/bin/sh
+ps -o pgid= -p $$ | tr -d ' ' >"$2.pgid"
+sleep 2
+printf 'formatted\n' >>"$2"
+F
+chmod +x "$T/slowfmt"
+printf '{ "rs": ["%s", "x"] }\n' "$T/slowfmt" >"$T/slow.json"
+mypgid=$(ps -o pgid= -p $$ | tr -d ' ')
+
+# Command substitution reads the hook's stdout until EOF, so it blocks for as
+# long as anything holds the write end -- which is exactly what an inherited
+# descriptor would do. It is the shell's version of waiting for pipe close.
+fast_or_slow() { [[ $1 -le 1 ]] && echo fast || echo "slow:${1}s"; }
+
+# Redirected to a file there is no pipe, so this times the hook's exit alone.
+printf 'orig\n' >"$T/async.rs"
+t0=$SECONDS
+printf '{"tool_input":{"file_path":"%s"}}' "$T/async.rs" |
+  env CLAUDE_CONFIG_DIR="$T/cfgdir" CC_FMT_CONFIG="$T/slow.json" CC_FMT_ASYNC=1 "$hook" >"$T/async.out"
+chk "the hook process exits without waiting" fast "$(fast_or_slow $((SECONDS - t0)))"
+
+# Command substitution instead reads stdout until EOF, so it blocks for as long
+# as anything holds the write end -- which is what an inherited descriptor does.
+# It is the shell's version of waiting for the pipe to close.
+printf 'orig\n' >"$T/async2.rs"
+t0=$SECONDS
+_=$(printf '{"tool_input":{"file_path":"%s"}}' "$T/async2.rs" |
+  env CLAUDE_CONFIG_DIR="$T/cfgdir" CC_FMT_CONFIG="$T/slow.json" CC_FMT_ASYNC=1 "$hook")
+chk "its stdio pipe closes with it" fast "$(fast_or_slow $((SECONDS - t0)))"
+chk "the file is untouched on return" orig "$(cat "$T/async.rs")"
+sleep 3
+chk "the formatter still finished its work" formatted "$(cat "$T/async.rs")"
+chk "an async formatter gets its own process group" separate \
+  "$([[ "$(cat "$T/async.rs.pgid")" != "$mypgid" ]] && echo separate || echo same)"
+
+printf 'orig\n' >"$T/sync.rs"
+t0=$SECONDS
+printf '{"tool_input":{"file_path":"%s"}}' "$T/sync.rs" |
+  env CLAUDE_CONFIG_DIR="$T/cfgdir" CC_FMT_CONFIG="$T/slow.json" "$hook"
+sync_elapsed=$((SECONDS - t0))
+chk "without it the hook waits" waited "$([[ $sync_elapsed -ge 2 ]] && echo waited || echo "returned in ${sync_elapsed}s")"
+chk "and the work is done on return" formatted "$(cat "$T/sync.rs")"
+chk "a synchronous formatter stays in the group" same \
+  "$([[ "$(cat "$T/sync.rs.pgid")" == "$mypgid" ]] && echo same || echo separate)"
+
 printf '\n%d passed, %d failed\n' "$pass" "$fail"
 [[ $fail -eq 0 ]]
