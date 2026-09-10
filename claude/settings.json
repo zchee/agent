@@ -2,11 +2,14 @@
   "$schema": "file:///Users/zchee/src/github.com/zchee/schema/claude-code-settings.schema.json",
   "cleanupPeriodDays": 99999,
   "env": {
-    "CLAUDE_CODE_SHELL": "/opt/homebrew/bin/bash",
-    "CLAUDE_CODE_SCROLL_SPEED": "3",
+    "CC_FMT_ASYNC": "1",
+    "CC_FMT_TRUST": "/Users/zchee/src:/Users/zchee/go/src:/Users/zchee/rust/src",
+    "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
-    "TRACE_TO_LANGSMITH": "false",
-    "OMC_PLUGIN_ROOT": "/Users/zchee/src/github.com/Yeachan-Heo/oh-my-claudecode"
+    "CLAUDE_CODE_SCROLL_SPEED": "2",
+    "CLAUDE_CODE_SHELL": "/opt/homebrew/bin/bash",
+    "OMC_PLUGIN_ROOT": "/Users/zchee/src/github.com/Yeachan-Heo/oh-my-claudecode",
+    "TRACE_TO_LANGSMITH": "false"
   },
   "includeCoAuthoredBy": true,
   "permissions": {
@@ -71,16 +74,6 @@
     }
   ],
   "hooks": {
-    "Notification": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "jq -r '.message' | xargs -r -I {} sh -c '/Applications/claude-terminal-notifier.app/Contents/MacOS/terminal-notifier -title 'Claude Code' -sender 'com.anthropic.claudefordesktop' -message \"$1\"' _ {}"
-          }
-        ]
-      }
-    ],
     "UserPromptSubmit": [
       {
         "hooks": [
@@ -91,16 +84,6 @@
           {
             "type": "command",
             "command": "node \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/keyword-detector.mjs\""
-          }
-        ]
-      }
-    ],
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/session-start.mjs\""
           }
         ]
       }
@@ -117,10 +100,21 @@
         ]
       },
       {
+        "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/pre-tool-use.mjs\""
+            "command": "cmd=$(jq -r '.tool_input.command'); if echo \"$cmd\" | grep -qE '(^|[;&|(] *)find( |$)'; then echo 'In this repo, use fd (https://github.com/sharkdp/fd) instead of find. e.g. find . -name \"*.js\" -> fd -e js / find . -type d foo -> fd -t d foo' >&2; exit 2; fi"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/session-start.mjs\""
           }
         ]
       }
@@ -267,6 +261,10 @@
     },
     "claude-fable-5-1": {
       "effortLevel": "xhigh"
+    },
+    "claude-opus-5": {},
+    "claude-sonnet-5": {
+      "effortLevel": "xhigh"
     }
   },
   "fastModePerSessionOptIn": true,
@@ -296,7 +294,6 @@
   "autoUploadSessions": true,
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true,
   "useAutoModeDuringPlan": true,
   "autoMode": {
     "environment": [
