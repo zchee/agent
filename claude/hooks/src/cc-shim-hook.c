@@ -33,9 +33,10 @@
 // build targets: NEON, SSE2, AVX2 or AVX-512BW. Measured string scan:
 // 10.7 GB/s SSE2, 12.8 AVX2, 15.3 AVX-512BW, 40.0 NEON on Apple silicon.
 //
-// The source lives in hooks/src/ and the binary is deployed to scripts/, which
-// is the path settings.json registers; both commands below run from the Claude
-// config dir (~/.claude, or $CLAUDE_CONFIG_DIR).
+// The source lives in hooks/src/ and the binary is deployed to
+// /opt/local/bin/, which is the path settings.json registers; both build
+// commands below run from the Claude config dir (~/.claude, or
+// $CLAUDE_CONFIG_DIR).
 //
 // Build, macOS arm64:
 //   clang -O3 -fno-stack-protector -fno-unwind-tables \
