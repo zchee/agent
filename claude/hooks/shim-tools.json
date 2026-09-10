@@ -1,0 +1,29 @@
+{
+  "$comment": "cc-shim-hook: which binary a bare command word runs inside the Bash tool. Deployed to ${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/shim-tools.json. Dropping this file restores the built-in grep/find/rg table.",
+  "tools": {
+    "grep": {
+      "bin": "/opt/homebrew/bin/ugrep",
+      "args": "-G --ignore-files --hidden -I --exclude-dir=.git --exclude-dir=.svn --exclude-dir=.hg --exclude-dir=.bzr --exclude-dir=.jj --exclude-dir=.sl",
+      "bin_env": "CLAUDE_CODE_UGREP",
+      "args_env": "CLAUDE_CODE_UGREP_ARGS"
+    },
+    "find": {
+      "bin": "/usr/local/bin/bfs",
+      "args": "-S dfs -regextype findutils-default",
+      "bin_env": "CLAUDE_CODE_BFS",
+      "args_env": "CLAUDE_CODE_BFS_ARGS"
+    },
+    "rg": {
+      "bin": "/opt/homebrew/bin/rg",
+      "args": "",
+      "bin_env": "CLAUDE_CODE_RG",
+      "args_env": "CLAUDE_CODE_RG_ARGS"
+    },
+    "sed": {
+      "bin": "/opt/homebrew/opt/gnu-sed/libexec/gnubin/sed",
+      "args": "",
+      "bin_env": "CLAUDE_CODE_SED",
+      "args_env": "CLAUDE_CODE_SED_ARGS"
+    }
+  }
+}
