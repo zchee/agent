@@ -4,9 +4,6 @@ chrome/
 daemon/
 debug/
 file-history/
-hooks/*
-!hooks/src/
-hud/
 jobs/
 plugins/.last_inuse_sweep
 plugins/cache/
@@ -24,6 +21,15 @@ tasks/
 teams/
 telemetry/
 
+# OMC
+hooks/**/*.mjs
+hooks/find-node.sh
+hooks/lib/*.sh
+hud/
+
+# fastest claude custom hooks source written in C
+!hooks/src/
+
 .last-cleanup
 .last-update-result.json
 .omc-config.default.json
@@ -35,6 +41,4 @@ daemon.log
 daemon.status.json
 gh-pr-status-cache.json
 history.jsonl
-scripts/cc-fmt-hook
-scripts/cc-search-hook
 stats-cache.json
