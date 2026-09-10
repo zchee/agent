@@ -36,6 +36,12 @@ All code you write MUST be fully optimized.
 - Use `cargo` for project management, building, and dependency management.
 - Use `indicatif` to track long-running operations with progress bars. The message should be contextually sensitive.
 - Use `serde` with `serde_json` for JSON serialization/deserialization.
+- Use `clap` (derive API) for command-line parsing, and **MUST** ship shell completions whenever `clap` is
+  used: add `clap_complete` and expose a `completions <shell>` subcommand (or `--completions <shell>` flag)
+  that writes the script for every `clap_complete::Shell` to stdout, generated from the same `Command` the
+  binary parses with (`CommandFactory::command()`), so completions never drift from the real flag set.
+  Document the install line per shell in the README (e.g. `eval "$(<bin> completions zsh)"`). A CLI
+  without completions is incomplete; do not defer it to a follow-up.
 - Use `ratatui` and `crossterm` for terminal applications/TUIs.
   - Include logical and intuitive mouse controls for all TUIs.
   - **ALWAYS** account for interface scrolling offsets when calculating click locations
