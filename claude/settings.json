@@ -98,7 +98,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/opt/local/bin/cc-search-hook",
+            "command": "/opt/local/bin/cc-shim-hook",
             "args": []
           }
         ]

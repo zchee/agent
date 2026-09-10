@@ -1,4 +1,4 @@
-// cc-search-hook: Claude Code PreToolUse(Bash) hook.
+// cc-shim-hook: Claude Code PreToolUse(Bash) hook.
 //
 // Rewrites the Bash tool's command so grep/find/rg resolve to configurable
 // full-featured binaries, by prepending shell function overrides. The overrides
@@ -40,9 +40,9 @@
 // Build, macOS arm64:
 //   clang -O3 -fno-stack-protector -fno-unwind-tables \
 //     -fno-asynchronous-unwind-tables -Wl,-dead_strip -Wl,-x \
-//     -o /opt/local/bin/cc-search-hook hooks/src/cc-search-hook.c
-//   llvm-strip --strip-all /opt/local/bin/cc-search-hook
-//   codesign -f -s - /opt/local/bin/cc-search-hook
+//     -o /opt/local/bin/cc-shim-hook hooks/src/cc-shim-hook.c
+//   llvm-strip --strip-all /opt/local/bin/cc-shim-hook
+//   codesign -f -s - /opt/local/bin/cc-shim-hook
 //
 // Build, Linux (freestanding: no libc, no dynamic loader). The link flags
 // collapse the four PT_LOAD segments into two and drop the section headers,
@@ -51,7 +51,7 @@
 //     -fno-stack-protector -fno-unwind-tables -fno-asynchronous-unwind-tables \
 //     -fno-ident -fuse-ld=lld -Wl,--build-id=none -Wl,--no-rosegment \
 //     -Wl,-z,noseparate-code -Wl,-z,norelro -Wl,-z,nosectionheader -Wl,-s \
-//     -o /opt/local/bin/cc-search-hook hooks/src/cc-search-hook.c
+//     -o /opt/local/bin/cc-shim-hook hooks/src/cc-shim-hook.c
 //
 // -z norelro costs nothing here: a static binary with no relocations has no
 // .data.rel.ro worth protecting, and dropping the segment is what takes the
@@ -274,8 +274,9 @@ static const char NOOP[] = "{}";
 // Injected shell text. The \" sequences are literal backslash-quote bytes so
 // the surrounding JSON string stays valid; Claude decodes them to plain " for
 // the shell. MARKER makes re-entry a no-op and must stay in sync with the
-// three 8-byte compares in cc_run().
-static const char MARKER[] = ": __cc_search_override; ";
+// three 8-byte compares in cc_run(): at 22 bytes it covers offsets 0, 8
+// and 14, so the last load overlaps the second by two bytes.
+static const char MARKER[] = ": __cc_shim_override; ";
 static const char FN_GREP[] =
     "grep(){ command \\\"${CLAUDE_CODE_UGREP:-/opt/homebrew/bin/ugrep}\\\" "
     "${CLAUDE_CODE_UGREP_ARGS--G --ignore-files --hidden -I --exclude-dir=.git "
@@ -514,8 +515,8 @@ __attribute__((noreturn)) static void cc_run(void) {
     reply_noop();
 
   // Already rewritten: the marker is injected at the head, so this is O(1).
-  if (ce - cb >= (long)(sizeof MARKER - 1) && ld64(cb) == PACK8(": __cc_s") && ld64(cb + 8) == PACK8("earch_ov") &&
-      ld64(cb + 16) == PACK8("erride; "))
+  if (ce - cb >= (long)(sizeof MARKER - 1) && ld64(cb) == PACK8(": __cc_s") && ld64(cb + 8) == PACK8("him_over") &&
+      ld64(cb + 14) == PACK8("erride; "))
     reply_noop();
 
   unsigned hit = scan_tokens(cb, ce);
