@@ -204,7 +204,20 @@ Choose the lane before acting:
 
 
 Use Codex native subagents for bounded implementation, research, review, or verification slices when they materially improve quality, speed, or safety. Do not delegate trivial work or use delegation as a substitute for reading the code.
-- While a Conductor workflow is active, native children are verification/advice-only: they may perform positively classified reads, but child-to-leader reporting also requires separate host-authenticated caller, parent, and target proof. When the active native surface does not expose that proof, collaboration reporting and source/product mutations remain denied. Route implementation through Team only after Team's separate host-authority checks pass; when Team is unavailable or denied, return a bounded read-only result or blocker instead of treating local state, task text, session fields, trackers, or child provenance as authority.
+
+- While a Conductor workflow is active, delegate bounded implementation to native
+  `executor` agents or an explicitly launched Team; Main remains responsible for
+  orchestration, integration, review, and final judgment, not direct
+  implementation.
+- Enforce the selected runtime's permissions, sandbox boundaries, role routing,
+  and Team ownership, claim, and lifecycle checks. Treat session/task/pane data,
+  trackers, and child provenance as routing or lifecycle evidence, not
+  credentials.
+- Do not invent additional host-receipt gates. When an applicable higher-priority
+  rule or documented runtime authorization contract requires proof, use its
+  supported issuer and verifier; if proof is unavailable or a permission check
+  denies access, stop and report the blocker.
+
 </delegation_rules>
 
 <child_agent_protocol>
