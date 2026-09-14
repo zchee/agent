@@ -207,14 +207,23 @@ outbound request, or probing an authenticated endpoint — running that step
 **myself** can trigger a dual-use security check whose fallback path lands on
 Opus 4.8. That fallback is expensive and usually unwanted.
 
-**Avoid it by delegating the credential-touching execution to the Fable
-implementation lane (`/fable-advisor:fable-implementer`), launched through the
-OMC team runtime** — invoke the `/oh-my-claudecode:team` skill with that agent
-type as the worker — rather than running it in the lead context. The
-worker holds the token and performs the network/auth work; the lead
+<!--
+Option A (disabled 2026-09-15): Fable-pinned executor lane.
+
+**Avoid it by delegating the credential-touching execution to a Fable
+implementation lane launched through the OMC team runtime**: run
+`/oh-my-claudecode:team 1:executor "<task>"` and pass `model: "fable"` on the
+worker's Agent-tool spawn, rather than running the step in the lead context.
+The worker holds the token and performs the network/auth work; the lead
 receives only the derived facts (observed wire fields, a verdict, a decision)
 and never reads the raw secret. This keeps the whole run on Fable 5.1 and
 preserves the "workers are Fable, not Opus" routing.
+
+The explicit `model: "fable"` is what makes the lane Fable. Without it the
+executor runs on its pinned tier (the `agents.executor.model` override in
+`~/.config/claude-omc/config.jsonc`, else the agent's Sonnet default), and
+`fable` resolves to Fable 5.1 only while `ANTHROPIC_DEFAULT_FABLE_MODEL` is
+unset.
 
 Alternatives, in order of preference:
 1. **Full delegation to the team-launched Fable lane** (default) — design,
@@ -227,8 +236,29 @@ Alternatives, in order of preference:
    agent; the lead parses only the raw output. Use when a single manual
    call suffices; poor fit for iterative probing.
 4. **Direct spawn fallback** — when the team runtime is unavailable (wedged
-   tmux panes, missing CLI), spawn `/fable-advisor:fable-implementer` directly
-   with the Agent tool, the pre-team shape.
+   tmux panes, missing CLI), spawn `oh-my-claudecode:executor` directly with
+   the Agent tool, still passing `model: "fable"`.
+-->
+
+Keep the credential out of the lead context by one of two routes:
+
+1. **Delegate to an executor worker off Fable** — for iterative probing,
+   multi-step auth work, and unattended runs. Run
+   `/oh-my-claudecode:team 1:executor "<task>"` without a `model` override,
+   so the worker runs on the executor's configured model
+   (`agents.executor.model` in `~/.config/claude-omc/config.jsonc`) instead of
+   the Fable 5.1 path whose check falls back to Opus 4.8. That configured
+   model must not be a Fable model, and this worker never gets
+   `model: "fable"`. When the team runtime is unavailable (wedged tmux panes,
+   missing CLI), spawn `oh-my-claudecode:executor` directly with the Agent
+   tool, again without a `model` override. The worker holds the token and
+   performs the network/auth work; the lead receives only the derived facts
+   (observed wire fields, a verdict, a decision) and never reads the raw
+   secret.
+2. **User runs it** (`! <cmd>`) — when a single manual call suffices and the
+   user is at the terminal. The credential never passes through any agent;
+   the lead parses only the raw output. Poor fit for iterative probing, and
+   unavailable in an unattended run.
 
 When delegation shifts ownership away from what a frozen execution contract
 assigns, record it as a numbered deviation in that contract's ledger.
@@ -338,7 +368,7 @@ Co-Authored-By: (Claude Opus 4.8 (1M context) or Claude Fable 5.1) <noreply@anth
 
 - Intent line first; describe why, not what.
 - Use trailers only when they add decision context.
-- When a cross-vendor implementation lane wrote the code (e.g. fable-advisor orchestration), the `Co-Authored-By` trailer must credit that lane, kept alongside the Claude architect trailer:
+- When a cross-vendor implementation lane wrote the code, the `Co-Authored-By` trailer must credit that lane, kept alongside the Claude architect trailer:
   - codex lane: `Co-Authored-By: Codex <noreply@openai.com>`
   - grok lane: `Co-Authored-By: Grok <noreply@x.ai>`
 - Git commits: always use `git commit --gpg-sign`.
@@ -351,9 +381,28 @@ Co-Authored-By: (Claude Opus 4.8 (1M context) or Claude Fable 5.1) <noreply@anth
   do not split them into one commit per step. Batch consecutive tracker-only updates into
   a single commit, or fold them into the next code commit. The per-task commit rule is for
   code; a run of `beads: close S11` / `beads: close S12` / … commits is noise in the history.
-- PR merges: always use squash merging (`gh pr merge --squash`; on the
-  GitHub UI, "Squash and merge"). Never merge-commit or rebase-merge a PR
-  unless the user explicitly instructs otherwise for that specific PR.
+- PR merges: the default is the `git pr-merge <pr_number>` alias — the PR
+  number alone, since 2026-09-14; the head branch is read from the PR through
+  `gh pr view`, and a head that lives in a fork is refused with a pointer to
+  `pr-merge-external` — (`git switch main && git pull --ff-only`, then
+  `git rebase --gpg-sign main` on the branch and `git push --force-with-lease`,
+  then on main
+  `git merge --no-ff --gpg-sign -m "Merge pull request #N from <owner>/<branch>"`
+  and `git push`) — the per-commit history of a landing is the record, so the
+  branch's commits survive and the merge commit is signed. Run it from the
+  main checkout; a branch checked out in a worktree needs `git worktree remove`
+  first, and a stacked PR is retargeted with `gh pr edit <n> --base main`
+  before it runs. GitHub marks the PR merged on its own. A PR from an
+  **external user** (a fork, or a head branch this checkout does not own) is
+  merged with `git pr-merge-external <pr_number>` instead — the alias
+  resolves the head as `<owner>/<branch>` through `gh pr view`, fetches
+  `pull/N/head` into a temporary `pr-N`, fast-forwards main, then
+  `git merge --no-ff --gpg-sign -m "Merge pull request #N from <owner>/<branch>"`,
+  pushes and deletes `pr-N`; no rebase and no force-push, because the
+  contributor's branch is not ours to rewrite. (Both aliases take the PR
+  number alone; the branch is read from the PR.) Never `gh pr merge --squash`
+  and never the GitHub UI's "Squash and merge" unless the user explicitly
+  asks for a squash on that specific PR.
 <!-- </git_commit_protocol> -->
 
 ---
