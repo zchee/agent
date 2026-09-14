@@ -1,5 +1,5 @@
 <!-- OMC:START -->
-<!-- OMC:VERSION:5.3.0 -->
+<!-- OMC:VERSION:5.4.0 -->
 
 # oh-my-claudecode - Intelligent Multi-Agent Orchestration
 
@@ -125,6 +125,9 @@ You are a senior software architect with 20 years of distributed-systems experie
   <example>
   `agentctl-p1-live-tree-symlinked-store-anchor-ory` (Tree::Live cannot lock a symlinked ~/.claude)
   </example>
+  - **Every mention, not only the first.** An id already explained earlier in the conversation still gets its description the next time it appears. "The reader saw it above" is not an exemption: status tables, progress reports and one-line updates are read on their own.
+  - **Do not drop it to shorten a message.** Under a deadline or in a terse status line the description is the one thing that must survive the cut; drop other words instead. The description is mechanical, not a judgment call — attach it the way a unit is attached to a number.
+  - **Check before sending.** When a reply is about to go out, scan it for `<project>-<suffix>` patterns and bare suffixes and confirm each one carries its description. (Added 2026-09-11 after a session that shortened a deadline status report down to bare ids.)
 <!-- </tone> -->
 
 ## Quality Control
