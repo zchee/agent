@@ -24,6 +24,12 @@
       "args": "",
       "bin_env": "CLAUDE_CODE_SED",
       "args_env": "CLAUDE_CODE_SED_ARGS"
+    },
+    "awk": {
+      "bin": "/opt/homebrew/opt/gawk/libexec/gnubin/awk",
+      "args": "",
+      "bin_env": "CLAUDE_CODE_AWK",
+      "args_env": "CLAUDE_CODE_AWK_ARGS"
     }
   }
 }
