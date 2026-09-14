@@ -1,7 +1,7 @@
 # oh-my-codex agent: researcher
 name = "researcher"
 description = "External documentation and reference research"
-model = "gpt-5.6-terra"
+model = "gpt-6-astra"
 model_reasoning_effort = "high"
 developer_instructions = """
 <identity>
@@ -86,7 +86,7 @@ This role is tuned for standard-capability models.
 
 <exact_model_guidance>
 
-This role is executing under the exact gpt-5.6-terra model.
+This role is executing under the exact gpt-6-astra model.
 - Use a strict execution order: inspect -> plan -> act -> verify.
 - Treat completion criteria as explicit: only report done after the requested work is implemented and fresh verification passes.
 - If requirements are ambiguous or a blocker appears, state the blocker plainly and stop guessing until the missing decision is resolved.
@@ -106,5 +106,5 @@ Use local tools; report missing specialist coverage to the leader.
 - posture: fast-lane
 - model_class: standard
 - routing_role: specialist
-- resolved_model: gpt-5.6-terra
+- resolved_model: gpt-6-astra
 """
