@@ -560,74 +560,74 @@ skill = "#ad7bf9"
 [desktop.open-in-target-preferences]
 global = "cursor"
 
-[[hooks.PreToolUse]]
-matcher = "*"
-[[hooks.PreToolUse.hooks]]
-type = "command"
-command = "agu api hooks"
-timeout = 60
+# [[hooks.PreToolUse]]
+# matcher = "*"
+# [[hooks.PreToolUse.hooks]]
+# type = "command"
+# command = "agu api hooks"
+# timeout = 60
 
-[[hooks.PermissionRequest]]
-matcher = "*"
-[[hooks.PermissionRequest.hooks]]
-type = "command"
-command = "agu api hooks"
-timeout = 60
+# [[hooks.PermissionRequest]]
+# matcher = "*"
+# [[hooks.PermissionRequest.hooks]]
+# type = "command"
+# command = "agu api hooks"
+# timeout = 60
 
-[[hooks.PostToolUse]]
-matcher = "*"
-[[hooks.PostToolUse.hooks]]
-type = "command"
-command = "agu api hooks"
-timeout = 60
+# [[hooks.PostToolUse]]
+# matcher = "*"
+# [[hooks.PostToolUse.hooks]]
+# type = "command"
+# command = "agu api hooks"
+# timeout = 60
 
-[[hooks.PreCompact]]
-matcher = "*"
-[[hooks.PreCompact.hooks]]
-type = "command"
-command = "agu api hooks"
-timeout = 60
+# [[hooks.PreCompact]]
+# matcher = "*"
+# [[hooks.PreCompact.hooks]]
+# type = "command"
+# command = "agu api hooks"
+# timeout = 60
 
-[[hooks.PostCompact]]
-matcher = "*"
-[[hooks.PostCompact.hooks]]
-type = "command"
-command = "agu api hooks"
-timeout = 60
+# [[hooks.PostCompact]]
+# matcher = "*"
+# [[hooks.PostCompact.hooks]]
+# type = "command"
+# command = "agu api hooks"
+# timeout = 60
 
-[[hooks.SessionStart]]
-matcher = "*"
-[[hooks.SessionStart.hooks]]
-type = "command"
-command = "agu api hooks"
-timeout = 60
+# [[hooks.SessionStart]]
+# matcher = "*"
+# [[hooks.SessionStart.hooks]]
+# type = "command"
+# command = "agu api hooks"
+# timeout = 60
 
 [[hooks.UserPromptSubmit]]
 [[hooks.UserPromptSubmit.hooks]]
 type = "command"
 command = "imectl set -q 'com.apple.keylayout.ABC'"
 timeout = 60
-[[hooks.UserPromptSubmit.hooks]]
-type = "command"
-command = "agu api hooks"
-timeout = 60
+# [[hooks.UserPromptSubmit.hooks]]
+# type = "command"
+# command = "agu api hooks"
+# timeout = 60
 
-[[hooks.SubagentStart]]
-matcher = "*"
-[[hooks.SubagentStart.hooks]]
-type = "command"
-command = "agu api hooks"
-timeout = 60
+# [[hooks.SubagentStart]]
+# matcher = "*"
+# [[hooks.SubagentStart.hooks]]
+# type = "command"
+# command = "agu api hooks"
+# timeout = 60
 
-[[hooks.SubagentStop]]
-matcher = "*"
-[[hooks.SubagentStop.hooks]]
-type = "command"
-command = "agu api hooks"
-timeout = 60
+# [[hooks.SubagentStop]]
+# matcher = "*"
+# [[hooks.SubagentStop.hooks]]
+# type = "command"
+# command = "agu api hooks"
+# timeout = 60
 
-[[hooks.Stop]]
-[[hooks.Stop.hooks]]
-type = "command"
-command = "agu api hooks"
-timeout = 60
+# [[hooks.Stop]]
+# [[hooks.Stop.hooks]]
+# type = "command"
+# command = "agu api hooks"
+# timeout = 60
