@@ -1,7 +1,7 @@
 #:schema https://raw.githubusercontent.com/openai/codex/refs/heads/main/codex-rs/core/config.schema.json
 
-model = "gpt-5.6-sol"
-review_model = "gpt-5.6-sol"
+model = "gpt-6-astra"
+review_model = "gpt-6-astra"
 model_reasoning_effort = "max"
 model_context_window = 1000000
 model_auto_compact_token_limit = 900000
@@ -100,6 +100,7 @@ status_line = [
   "five-hour-limit",
   "weekly-limit",
 ]
+session_picker_view = "comfortable"
 
 [tui.model_availability_nux]
 "gpt-5.5" = 4
@@ -146,11 +147,16 @@ apply_patch_preserve_line_endings = true
 exec_permission_approvals = true
 write_stdin_approval = true
 request_permissions_tool = true
+api_key_model_discovery = true
 network_proxy = true
 respect_system_proxy = true
+worktrees = true
 apps = false
 psp = true
 mcp_2026_07_28 = true
+codex_apps_mcp_2026_07_28 = true
+mcp_oauth_refresh_coordination = true
+use_xaa = true
 enable_mcp_apps = true
 deferred_tool_world_state = true
 non_prefixed_mcp_tool_names = true
@@ -168,14 +174,17 @@ unified_image_budget = true
 concurrent_reasoning_summaries = true
 default_mode_request_user_input = true
 send_async_message = true
+send_message_to_user_async = true
 terminal_visualization_instructions = true
 terminal_resize_reflow = false
 guardian_reuse_parent_compaction = true
 guardian_enhanced_node_repl_transcripts = true
 guardian_node_repl_transcript_images = true
-guardianv2 = true
 guardian_ext = true
 token_budget = true
+context_management = true
+rollout_budget = false
+reasoning_effort_override = true
 current_time_reminder = true
 auth_elicitation = true
 step_model_switching = true
@@ -186,11 +195,13 @@ retain_client_developer_messages = true
 use_agent_identity = false
 js_repl = false
 
-plugin_hooks = true
-goals = true
 [features.multi_agent_v2]
 enabled = true
 max_concurrent_threads_per_session = 7
+
+[features.guardianv2]
+enabled = true
+thread_context = true
 
 [orchestrator.skills]
 enabled = true
