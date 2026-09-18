@@ -2,7 +2,6 @@
   "$schema": "file:///Users/zchee/src/github.com/zchee/schema/claude-code-settings.schema.json",
   "cleanupPeriodDays": 99999,
   "env": {
-    "CC_FMT_ASYNC": "1",
     "CC_FMT_TRUST": "/Users/zchee/src:/Users/zchee/go/src:/Users/zchee/rust/src",
     "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
@@ -29,9 +28,6 @@
   "deniedMcpServers": [
     {
       "serverName": "claude.ai workspace-developer"
-    },
-    {
-      "serverName": "claude.ai Datadog"
     },
     {
       "serverName": "claude.ai Figma"
@@ -179,7 +175,6 @@
     "beads@beads-rust": true,
     "clangd-lsp@claude-plugins-official": true,
     "codspeed@codspeed-plugin-marketplace": true,
-    "compact-plus@compact-plus-local": true,
     "gopls-lsp@claude-plugins-official": true,
     "langsmith-tracing@langsmith-claude-code-plugins": true,
     "lua-lsp@claude-plugins-official": true,
@@ -196,7 +191,12 @@
     "skill-creator@claude-plugins-official": true,
     "swift-lsp@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
-    "build-macos-apps@openai-curated": true
+    "build-macos-apps@openai-curated": false,
+    "model-gateway@eigenwise-toolshed": true,
+    "typesafe@typesafe-ai": true,
+    "google-agents-cli@google-agents-cli": true,
+    "datadog@claude-plugins-official": true,
+    "compact-plus@compact-plus": true
   },
   "extraKnownMarketplaces": {
     "goland-claude-marketplace": {
@@ -258,6 +258,24 @@
         "source": "github",
         "repo": "zchee/openai-plugins"
       }
+    },
+    "eigenwise-toolshed": {
+      "source": {
+        "source": "directory",
+        "path": "/Users/zchee/src/github.com/Eigenwise/eigenwise-toolshed"
+      }
+    },
+    "typesafe-ai": {
+      "source": {
+        "source": "github",
+        "repo": "typesafe-ai/skills"
+      }
+    },
+    "google-agents-cli": {
+      "source": {
+        "source": "directory",
+        "path": "/Users/zchee/src/github.com/google/agents-cli"
+      }
     }
   },
   "outputStyle": "Proactive",
@@ -276,6 +294,12 @@
     },
     "claude-opus-5": {},
     "claude-sonnet-5": {
+      "effortLevel": "xhigh"
+    },
+    "claude-gpt-6-astra-fast": {
+      "effortLevel": "xhigh"
+    },
+    "claude-gpt-6-astra-fast[1m]": {
       "effortLevel": "xhigh"
     }
   },
@@ -299,6 +323,7 @@
   "verbose": true,
   "preferredNotifChannel": "kitty",
   "autoCompactEnabled": true,
+  "switchModelsOnFlag": false,
   "autoScrollEnabled": true,
   "teammateMode": "tmux",
   "remoteControlAtStartup": true,
@@ -337,7 +362,7 @@
   "voiceEnabled": true,
   "$comment": "https://code.claude.com/docs/en/settings-reference",
   "autoCompactThreshold": 0.9,
-  "autoCompactTiming": "after-response",
+  "autoCompactTiming": "before-prompt",
   "omc": {
     "deepInterview": {
       "ambiguityThreshold": 0.2
@@ -390,7 +415,7 @@
     },
     "thresholds": {
       "contextWarning": 70,
-      "contextCompactSuggestion": 80,
+      "contextCompactSuggestion": 90,
       "contextCritical": 85,
       "ralphWarning": 7
     },
