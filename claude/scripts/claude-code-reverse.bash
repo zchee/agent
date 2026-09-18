@@ -21,9 +21,9 @@ for vt in ${VER_TIMESTAMP}; do
   npm i
 
   claude --effort=xhigh --model=claude-sonnet-5 --dangerously-skip-permissions --verbose --include-partial-messages --output-format stream-json -p "/extract-cli-from-claude-exe"
-  NODE_OPTIONS='--max-old-space-size=8192' webcrack --no-jsx cli.js >cli.unpack.js && rm -f cli.js
+  NODE_OPTIONS='--max-old-space-size=10240' webcrack --no-jsx cli.js > cli.unpack.js || break
 
-  rm -rf node_modules package-lock.json
+  rm -rf cli.js node_modules package-lock.json
 
   git add .
   GIT_COMMITTER_DATE=$(echo -n "${vt}" | cut -d'|' -f 2) git commit -m "${version}"
