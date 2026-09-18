@@ -292,14 +292,13 @@
     "claude-fable-5-1": {
       "effortLevel": "xhigh"
     },
-    "claude-opus-5": {},
+    "claude-opus-5": {
+      "effortLevel": "high"
+    },
     "claude-sonnet-5": {
-      "effortLevel": "xhigh"
+      "effortLevel": "high"
     },
     "claude-gpt-6-astra-fast": {
-      "effortLevel": "xhigh"
-    },
-    "claude-gpt-6-astra-fast[1m]": {
       "effortLevel": "xhigh"
     }
   },
@@ -468,5 +467,12 @@
   },
   "usageApiPollIntervalMs": 5000,
   "wrapMode": "wrap",
-  "backendType": "tmux"
+  "backendType": "tmux",
+  "pluginConfigs": {
+    "agents-md@builtin": {
+      "options": {
+        "instructionFiles": "claude-md"
+      }
+    }
+  }
 }
