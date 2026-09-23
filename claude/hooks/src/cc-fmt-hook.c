@@ -175,6 +175,7 @@
 #include <spawn.h>
 #include <stdint.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
@@ -410,30 +411,38 @@ static int ci_eq(const char *a, const char *b) {
   }
 }
 
+// access(X_OK) says yes to a directory too, and an empty program name turns
+// every PATH entry into one; the stat runs only on a hit, so it costs nothing
+// on the misses that dominate.
+static int runnable(const char *p) {
+  struct stat st;
+  return access(p, X_OK) == 0 && stat(p, &st) == 0 && S_ISREG(st.st_mode);
+}
+
 // execvp() resolves by trying execve() on every candidate, which costs 20.6 us
 // per miss on macOS. Probing with access(X_OK) costs 0.97 us, so resolve here
 // and exec exactly once.
 static const char *resolve(const char *name, const char *path, char *buf, size_t cap) {
+  if (!*name)
+    return 0;
   if (strchr(name, '/'))
-    return access(name, X_OK) == 0 ? name : 0;
+    return runnable(name) ? name : 0;
   if (!path)
     return 0;
   size_t nlen = strlen(name);
   for (const char *p = path; *p;) {
     const char *e = strchr(p, ':');
+    const char *dir = p;
     size_t len = e ? (size_t)(e - p) : strlen(p);
     if (len == 0) {  // an empty PATH entry means the cwd
-      buf[0] = '.';
+      dir = ".";
       len = 1;
-    } else if (len + nlen + 2 <= cap) {
-      memcpy(buf, p, len);
-    } else {
-      len = 0;
     }
-    if (len) {
+    if (len + nlen + 2 <= cap) {
+      memcpy(buf, dir, len);
       buf[len] = '/';
       memcpy(buf + len + 1, name, nlen + 1);
-      if (access(buf, X_OK) == 0)
+      if (runnable(buf))
         return buf;
     }
     if (!e)
