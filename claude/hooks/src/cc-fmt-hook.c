@@ -10,7 +10,7 @@
 // missing config indistinguishable from "nothing to do" at run time, which is
 // what CC_FMT_DRYRUN=1 exists for: it names every config that was loaded or
 // rejected and says which rule matched, or that none did.
-// hooks/src/fmt-hooks.example.json is a starting point covering the usual
+// hooks/src/tests/fmt-hooks.example.json is a starting point covering the usual
 // languages.
 //
 // Register as an EXEC-FORM hook (spawned directly, no shell):
@@ -44,6 +44,13 @@
 //                    the async child in its own group; the synchronous child
 //                    stays in the hook's group on purpose, because there
 //                    abandoning the hook should abandon the formatter too.
+//
+// A rule that chains several formatters (see the config section) needs
+// something to run them one after another once the hook has returned, so
+// under CC_FMT_ASYNC the hook forks a runner that detaches the same way --
+// /dev/null on its stdio, a process group of its own -- and walks the chain
+// before exiting. That fork is the one place the hook pays for page tables; a
+// single command, async or not, still goes through posix_spawn.
 //
 // ------------------------------------------------------------------ config --
 // Config files are applied lowest precedence first. A later file overrides
@@ -79,19 +86,45 @@
 //
 // Each file is a JSON object mapping a rule -- or a comma-separated list of
 // rules -- to the argv that formats a file, with the path appended as the last
-// argument:
+// argument, or to a list of such argvs that run one after another:
 //
 //   {
 //     "rs":              ["rustfmt", "--edition", "2024"],
 //     "c,h,cpp":         ["clang-format", "-i", "-style=file:${HOME}/x/.clang-format"],
+//     "go":              [["gofmt", "-s", "-w"], ["gofumpt", "-w", "-extra"]],
+//     "py":              [["ruff", "check", "--fix", "-q"], ["ruff", "format", "-q"]],
 //     "Makefile":        ["some-make-formatter", "-w"],
 //     "*_pb2.py":        [],
 //     "*/vendor/*":      null
 //   }
 //
-// An empty array or null turns a rule off. ${VAR} inside an argument is
-// substituted from the environment and an argument naming an unset variable is
-// dropped, which is what keeps machine specific paths out of a shared config.
+// A chain runs in order, each command on the file as the previous one left
+// it, and every command runs regardless of what the earlier ones returned: an
+// exit status is not a signal here, because `ruff check --fix` reports the
+// violations it could not fix with status 1 after fixing the rest, and `ruff
+// format` should still follow. A command that is not installed is skipped and
+// the rest of the chain still runs. A chain is one value, so a project config
+// that overrides "go" replaces the whole chain, not one link of it. An empty
+// array or null turns a rule off; an empty array inside a chain is an error,
+// since it names nothing to run. ${VAR} inside an argument is substituted from
+// the environment and an argument naming an unset variable is dropped, which
+// is what keeps machine specific paths out of a shared config.
+//
+// A rule holds at most CFG_ARGV tokens across its whole chain, counting one
+// separator per command. A rule past that is registered as turned off rather
+// than truncated -- a command missing its trailing "-w" would print to
+// /dev/null and format nothing, which is worse than not running, and so would
+// the lower-precedence rule this one meant to replace -- and CC_FMT_DRYRUN
+// names it. The same rule applies to ${VAR} expansion: a command whose
+// expanded arguments do not fit the buffer leaves the chain whole, never
+// shortened.
+//
+// A formatter races the next edit of the same file whether or not it is
+// chained; a chain only makes the window as long as its links put together,
+// and two quick writes of one file can have two chains interleaving on it.
+// That is inherent to formatting on PostToolUse, not something this hook can
+// serialise, so prefer fast formatters in a chain and keep CC_FMT_ASYNC for
+// the slow ones.
 //
 // A syntactically invalid file is discarded whole rather than half-applied:
 // each file is parsed against a snapshot of the rules accumulated so far and
@@ -196,13 +229,14 @@
 
 #define CFG_CAP     (64u << 10)  // holds every config file read, concatenated
 #define CFG_ENTRIES 192
-#define CFG_ARGS    12
-#define ARENA_CAP   4096  // holds arguments after ${VAR} substitution
-#define WALK_MAX    64    // directory levels searched for a project config
+#define CFG_ARGV    32              // tokens per rule, chain separators included
+#define CMD_MAX     (CFG_ARGV / 2)  // a command is at least a program and its separator
+#define ARENA_CAP   8192            // holds arguments after ${VAR} substitution
+#define WALK_MAX    64              // directory levels searched for a project config
 
 static char inbuf[BUF_CAP + 16];
 static char fpath[PATH_CAP];
-static char exe[PATH_CAP];
+static char exe[CMD_MAX][PATH_CAP];
 static char cfgbuf[CFG_CAP + 1];
 static size_t cfgbuf_used;
 static char arena[ARENA_CAP];
@@ -482,11 +516,14 @@ static void put_line(const char *a, const char *b) {
 }
 
 // ------------------------------------------------------------------- rules --
+// argv holds the rule's whole chain flat: each command's tokens, a null after
+// each, and a second null after the last. One command is the degenerate chain
+// {"rustfmt", 0, 0}; a disabled rule is {0}.
 struct cfg_entry {
   const char *key;
   uint8_t glob;  // needs fnmatch rather than a plain compare
   uint8_t path;  // match against the whole path, not the base name
-  const char *argv[CFG_ARGS + 1];
+  const char *argv[CFG_ARGV + 1];
 };
 
 static struct cfg_entry cfg[CFG_ENTRIES];
@@ -571,8 +608,9 @@ static char *cfg_str(char **pp) {
   }
 }
 
-// Register argv under one rule. A rule already present is replaced, which is
-// how a project config overrides the personal one.
+// Register a flat chain of n tokens (n <= CFG_ARGV, checked by the parser)
+// under one rule. A rule already present is replaced, which is how a project
+// config overrides the personal one.
 static void cfg_put(const char *key, const char *const *argv, int nargv) {
   struct cfg_entry *slot = 0;
   for (int i = 0; i < cfg_n; i++)
@@ -588,9 +626,8 @@ static void cfg_put(const char *key, const char *const *argv, int nargv) {
   slot->key = key;
   slot->path = strchr(key, '/') != 0;
   slot->glob = slot->path || strpbrk(key, "*?[") != 0;
-  int n = 0;
-  for (; n < nargv && n < CFG_ARGS; n++) slot->argv[n] = argv[n];
-  slot->argv[n] = 0;
+  memcpy(slot->argv, argv, (size_t)nargv * sizeof argv[0]);
+  slot->argv[nargv] = 0;
 }
 
 // Split a key on commas ("c, h, cpp") and register each rule. Splitting is
@@ -619,7 +656,90 @@ static void cfg_add(char *keys, const char *const *argv, int nargv) {
   }
 }
 
-// Object of string -> array of strings. Anything else invalidates the file.
+// The strings of an array whose '[' is already consumed, through its ']':
+// zero or more, comma separated. Every string is counted in *n but only the
+// first cap are stored, so the caller can tell a rule that is merely too long
+// (dropped) from one that is malformed (the file is rejected). *pp is left
+// past the ']'. Returns 0 on a malformed array.
+static int cfg_strings(char **pp, const char **out, int *n, int cap) {
+  char *p = cfg_ws(*pp);
+  if (*p == ']') {
+    *pp = p + 1;
+    return 1;
+  }
+  for (;;) {
+    if (*p++ != '"')
+      return 0;
+    char *v = cfg_str(&p);
+    if (!v)
+      return 0;
+    if (*n < cap)
+      out[*n] = v;
+    (*n)++;
+    p = cfg_ws(p);
+    if (*p == ',') {
+      p = cfg_ws(p + 1);
+      continue;
+    }
+    if (*p != ']')
+      return 0;
+    *pp = p + 1;
+    return 1;
+  }
+}
+
+// One rule's value, laid out flat as cfg_entry.argv describes:
+//
+//   null | []          disabled              -> n = 0
+//   ["a", "b"]         one command           -> a b 0
+//   [["a"], ["b","c"]] a chain               -> a 0 b c 0
+//
+// Anything else -- a scalar, a string next to an array, an empty command --
+// is malformed. n counts every token including the separators, and may come
+// back above cap for a rule that is too long. Returns 0 on malformed input.
+static int cfg_value(char **pp, const char **out, int *n, int cap) {
+  char *p = *pp;
+  if (!strncmp(p, "null", 4)) {
+    *pp = p + 4;
+    return 1;
+  }
+  if (*p++ != '[')
+    return 0;
+  p = cfg_ws(p);
+  if (*p != '[') {  // [] or a single command
+    if (!cfg_strings(&p, out, n, cap))
+      return 0;
+    if (*n) {
+      if (*n < cap)
+        out[*n] = 0;
+      (*n)++;
+    }
+    *pp = p;
+    return 1;
+  }
+  for (;;) {  // a chain: every element is a non-empty command
+    p++;
+    int before = *n;
+    if (!cfg_strings(&p, out, n, cap) || *n == before)
+      return 0;
+    if (*n < cap)
+      out[*n] = 0;
+    (*n)++;
+    p = cfg_ws(p);
+    if (*p == ',') {
+      p = cfg_ws(p + 1);
+      if (*p != '[')
+        return 0;
+      continue;
+    }
+    if (*p != ']')
+      return 0;
+    *pp = p + 1;
+    return 1;
+  }
+}
+
+// Object of string -> value. Anything else invalidates the file.
 static int cfg_parse(char *p) {
   p = cfg_ws(p);
   if (*p++ != '{')
@@ -638,31 +758,14 @@ static int cfg_parse(char *p) {
     if (*p++ != ':')
       return 0;
     p = cfg_ws(p);
-    const char *argv[CFG_ARGS];
+    const char *argv[CFG_ARGV];
     int n = 0;
-    if (!strncmp(p, "null", 4)) {
-      p += 4;
-    } else if (*p == '[') {
-      p = cfg_ws(p + 1);
-      while (*p != ']') {
-        if (*p++ != '"')
-          return 0;
-        char *v = cfg_str(&p);
-        if (!v)
-          return 0;
-        if (n < CFG_ARGS)
-          n++, argv[n - 1] = v;
-        p = cfg_ws(p);
-        if (*p == ',') {
-          p = cfg_ws(p + 1);
-          continue;
-        }
-        if (*p != ']')
-          return 0;
-      }
-      p++;
-    } else {
+    if (!cfg_value(&p, argv, &n, CFG_ARGV))
       return 0;
+    if (n > CFG_ARGV) {  // too long to hold: turned off whole, never truncated
+      if (dryrun)
+        put_line("# rule too long, turned off: ", keys);
+      n = 0;
     }
     cfg_add(keys, argv, n);
     p = cfg_ws(p);
@@ -710,7 +813,7 @@ static void cfg_read(const char *path) {
     memcpy(cfg, cfg_bak, (size_t)saved_n * sizeof cfg[0]);
     cfg_n = saved_n;
     if (dryrun)
-      put_line("# rejected (not an object of rule -> argv): ", path);
+      put_line("# rejected (not an object of rule -> argv or [argv, ...]): ", path);
     return;
   }
   if (dryrun)
@@ -802,13 +905,20 @@ static const char *const *cfg_lookup(const char *path, const char *base, const c
   return 0;
 }
 
+// ----------------------------------------------------------------- running --
 // Substitute ${VAR} from the environment. Returns 0 when a referenced variable
-// is unset, which drops the argument.
+// is unset, which drops the argument, and expand_full when the result does not
+// fit what is left of the arena -- a different answer, because a shortened
+// argument is a different command and the caller must drop the whole one.
+static const char expand_full[1] = "";
+
 static const char *expand(const char *s, char **envp) {
   if (!strchr(s, '$'))
     return s;
+  if (arena_used >= ARENA_CAP)
+    return expand_full;
   char *o = arena + arena_used;
-  size_t cap = ARENA_CAP - arena_used, w = 0;
+  size_t cap = ARENA_CAP - arena_used, w = 0;  // w + 1 < cap before every store keeps o[w] = 0 inside
   for (const char *p = s; *p;) {
     if (p[0] == '$' && p[1] == '{') {
       const char *e = strchr(p + 2, '}');
@@ -823,17 +933,96 @@ static const char *expand(const char *s, char **envp) {
       const char *v = env_get(envp, name, nlen);
       if (!v)
         return 0;
-      while (*v && w + 1 < cap) o[w++] = *v++;
+      for (; *v; v++) {
+        if (w + 1 >= cap)
+          return expand_full;
+        o[w++] = *v;
+      }
       p = e + 1;
     } else {
-      if (w + 1 < cap)
-        o[w++] = *p;
-      p++;
+      if (w + 1 >= cap)
+        return expand_full;
+      o[w++] = *p++;
     }
   }
   o[w] = 0;
   arena_used += w + 1;
   return o;
+}
+
+// One command of a chain, ready to exec: the program resolved on PATH, the
+// argv with ${VAR} substituted and the file path appended. A command has at
+// most CFG_ARGV - 1 tokens (its separator takes the last slot), so the path
+// and the null fit in CFG_ARGV + 1.
+struct run {
+  const char *prog;
+  const char *args[CFG_ARGV + 1];
+};
+
+// CMD_MAX is CFG_ARGV / 2 only because cfg_value refuses an empty command:
+// every command then costs at least a program and a separator.
+static struct run runs[CMD_MAX];
+
+// Walk the flat chain one command at a time into runs[]: cmd stops on each
+// command's separator and the loop increment steps over it. A command whose
+// program cannot be named, does not fit after expansion or is not installed is
+// left out; the rest of the chain still runs. Returns how many are runnable.
+static int build_runs(const char *const *chain, char **envp) {
+  const char *path = env_get(envp, "PATH", 4);
+  int nrun = 0;
+  for (const char *const *cmd = chain; *cmd; cmd++) {
+    struct run *r = &runs[nrun];
+    const char *skip = 0;
+    int n = 0;
+    for (; *cmd; cmd++) {
+      const char *v = expand(*cmd, envp);
+      if (v == expand_full)
+        skip = "# too long after ${VAR} expansion, command skipped: ";
+      else if (!v && n == 0)
+        skip = "# unset ${VAR} in the program name: ";
+      else if (v)
+        r->args[n++] = v;
+      if (skip) {
+        if (dryrun)
+          put_line(skip, *cmd);
+        while (*cmd) cmd++;  // the rest of this command is moot: stop on its separator
+        break;
+      }
+    }
+    if (skip)
+      continue;
+    r->args[n++] = fpath;
+    r->args[n] = 0;
+    r->prog = resolve(r->args[0], path, exe[nrun], sizeof exe[nrun]);
+    if (!r->prog) {  // formatter not installed: nothing to do, silently
+      if (dryrun)
+        put_line("# not on PATH: ", r->args[0]);
+      continue;
+    }
+    nrun++;
+  }
+  return nrun;
+}
+
+static pid_t spawn(const struct run *r, posix_spawn_file_actions_t *fap, posix_spawnattr_t *atp, char **envp) {
+  pid_t pid;
+  return posix_spawn(&pid, r->prog, fap, atp, (char *const *)r->args, envp) == 0 ? pid : -1;
+}
+
+static void reap(pid_t pid) {
+  int st;
+  while (waitpid(pid, &st, 0) < 0 && errno == EINTR) {
+  }
+}
+
+// Run links [from, nrun) one after another, each waited for before the next
+// starts, all in the caller's process group.
+static void run_links(int from, int nrun, posix_spawn_file_actions_t *fap, char **envp) {
+  for (int i = from; i < nrun; i++) {
+    pid_t pid = spawn(&runs[i], fap, 0, envp);
+    if (pid > 0)
+      reap(pid);
+  }
 }
 
 int main(int argc, char **argv, char **envp) {
@@ -877,49 +1066,31 @@ int main(int argc, char **argv, char **envp) {
 
   cfg_load(fpath, envp);
   if (dryrun && cfg_skipped)
-    put("# some rules were skipped: empty, or past the entry limit\n");
+    put("# some rules were skipped: empty, too long, or past the entry limit\n");
 
-  const char *const *fargv = cfg_lookup(fpath, base, ext);
-  if (!fargv || !fargv[0]) {
+  const char *const *chain = cfg_lookup(fpath, base, ext);
+  if (!chain || !chain[0]) {
     if (dryrun)
-      put_line(fargv ? "# rule matched but disabled: " : "# no rule matches: ", base);
+      put_line(chain ? "# rule matched but disabled: " : "# no rule matches: ", base);
     drain_stdin();
     return 0;
   }
 
-  const char *args[CFG_ARGS + 3];
-  int n = 0;
-  for (const char *const *a = fargv; *a && n < CFG_ARGS + 1; a++) {
-    const char *v = expand(*a, envp);
-    if (!v) {
-      if (a == fargv) {  // the program itself names a variable that is unset
-        if (dryrun)
-          put_line("# unset ${VAR} in the program name: ", *a);
-        drain_stdin();
-        return 0;
-      }
-      continue;
-    }
-    args[n++] = v;
-  }
-  args[n++] = fpath;
-  args[n] = 0;
-
-  const char *prog = resolve(args[0], env_get(envp, "PATH", 4), exe, sizeof exe);
-  if (!prog) {  // formatter not installed: nothing to do, silently
-    if (dryrun)
-      put_line("# not on PATH: ", args[0]);
+  int nrun = build_runs(chain, envp);
+  if (!nrun) {
     drain_stdin();
     return 0;
   }
 
   if (dryrun) {
-    put(prog);
-    for (int i = 1; i < n; i++) {
-      put(" ");
-      put(args[i]);
+    for (int i = 0; i < nrun; i++) {
+      put(runs[i].prog);
+      for (const char **a = runs[i].args + 1; *a; a++) {
+        put(" ");
+        put(*a);
+      }
+      put("\n");
     }
-    put("\n");
     drain_stdin();
     return 0;
   }
@@ -936,25 +1107,56 @@ int main(int argc, char **argv, char **envp) {
       posix_spawn_file_actions_addopen(&fa, 2, "/dev/null", O_WRONLY, 0) == 0)
     fap = &fa;
 
+  int async = env_get(envp, "CC_FMT_ASYNC", 12) != 0;
+
+  // An async chain has to be sequenced by someone after the hook is gone, so a
+  // forked runner does it: detached exactly like an async formatter -- its own
+  // process group, /dev/null on the hook's stdio so the pipes to Claude Code
+  // close with the hook and the payload pipe is the hook's alone to drain --
+  // then one posix_spawn + waitpid per link. Both sides call setpgid, the way
+  // a job-control shell does, so the runner is out of the hook's group no
+  // matter which of them runs first. If /dev/null cannot be opened the
+  // descriptors are closed outright: the links reopen theirs through the file
+  // actions, and a closed pipe is still a closed pipe to Claude Code. A failed
+  // fork degrades to the synchronous path below rather than to nothing.
+  if (async && nrun > 1) {
+    pid_t runner = fork();
+    if (runner == 0) {
+      setpgid(0, 0);
+      int nul = open("/dev/null", O_RDWR);
+      for (int fd = 0; fd < 3; fd++)
+        if (nul < 0 || dup2(nul, fd) < 0)
+          close(fd);
+      if (nul > 2)
+        close(nul);
+      run_links(0, nrun, fap, envp);
+      _exit(0);
+    }
+    if (runner > 0) {
+      setpgid(runner, runner);
+      drain_stdin();
+      return 0;
+    }
+    async = 0;
+  }
+
   // An async formatter outlives the hook, so it must not share the hook's
   // process group: a timeout signalling that group would land on a formatter
   // halfway through rewriting the file. A synchronous one stays in the group.
-  int async = env_get(envp, "CC_FMT_ASYNC", 12) != 0;
   posix_spawnattr_t at;
   posix_spawnattr_t *atp = 0;
   if (async && posix_spawnattr_init(&at) == 0 && posix_spawnattr_setflags(&at, (short)POSIX_SPAWN_SETPGROUP) == 0 &&
       posix_spawnattr_setpgroup(&at, 0) == 0)
     atp = &at;
 
-  pid_t pid;
-  int spawned = posix_spawn(&pid, prog, fap, atp, (char *const *)args, envp) == 0;
+  pid_t pid = spawn(&runs[0], fap, atp, envp);
 
-  drain_stdin();  // concurrent with the formatter, which is the point
+  drain_stdin();  // concurrent with the first formatter, which is the point
 
-  if (spawned && !async) {
-    int st;
-    while (waitpid(pid, &st, 0) < 0 && errno == EINTR) {
-    }
-  }
-  return 0;  // never anything but 0: a formatter that fails stays invisible
+  if (async)
+    return 0;
+  if (pid > 0)
+    reap(pid);
+  run_links(1, nrun, fap, envp);  // each link waits for the one before it
+  return 0;                       // never anything but 0: a formatter that fails stays invisible
 }

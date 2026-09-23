@@ -195,5 +195,123 @@ chk "and the work is done on return" formatted "$(cat "$T/sync.rs")"
 chk "a synchronous formatter stays in the group" same \
   "$([[ "$(cat "$T/sync.rs.pgid")" == "$mypgid" ]] && echo same || echo separate)"
 
+echo '# a rule may chain several formatters'
+cat >"$T/chain.json" <<'J'
+{
+  "go": [["echo", "FIRST"], ["echo", "SECOND", "-x"], ["echo", "THIRD"]],
+  "rs": [["echo", "ONLY"]],
+  "py": [["definitely-not-installed-xyz", "-w"], ["echo", "AFTER-MISSING"]],
+  "lua": [["${CC_FMT_NO_SUCH_VAR}"], ["echo", "AFTER-UNSET"]],
+  "toml": [["definitely-not-installed-xyz"], ["${CC_FMT_NO_SUCH_VAR}"]]
+}
+J
+out=$(run "$T/other/a.go" "$T/chain.json")
+chk "every link is listed, in order" "FIRST $T/other/a.go"$'\n'"$(type -P echo) SECOND -x $T/other/a.go"$'\n'"$(type -P echo) THIRD $T/other/a.go" "$out"
+chk "a one-link chain is a single command" "ONLY $T/other/a.rs" "$(run "$T/other/a.rs" "$T/chain.json")"
+out=$(run "$T/other/a.py" "$T/chain.json")
+chk "a missing program is reported" "not on PATH: definitely-not-installed-xyz" "$out"
+chk "and the links after it still run" "AFTER-MISSING $T/other/a.py" "$out"
+out=$(run "$T/other/a.lua" "$T/chain.json")
+chk "an unset \${VAR} program is reported" 'unset ${VAR} in the program name' "$out"
+chk "and the links after it still run too" "AFTER-UNSET $T/other/a.lua" "$out"
+out=$(run "$T/other/a.toml" "$T/chain.json")
+chk "a chain with nothing runnable runs nothing" "not on PATH" "$out"
+chk "and prints no command line" nothing "$([[ "$out" == *"$T/other/a.toml"* ]] && echo printed || echo nothing)"
+
+echo '# malformed chains reject the file; an over-long rule turns itself off'
+for bad in '{"rs": [["echo","a"], []]}' '{"rs": ["echo", ["a"]]}' '{"rs": [["echo"], "a"]}' '{"rs": [[]]}' '{"rs": [["echo","a"],]}' '{"rs": ["echo",]}' '{"rs": [["echo" , ]]}'; do
+  printf '%s' "$bad" >"$T/bad.json"
+  out=$(run "$T/other/a.rs" "$T/bad.json")
+  chk "rejected: $bad" "rejected (not an object" "$out"
+  chk "  and the rule before it survives" GLOBAL-rs "$out"
+done
+long=$(printf '"x%d",' $(seq 1 40))
+printf '{"rs": ["echo", %s "end"]}' "$long" >"$T/long.json"
+out=$(run "$T/other/a.rs" "$T/long.json")
+chk "an over-long rule is named" "rule too long, turned off: rs" "$out"
+chk "  and turned off, not truncated" "disabled: a.rs" "$out"
+printf '{"rs": [["echo","a"], ["echo", %s "end"]]}' "$long" >"$T/long.json"
+chk "an over-long chain is turned off whole" "disabled: a.rs" "$(run "$T/other/a.rs" "$T/long.json")"
+printf '{"rs, toml": ["echo", %s "end"]}' "$long" >"$T/long.json"
+chk "  under every name it was given" "disabled: x.toml" "$(run "$T/other/x.toml" "$T/long.json")"
+words() { # a single command of $1 tokens: ["echo","x2",...,"x$1"]
+  local s='"echo"' i
+  for ((i = 2; i <= $1; i++)); do s+=",\"x$i\""; done
+  printf '{"rs": [%s]}' "$s"
+}
+words 31 >"$T/edge.json"
+chk "a 31-token command fills the rule exactly" "x31 $T/other/a.rs" "$(run "$T/other/a.rs" "$T/edge.json")"
+words 32 >"$T/edge.json"
+chk "a 32-token command is one too many" "disabled: a.rs" "$(run "$T/other/a.rs" "$T/edge.json")"
+links() { # $1 links of one word each: {"rs": [["s1"],["s2"],...]}
+  local s='' i
+  for ((i = 1; i <= $1; i++)); do s+="[\"s$i\"],"; done
+  printf '{"rs": [%s]}' "${s%,}"
+}
+links 16 >"$T/wide.json"
+chk "sixteen one-word links fit" "not on PATH: s16" "$(run "$T/other/a.rs" "$T/wide.json")"
+links 17 >"$T/wide.json"
+out=$(run "$T/other/a.rs" "$T/wide.json")
+chk "seventeen are turned off" "rule too long, turned off: rs" "$out"
+chk "  rather than rejected" "disabled: a.rs" "$([[ "$out" != *rejected* ]] && printf '%s' "$out" || echo rejected)"
+
+echo '# ${VAR} inside a chain'
+cat >"$T/chainvar.json" <<'J'
+{
+  "go": [["echo", "${CC_FMT_NO_SUCH_VAR}", "KEPT-IN-LINK"], ["echo", "NEXT-LINK"]],
+  "rs": [["echo", "${CC_FMT_BIG}"], ["echo", "--x=${HOME}", "AFTER-BIG"]],
+  "py": [["echo", "a=${CC_FMT_BIG}", "b=${CC_FMT_BIG}"], ["echo", "c=${CC_FMT_BIG}"], ["echo", "AFTER-TWO"]]
+}
+J
+out=$(run "$T/other/a.go" "$T/chainvar.json")
+chk "an unset variable drops one argument of a link" "echo KEPT-IN-LINK $T/other/a.go" "$out"
+chk "  and the chain goes on" "NEXT-LINK $T/other/a.go" "$out"
+export CC_FMT_BIG
+CC_FMT_BIG=$(head -c 9000 /dev/zero | tr '\0' a)
+out=$(run "$T/other/a.rs" "$T/chainvar.json")
+chk "an expansion that cannot fit skips its whole command" 'too long after ${VAR} expansion, command skipped' "$out"
+chk "  never a shortened one" nothing "$([[ "$out" == *"echo a"* ]] && echo shortened || echo nothing)"
+chk "  and the next link still expands" "--x=$HOME AFTER-BIG $T/other/a.rs" "$out"
+CC_FMT_BIG=$(head -c 3600 /dev/zero | tr '\0' a)
+out=$(run "$T/other/a.py" "$T/chainvar.json")
+chk "the arena fills across links" "command skipped" "$out"
+chk "  the first link fits" "b=${CC_FMT_BIG} $T/other/a.py" "$out"
+chk "  the third still runs" "AFTER-TWO $T/other/a.py" "$out"
+unset CC_FMT_BIG
+
+echo '# a chain really runs one link at a time'
+# Link one takes 2 s before it writes, so a concurrent link two would win the
+# race and land first. Each link also records its process group.
+cat >"$T/step" <<'F'
+#!/bin/sh
+[ "$1" = one ] && sleep 2
+ps -o pgid= -p $$ | tr -d ' ' >>"$2.pgid"
+printf '%s\n' "$1" >>"$2"
+F
+chmod +x "$T/step"
+printf '{ "rs": [["%s", "one"], ["%s", "two"]] }\n' "$T/step" "$T/step" >"$T/steps.json"
+
+: >"$T/chain-sync.rs"
+t0=$SECONDS
+printf '{"tool_input":{"file_path":"%s"}}' "$T/chain-sync.rs" |
+  $clean CLAUDE_CONFIG_DIR="$T/cfgdir" CC_FMT_CONFIG="$T/steps.json" "$hook"
+chk "synchronously, the hook waits for the whole chain" waited \
+  "$([[ $((SECONDS - t0)) -ge 2 ]] && echo waited || echo returned)"
+chk "  and the links ran in order" $'one\ntwo' "$(cat "$T/chain-sync.rs")"
+chk "  in the hook's process group" same \
+  "$([[ "$(sort -u "$T/chain-sync.rs.pgid")" == "$mypgid" ]] && echo same || echo separate)"
+
+: >"$T/chain-async.rs"
+t0=$SECONDS
+_=$(printf '{"tool_input":{"file_path":"%s"}}' "$T/chain-async.rs" |
+  $clean CLAUDE_CONFIG_DIR="$T/cfgdir" CC_FMT_CONFIG="$T/steps.json" CC_FMT_ASYNC=1 "$hook")
+chk "asynchronously, the hook and its pipes return at once" fast "$(fast_or_slow $((SECONDS - t0)))"
+chk "  with nothing written yet" nothing "$([[ -s "$T/chain-async.rs" ]] && echo written || echo nothing)"
+sleep 3
+chk "  the links still ran in order" $'one\ntwo' "$(cat "$T/chain-async.rs")"
+pgids=$(sort -u "$T/chain-async.rs.pgid")
+chk "  sharing one process group of their own" separate \
+  "$([[ $(wc -l <<<"$pgids") -eq 1 && "$pgids" != "$mypgid" ]] && echo separate || echo "pgids: ${pgids//$'\n'/,} mine: $mypgid")"
+
 printf '\n%d passed, %d failed\n' "$pass" "$fail"
 [[ $fail -eq 0 ]]
