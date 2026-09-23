@@ -116,13 +116,15 @@ cat >"$T/var.json" <<'J'
   "rs": ["echo", "-n", "home=${HOME}"],
   "go": ["echo", "${CC_FMT_NO_SUCH_VAR}", "kept"],
   "py": ["${CC_FMT_NO_SUCH_VAR}", "x"],
-  "lua": ["definitely-not-installed-xyz", "-w"]
+  "lua": ["definitely-not-installed-xyz", "-w"],
+  "sh": [""]
 }
 J
 chk "a set variable is substituted" "home=$HOME" "$(run "$T/other/a.rs" "$T/var.json")"
 chk "an unset variable drops the argument" kept "$(run "$T/other/a.go" "$T/var.json")"
 chk "an unset variable in argv[0] aborts" 'unset ${VAR} in the program name' "$(run "$T/other/a.py" "$T/var.json")"
 chk "a formatter that is not installed" "not on PATH: definitely-not-installed-xyz" "$(run "$T/other/a.lua" "$T/var.json")"
+chk "an empty program name is not a program" "not on PATH: " "$(run "$T/other/a.sh" "$T/var.json")"
 
 echo '# CC_FMT_TRUST fences off project configs'
 chk "the project itself is trusted" PROJECT-rs "$(run "$T/repo/a.rs" "" "$T/repo")"
