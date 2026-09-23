@@ -1,7 +1,7 @@
 {
   "zig": ["zig", "fmt"],
   "rs": ["rustfmt", "--edition", "2024"],
-  "go": ["gofumpt", "-w"],
+  "go": [["gofmt", "-s", "-w"], ["gofumpt", "-w", "-extra"]],
   "py,pyi": ["ruff", "format", "-q"],
   "c,h,cc,cpp,cxx,hpp,hxx,m,mm": ["clang-format", "-i", "-style=file:${HOME}/.config/llvm/.clang-format"],
   "js,jsx,mjs,cjs,ts,tsx,mts,cts": ["deno", "fmt", "--quiet"],
