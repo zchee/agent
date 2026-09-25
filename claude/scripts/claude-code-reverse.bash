@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
-mv ./.agents ./ENV.md ../
+mv ./.agents ./BETAS.md ./ENV.md ../
 
 VER_TIMESTAMP=$(cat ../claude-code-reverse-hack/scripts/claude-code.timestamp.txt)
 for vt in ${VER_TIMESTAMP}; do
@@ -30,4 +30,4 @@ for vt in ${VER_TIMESTAMP}; do
   git tag --force -a "${version}" -m "${version}"
 done
 
-mv ../.agents ../ENV.md ./
+mv ../.agents ../BETAS.md ../ENV.md ./
