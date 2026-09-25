@@ -3,10 +3,13 @@
   "cleanupPeriodDays": 99999,
   "env": {
     "CC_FMT_TRUST": "/Users/zchee/src:/Users/zchee/go/src:/Users/zchee/rust/src",
+    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
     "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
     "CLAUDE_CODE_SCROLL_SPEED": "2",
     "CLAUDE_CODE_SHELL": "/opt/homebrew/bin/bash",
+    "COMPACT_PLUS_PRIMARY_BACKEND": "tmp=$(mktemp \"${TMPDIR:-/tmp}/compact-plus-codex.XXXXXX\"); { printf \"%s\\n\\n\" \"$SYSTEM_PROMPT\"; cat; } | codex exec --model gpt-6-astra -c model_reasoning_effort=\"high\" -c service_tier=\"fast\" --sandbox read-only --skip-git-repo-check --dangerously-bypass-hook-trust --ignore-user-config --ephemeral --output-last-message \"$tmp\" - >/dev/null && cat \"$tmp\"; status=$?; rm -f \"$tmp\"; exit \"$status\"",
+    "COMPACT_PLUS_FALLBACK_BACKEND": "claude -p --model claude-opus-5-5 --effort medium --permission-mode dontAsk --output-format text --no-session-persistence --system-prompt \"$SYSTEM_PROMPT\"",
     "OMC_PLUGIN_ROOT": "/Users/zchee/src/github.com/Yeachan-Heo/oh-my-claudecode",
     "TRACE_TO_LANGSMITH": "false"
   },
@@ -22,7 +25,7 @@
   },
   "model": "claude-fable-5-1[1m]",
   "fallbackModel": [
-    "claude-opus-5"
+    "claude-opus-5-5"
   ],
   "enableAllProjectMcpServers": false,
   "deniedMcpServers": [
@@ -40,6 +43,9 @@
     },
     {
       "serverName": "claude.ai Notion"
+    },
+    {
+      "serverName": "claude.ai Slack"
     },
     {
       "serverName": "claude.ai Linear"
@@ -78,14 +84,6 @@
             "command": "imectl set -q com.apple.keylayout.ABC"
           }
         ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/keyword-detector.mjs\""
-          }
-        ]
       }
     ],
     "PreToolUse": [
@@ -105,62 +103,6 @@
           {
             "type": "command",
             "command": "cmd=$(jq -r '.tool_input.command'); if echo \"$cmd\" | grep -qE '(^|[;&|(] *)find( |$)'; then echo 'In this repo, use fd (https://github.com/sharkdp/fd) instead of find. e.g. find . -name \"*.js\" -> fd -e js / find . -type d foo -> fd -t d foo' >&2; exit 2; fi"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/pre-tool-use.mjs\""
-          }
-        ]
-      }
-    ],
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/session-start.mjs\""
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/post-tool-use.mjs\""
-          }
-        ]
-      }
-    ],
-    "PostToolUseFailure": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/post-tool-use-failure.mjs\""
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/persistent-mode.mjs\""
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/code-simplifier.mjs\""
           }
         ]
       }
@@ -183,7 +125,7 @@
     "modern-go-guidelines@goland-claude-marketplace": true,
     "modern-web-guidance@googlechrome": true,
     "oh-my-claudecode@omc": true,
-    "plugin-dev@claude-plugins-official": true,
+    "plugin-dev@claude-plugins-official": false,
     "pyright-lsp@claude-plugins-official": true,
     "rust-analyzer-lsp@claude-plugins-official": true,
     "rust-reverse-engineering@jingjing2222-plugins": false,
@@ -192,11 +134,14 @@
     "swift-lsp@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
     "build-macos-apps@openai-curated": false,
-    "model-gateway@eigenwise-toolshed": true,
     "typesafe@typesafe-ai": true,
     "google-agents-cli@google-agents-cli": true,
     "datadog@claude-plugins-official": true,
-    "compact-plus@compact-plus": true
+    "compact-plus@compact-plus": true,
+    "lapdog@lapdog": true,
+    "claude-md-management@claude-plugins-official": true,
+    "model-gateway@eigenwise-toolshed": true,
+    "compact-plus@compact-plus-local": true
   },
   "extraKnownMarketplaces": {
     "goland-claude-marketplace": {
@@ -259,12 +204,6 @@
         "repo": "zchee/openai-plugins"
       }
     },
-    "eigenwise-toolshed": {
-      "source": {
-        "source": "directory",
-        "path": "/Users/zchee/src/github.com/Eigenwise/eigenwise-toolshed"
-      }
-    },
     "typesafe-ai": {
       "source": {
         "source": "github",
@@ -276,6 +215,18 @@
         "source": "directory",
         "path": "/Users/zchee/src/github.com/google/agents-cli"
       }
+    },
+    "eigenwise-toolshed": {
+      "source": {
+        "source": "directory",
+        "path": "/Users/zchee/src/github.com/Eigenwise/eigenwise-toolshed"
+      }
+    },
+    "lapdog": {
+      "source": {
+        "source": "github",
+        "repo": "DataDog/dd-apm-test-agent"
+      }
     }
   },
   "outputStyle": "Proactive",
@@ -284,7 +235,7 @@
   "spinnerTipsEnabled": true,
   "subagentPromptCacheTtl": "5m",
   "alwaysThinkingEnabled": true,
-  "effortLevel": "xhigh",
+  "effortLevel": "high",
   "modelSettings": {
     "claude-fable-5": {
       "effortLevel": "xhigh"
@@ -295,17 +246,27 @@
     "claude-opus-5": {
       "effortLevel": "high"
     },
+    "claude-opus-5-5": {
+      "effortLevel": "xhigh"
+    },
     "claude-sonnet-5": {
-      "effortLevel": "high"
+      "effortLevel": "xhigh"
     },
     "claude-gpt-6-astra-fast": {
-      "effortLevel": "xhigh"
+      "effortLevel": "high"
     }
   },
-  "fastModePerSessionOptIn": true,
+  "fastModePerSessionOptIn": false,
   "awaySummaryEnabled": false,
   "askUserQuestionTimeout": "never",
   "dialogExpiry": "never",
+  "pluginConfigs": {
+    "agents-md@builtin": {
+      "options": {
+        "instructionFiles": "claude-md-and-agents-md"
+      }
+    }
+  },
   "autoUpdatesChannel": "latest",
   "tui": "fullscreen",
   "voice": {
@@ -467,12 +428,5 @@
   },
   "usageApiPollIntervalMs": 5000,
   "wrapMode": "wrap",
-  "backendType": "tmux",
-  "pluginConfigs": {
-    "agents-md@builtin": {
-      "options": {
-        "instructionFiles": "claude-md"
-      }
-    }
-  }
+  "backendType": "tmux"
 }
