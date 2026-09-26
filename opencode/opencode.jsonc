@@ -48,8 +48,8 @@
         "uvx",
         "--prerelease=allow",
         "--from",
-        "git+https://github.com/zchee/mcp-gemini-search@interactions",
-        "mcp-gemini-search"
+        "git+https://github.com/zchee/mcp-gemini-google-search",
+        "mcp-gemini-google-search"
       ],
       "environment": {
         "GOOGLE_GENAI_USE_VERTEXAI": "true",

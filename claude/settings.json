@@ -121,7 +121,7 @@
     "langsmith-tracing@langsmith-claude-code-plugins": true,
     "lua-lsp@claude-plugins-official": true,
     "mattpocock-skills@claude-plugins-official": true,
-    "mcp-gemini-search@mcp-gemini-search": true,
+    "mcp-gemini-google-search@mcp-gemini-google-search": true,
     "modern-go-guidelines@goland-claude-marketplace": true,
     "modern-web-guidance@googlechrome": true,
     "oh-my-claudecode@omc": true,

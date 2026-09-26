@@ -253,9 +253,9 @@ source = "https://github.com/u-ichi/compact-plus.git"
 source_type = "local"
 source = "/Users/zchee/src/github.com/Yeachan-Heo/oh-my-codex"
 
-[marketplaces.mcp-gemini-search]
+[marketplaces.mcp-gemini-google-search]
 source_type = "git"
-source = "https://github.com/zchee/mcp-gemini-search.git"
+source = "https://github.com/zchee/mcp-gemini-google-search.git"
 ref = "main"
 
 [marketplaces.claude-plugins-official]
@@ -338,7 +338,7 @@ enabled = true
 [plugins."app-6938a94a61d881918ef32cb999ff937c@openai-curated-remote"]
 enabled = false
 
-[plugins."mcp-gemini-search@mcp-gemini-search"]
+[plugins."mcp-gemini-google-search@mcp-gemini-google-search"]
 enabled = true
 
 [plugins."compact-plus@compact-plus"]

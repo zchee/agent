@@ -417,7 +417,7 @@ Co-Authored-By: (Claude Opus 5.5 (1M context) or Claude Fable 5.1) <noreply@anth
 
 ## MCP Server
 
-- Web search: MUST Use `mcp-gemini-search` MCP server, not the built-in `WebSearch` tool.
+- Web search: MUST Use `mcp-gemini-google-search` MCP server, not the built-in `WebSearch` tool.
 - Library/API docs: Use `context7` MCP server for detailed library and API information.
 
 ## Tools
