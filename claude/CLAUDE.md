@@ -390,28 +390,26 @@ Co-Authored-By: (Claude Opus 5.5 (1M context) or Claude Fable 5.1) <noreply@anth
   do not split them into one commit per step. Batch consecutive tracker-only updates into
   a single commit, or fold them into the next code commit. The per-task commit rule is for
   code; a run of `beads: close S11` / `beads: close S12` / … commits is noise in the history.
-- PR merges: the default is the `git pr-merge <pr_number>` alias — the PR
-  number alone, since 2026-09-14; the head branch is read from the PR through
-  `gh pr view`, and a head that lives in a fork is refused with a pointer to
-  `pr-merge-external` — (`git switch main && git pull --ff-only`, then
-  `git rebase --gpg-sign main` on the branch and `git push --force-with-lease`,
-  then on main
+- PR merges: the default is `git pr-merge <pr_number>` — a script in
+  `~/bin` (dotfiles `bin/git-pr-merge`, since 2026-09-26; before that a pair
+  of `config.alias` entries) that takes the PR number alone and reads the
+  head branch, its owner, whether it lives in a fork, and the PR state
+  through `gh pr view`. It refuses a PR that is not OPEN, fast-forwards main
+  (`git switch main && git pull --ff-only`), then lands the head with
   `git merge --no-ff --gpg-sign -m "Merge pull request #N from <owner>/<branch>"`
-  and `git push`) — the per-commit history of a landing is the record, so the
-  branch's commits survive and the merge commit is signed. Run it from the
-  main checkout; a branch checked out in a worktree needs `git worktree remove`
-  first, and a stacked PR is retargeted with `gh pr edit <n> --base main`
-  before it runs. GitHub marks the PR merged on its own. A PR from an
-  **external user** (a fork, or a head branch this checkout does not own) is
-  merged with `git pr-merge-external <pr_number>` instead — the alias
-  resolves the head as `<owner>/<branch>` through `gh pr view`, fetches
-  `pull/N/head` into a temporary `pr-N`, fast-forwards main, then
-  `git merge --no-ff --gpg-sign -m "Merge pull request #N from <owner>/<branch>"`,
-  pushes and deletes `pr-N`; no rebase and no force-push, because the
-  contributor's branch is not ours to rewrite. (Both aliases take the PR
-  number alone; the branch is read from the PR.) Never `gh pr merge --squash`
-  and never the GitHub UI's "Squash and merge" unless the user explicitly
-  asks for a squash on that specific PR.
+  and `git push` — the per-commit history of a landing is the record, so the
+  branch's commits survive and the merge commit is signed. A head branch in
+  this repository is first rebased (`git rebase --gpg-sign main`) and pushed
+  with `--force-with-lease`, so the PR shows exactly what lands. A head that
+  lives in a **fork** (an external user's PR), or any PR run with
+  `git pr-merge --external <pr_number>`, is instead fetched from `pull/N/head`
+  into a temporary `pr-N` branch, merged as-is, and the branch deleted: no
+  rebase and no force-push, because the contributor's branch is not ours to
+  rewrite. Run it from the main checkout; a branch checked out in a worktree
+  needs `git worktree remove` first, and a stacked PR is retargeted with
+  `gh pr edit <n> --base main` before it runs. GitHub marks the PR merged on
+  its own. Never `gh pr merge --squash` and never the GitHub UI's "Squash and
+  merge" unless the user explicitly asks for a squash on that specific PR.
 
 ---
 
