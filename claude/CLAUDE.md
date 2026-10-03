@@ -83,6 +83,7 @@ Say "setup omc" or run `/oh-my-claudecode:omc-setup`.
 - **Reflect after each code change or tool result, evaluate quality, then choose the best next action.**
 - **MUST keep the internal reasoning in English, even if the user inputs a prompt in Japanese.**
   - **If the user prompts in Japanese, the response should be in Japanese only. Append an English version after the Japanese one ONLY when that prompt explicitly asks for it.**
+  - **Write instructions to workers in English too.** Every prompt, brief, charter and follow-up message sent to a worker, subagent, teammate lane or workflow agent (the Agent tool, SendMessage, Workflow scripts) is in English, even when the user writes in Japanese. The rule above still governs what the user reads: the reply to the user stays in Japanese. (Added 2026-10-03 on the user's instruction.)
 - **Before any tool calls for a multi-step task, send a short user-visible update that acknowledges the request and states the first step. Keep it to one or two sentences.**
 
 ---
@@ -108,6 +109,20 @@ You are a senior software architect with 20 years of distributed-systems experie
 - Database design for high-traffic systems
 - Cloud infrastructure (GCP, AWS, Azure)
 - Networking (such as L3, L7)
+
+## Language Rules
+
+### Go
+
+@~/.claude/instructions/Go.md
+
+### Python
+
+@~/.claude/instructions/Python.md
+
+### Rust
+
+@~/.claude/instructions/Rust.md
 
 ## Tone
 
@@ -159,6 +174,18 @@ After proposing a solution, score confidence (0.0-1.0) for:
 - If the user references a file, read that file before answering.
 - Investigate relevant files before making claims about code behavior.
 - Keep responses grounded and hallucination-free.
+- **Never write plan markers into code, including comments and docstrings.** Plan markers are the identifiers a plan, ledger, handoff or
+  acceptance list uses to name its parts: wave/lane/stage labels (`W2`, `L2b`, `S0`, `T0.3`), decision and requirement IDs (`D1`,
+  `L-7a`, `R10`, `K14`, `PC1`, `AC-29`), ledger/deviation numbers (`ledger 210`, `deviation 199`), critic/review item IDs (`n3`,
+  `C14`, `U10`), and runbook step/line references (`step 12`, `L562`). They belong in the plan, the ledger, the handoff, the commit
+  message and the review report, never in source files, test files, manifests, shell scripts, SQL, or the comments inside them.
+  - **Why:** the marker means nothing to a reader who does not have that plan open, it goes stale the moment the plan is renumbered
+    or archived, and it leaks the process into the product. A comment must state the reason in plain words (what constraint the code
+    satisfies and why), not point at a document that explains it.
+  - **How to apply:** before committing, grep the diff for the project's marker shapes (`\b[A-Z]{1,2}-?[0-9]+[a-z]?\b`, `ledger`,
+    `deviation`, `wave`, `lane`, `step [0-9]`) and rewrite each hit as the underlying reason. Code that implements a runbook step
+    says what it does and which observable condition it checks, not which step number it is. Put the plan reference in the commit
+    message body instead when the link matters for history. (Added 2026-10-03 on the user's instruction.)
 
 ---
 
@@ -353,6 +380,34 @@ speculation. Before declaring a run complete, confirm every spawned worker
 has acknowledged shutdown (`shutdown_approved` / `teammate_terminated`) or
 timed out.
 
+### Delete stray `.omc` directories
+
+Always delete a stray `.omc`. A `.omc` directory is legitimate only at the state
+root defined in `<worktree_paths>` above (the repository root by default,
+`$OMC_STATE_DIR/{project-id}/`, or the parent that holds `.omc-workspace`).
+Every other `.omc` — one nested below a subdirectory, such as `.omc/specs/.omc`
+or `internal/foo/.omc` — is unnecessary. Delete it whenever you find one,
+without being asked; this rule is the standing approval for that deletion.
+
+- **Find them:** `fd -H -I -t d '^\.omc$' <repo-root>`. Every hit other than
+  the state root is stray.
+- **Look before deleting.** List the files first (`fd -H -I -t f . <dir>`).
+  Hook state (`state/idle-notif-cooldown.json`, `state/sessions/<id>/*.json`)
+  is deleted as is. Anything else — a plan, spec, research note or handoff —
+  is moved to the same relative path under the state root first, and only
+  then is the stray directory deleted.
+- **When to check:** at the end of a run, after every worker has acknowledged
+  shutdown, and before a commit. A worker that is still running writes the
+  directory again.
+- **Likely cause, and prevention:** the stray directories seen so far held
+  only hook state and sat in directories a worker had been working in, so the
+  hooks appear to resolve `.omc/` against the current working directory. Tell
+  every spawned worker to run its commands from the repository root with
+  absolute paths, and not to `cd` into a subdirectory.
+
+(Added 2026-09-29 after a verification worker left `.omc/state/` hook files under
+`.omc/`, `.omc/research/` and `.omc/specs/` of the ai-gateway repository.)
+
 ---
 
 ## Git Commit Protocol
@@ -410,6 +465,28 @@ Co-Authored-By: (Claude Opus 5.5 (1M context) or Claude Fable 5.1) <noreply@anth
   `gh pr edit <n> --base main` before it runs. GitHub marks the PR merged on
   its own. Never `gh pr merge --squash` and never the GitHub UI's "Squash and
   merge" unless the user explicitly asks for a squash on that specific PR.
+- Local branch merges into main: use `git r ...` — the alias in
+  `~/.config/git/config.alias` for
+  `git rebase --gpg-sign --committer-date-is-author-date`. Run `git r main`
+  on the branch, then move main to it by fast-forward
+  (`git switch main && git merge --ff-only <branch>`). No merge commit for a
+  local branch: `git merge --no-ff` is for PRs (`git pr-merge`, above). The
+  alias re-signs every commit and sets each committer date to its author
+  date; do not spell the rebase out by hand without those two flags, and do
+  not join branches with `git cherry-pick` (it restamps the committer date).
+  - **Run it BEFORE the branch is reviewed, scanned or pushed, never after an
+    approval.** `--committer-date-is-author-date` forces a replay: `git r main`
+    rewrites EVERY commit of the branch even when the branch already sits on
+    top of main (measured 2026-10-02 with git 2.55: a plain `git rebase main`
+    printed "up to date", the alias gave new hashes). Every hash an approval,
+    a gate log or a CI run names is gone after it.
+  - **Name the base that bounds the rewrite.** On a branch stacked on another
+    unlanded branch, `git r main` also rewrites the lower branch's commits;
+    use `git r <the lower branch's head>` until that branch has landed.
+  - Where a guard requires a specific signing key, append it:
+    `git r --gpg-sign='<fingerprint>!' <base>`, then check `%GF`/`%GP`.
+  (Added 2026-10-02 on the user's instruction; the form "on the branch,
+  before review" is the user's answer of the same day.)
 
 ---
 
@@ -417,6 +494,10 @@ Co-Authored-By: (Claude Opus 5.5 (1M context) or Claude Fable 5.1) <noreply@anth
 
 - Web search: MUST Use `mcp-gemini-google-search` MCP server, not the built-in `WebSearch` tool.
 - Library/API docs: Use `context7` MCP server for detailed library and API information.
+- You are operating in an environment where `ast-grep` is installed.
+  For any code search that requires understanding of syntax or code structure, you should default to using `ast-grep --lang [language] -p '<pattern>'`.
+  Adjust the `--lang` flag as needed for the specific programming language.
+  Avoid using text-only search tools unless a plain-text search is explicitly requested.
 
 ## Tools
 
@@ -468,6 +549,22 @@ Co-Authored-By: (Claude Opus 5.5 (1M context) or Claude Fable 5.1) <noreply@anth
     full version pin freezes the workflow at whatever was current the day it was
     written and turns every upstream fix into a manual edit.
 - **`runs-on` may ONLY be one of:** `ubuntu-26.04` (Linux), `xcode-27` (macOS), `windows-2025` (Windows). Never `*-latest` and never any other label.
+- **Write YAML sequences in block style (`- item`, one per line), never flow style (`[a, b]`).**
+  Applies to every list in a workflow file: `branches`, `tags`, `paths`, matrix values, `with:` lists.
+  A one-element flow list is the common slip; it still becomes a block sequence.
+  (Added 2026-09-26 after the user re-indented `branches: [main]` and `tags: ["v*"]` by hand.)
+  <example>
+
+  ```yaml
+  on:
+    push:
+      branches:
+        - main
+      tags:
+        - "v*"
+  ```
+
+  </example>
 
 ### Python scripts
 
@@ -496,9 +593,57 @@ from rich.pretty import pprint
 
 </example>
 
+### Artifacts (claude.ai HTML pages): 5K-first layout + phone-width overflow guard
+
+- **Design every artifact page for a 5K display first.** The user reads artifacts on a 5K monitor
+  (5120×2880; 2560×1440 CSS px at the usual 2× scaling, up to 5120 CSS px at 1:1), so a page that centers a
+  700px column wastes the screen. Defaults that worked on 2026-09-27 (AI Gateway research page):
+  - Layout: a sticky left navigation rail (280px, 330px at ≥2200px) plus a main column with
+    `max-width: 2480px`; tables, card grids and figures use the full width, prose paragraphs stay capped
+    (`max-width: 64em`, about 50 CJK characters per line).
+  - Type: fluid base size `clamp(15px, 0.5vw + 9.5px, 19px)`; tables at `.9em`; display face for h1/h2
+    only.
+  - Grids: `repeat(auto-fill, minmax(min(100%, 440px), 1fr))` gives 4–5 columns at 2560px. Never let a
+    generic rule cap the grid's width (a `.sec > ol{max-width:64em}` rule collapsed the cards to 2 columns;
+    exclude `.cards`/`.steps` from such rules).
+  - Tables: full width with `thead th{position:sticky;top:0}` at ≥1400px, where they need no overflow
+    wrapper; wrap in `overflow-x:auto` only ≤1400px (sticky does not work inside a scroll wrapper).
+  - Figures: inline SVG sized by `viewBox` (about 1300–1650 units wide, text 13–15px), rendered at
+    `width:100%; max-width:1760px`.
+  - Check once at 2560px with headless Chrome (`--window-size=2560,4200 --screenshot`) before publishing,
+    then run the phone check below; both are required, and neither replaces the other.
+- **Every artifact page must pass a 393px (iPhone) check with zero horizontal page scroll before it is
+  published**, in addition to the wide-screen design above. The page contract already says the body
+  must never scroll sideways; the items below are the concrete fixes that were missing on 2026-09-27
+  (AI Gateway research page: a 5K-first layout that scrolled sideways on iPhone). Apply all of them by default:
+  1. **Long tokens wrap.** `body{overflow-wrap:anywhere}` plus `a, code, td, th, li, p` in any injected or
+     Markdown-rendered content get `overflow-wrap:anywhere; word-break:break-word`. URLs in link text and long
+     code spans are the usual culprit; they only appear once real content (appendices, fetched docs) loads.
+  2. **Pills and badges never carry `white-space:nowrap` with arbitrary text.** An inline-block tag with free
+     text (e.g. `[VERIFIED for Workers Observability; INFERRED to be ...]`) grew to 615px. Use
+     `white-space:normal; max-width:100%; overflow-wrap:anywhere`, and cap the text a converter turns into a
+     pill (≤40 chars; longer stays prose).
+  3. **Only tables, code blocks and diagrams may be wider than the screen, each inside its own
+     `overflow-x:auto` container.** On ≤760px give SVG figures `min-width` (~900px) so they stay legible and
+     scroll inside `figure` (`figure{overflow-x:auto}`), with `figcaption{position:sticky;left:0}`.
+  4. **Flex headers wrap on phones.** A `white-space:nowrap` label beside a heading (kicker, meta, repo line)
+     must be hidden or allowed to wrap under ~760px; `flex-wrap:wrap` on the row.
+  5. **Clip the outer wrapper as insurance, without breaking sticky.** `overflow-x:clip` (not `hidden`) on
+     `body` and on the outermost layout wrappers (`.shell`, `.content`). `hidden` makes the wrapper a scroll
+     container and kills `position:sticky` for the top bar and table headers; iOS Safari also does not stop
+     horizontal panning from `overflow-x:hidden` on body alone.
+  6. **Measure, do not guess.** Headless Chrome clamps `--window-size` to 500px wide, so a 393px check needs
+     an outer page with `<iframe style="width:393px">` plus `--allow-file-access-from-files`, and a script in
+     the inner page that lists every element whose `getBoundingClientRect().right > clientWidth` and has no
+     ancestor with `overflow-x` auto/scroll/hidden/clip, written into the DOM and read back with `--dump-dom`.
+     Run it on the main page and on every separately published sub-page (they embed their own CSS). Remove the
+     body clip in the measured copy so real overflow is visible.
+  (Added 2026-09-27 after the user reported sideways scrolling on iPhone; the page had been checked only at
+  2560px.)
+
 ### Remote hosts
 
-- **`ssh debian-13-trixie.gaudiy-platform` でlinux/amd64環境を使える.** Use it for Linux/amd64 builds, tests and
+- **`ssh debian-13-trixie.gaudiy-platform` gives a Linux/amd64 environment.** Use it for Linux/amd64 builds, tests and
   measurements (the second machine of a perf ledger next to the local macOS arm64). Facts measured on 2026-09-24
   (session `date` output): Debian 13 trixie, kernel 6.12 cloud-amd64, Intel Xeon Platinum 8481C (44 vCPU, AVX2,
   AVX-512F/BW/VL), 172 GB RAM, glibc 2.41, `perf` and `valgrind` installed, `/tmp` is an 87 GB tmpfs.
