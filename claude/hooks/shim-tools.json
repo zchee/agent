@@ -20,7 +20,7 @@
       "args_env": "CLAUDE_CODE_RG_ARGS"
     },
     "sed": {
-      "bin": "/opt/homebrew/opt/gnu-sed/libexec/gnubin/sed",
+      "bin": "/usr/bin/sed",
       "args": "",
       "bin_env": "CLAUDE_CODE_SED",
       "args_env": "CLAUDE_CODE_SED_ARGS"
