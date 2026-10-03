@@ -1,16 +1,20 @@
 {
-  "$schema": "file:///Users/zchee/src/github.com/zchee/schema/claude-code-settings.schema.json",
+  "$schema": "file:///Users/zchee/src/github.com/zchee/schema/claude-code.settings.schema.json",
   "cleanupPeriodDays": 99999,
   "env": {
+    "CC_FMT_ASYNC": "1",
     "CC_FMT_TRUST": "/Users/zchee/src:/Users/zchee/go/src:/Users/zchee/rust/src",
-    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
+    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "0",
     "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
+    "CLAUDE_CODE_ENABLE_FUNCTION_HOOKS": "1",
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
     "CLAUDE_CODE_SCROLL_SPEED": "2",
     "CLAUDE_CODE_SHELL": "/opt/homebrew/bin/bash",
     "COMPACT_PLUS_PRIMARY_BACKEND": "tmp=$(mktemp \"${TMPDIR:-/tmp}/compact-plus-codex.XXXXXX\"); { printf \"%s\\n\\n\" \"$SYSTEM_PROMPT\"; cat; } | codex exec --model gpt-6-astra -c model_reasoning_effort=\"high\" -c service_tier=\"fast\" --sandbox read-only --skip-git-repo-check --dangerously-bypass-hook-trust --ignore-user-config --ephemeral --output-last-message \"$tmp\" - >/dev/null && cat \"$tmp\"; status=$?; rm -f \"$tmp\"; exit \"$status\"",
     "COMPACT_PLUS_FALLBACK_BACKEND": "claude -p --model claude-opus-5-5 --effort medium --permission-mode dontAsk --output-format text --no-session-persistence --system-prompt \"$SYSTEM_PROMPT\"",
+    "OMC_GIT_GUARDRAILS": "0",
     "OMC_PLUGIN_ROOT": "/Users/zchee/src/github.com/Yeachan-Heo/oh-my-claudecode",
+    "OMC_READ_BUDGET": "off",
     "TRACE_TO_LANGSMITH": "false"
   },
   "includeCoAuthoredBy": true,
@@ -23,7 +27,7 @@
     ],
     "defaultMode": "bypassPermissions"
   },
-  "model": "claude-fable-5-1[1m]",
+  "model": "claude-fable-5-1",
   "fallbackModel": [
     "claude-opus-5-5"
   ],
@@ -45,13 +49,13 @@
       "serverName": "claude.ai Notion"
     },
     {
-      "serverName": "claude.ai Slack"
-    },
-    {
       "serverName": "claude.ai Linear"
     },
     {
       "serverName": "claude.ai Hugging Face"
+    },
+    {
+      "serverName": "claude.ai Google Compute Engine"
     },
     {
       "serverName": "musubi-otlp-setup"
@@ -93,7 +97,7 @@
           {
             "type": "command",
             "command": "/opt/local/bin/cc-shim-hook",
-            "args": []
+            "args": [ ]
           }
         ]
       },
@@ -115,13 +119,25 @@
   },
   "enabledPlugins": {
     "beads@beads-rust": true,
+    "build-macos-apps@openai-curated": false,
+    "cc-plugin-you-should-know@builtin": false,
     "clangd-lsp@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true,
     "codspeed@codspeed-plugin-marketplace": true,
+    "compact-plus@compact-plus": true,
+    "compact-plus@compact-plus-local": true,
+    "container@apple-container": true,
+    "context7@context7-marketplace": true,
+    "datadog@claude-plugins-official": false,
+    "fast-jev-compaction@fast-jev-compaction": true,
+    "google-agents-cli@google-agents-cli": true,
     "gopls-lsp@claude-plugins-official": true,
     "langsmith-tracing@langsmith-claude-code-plugins": true,
+    "lapdog@lapdog": false,
     "lua-lsp@claude-plugins-official": true,
     "mattpocock-skills@claude-plugins-official": true,
     "mcp-gemini-google-search@mcp-gemini-google-search": true,
+    "model-gateway@eigenwise-toolshed": true,
     "modern-go-guidelines@goland-claude-marketplace": true,
     "modern-web-guidance@googlechrome": true,
     "oh-my-claudecode@omc": true,
@@ -132,16 +148,9 @@
     "security-guidance@claude-plugins-official": false,
     "skill-creator@claude-plugins-official": true,
     "swift-lsp@claude-plugins-official": true,
-    "typescript-lsp@claude-plugins-official": true,
-    "build-macos-apps@openai-curated": false,
     "typesafe@typesafe-ai": true,
-    "google-agents-cli@google-agents-cli": true,
-    "datadog@claude-plugins-official": true,
-    "compact-plus@compact-plus": true,
-    "lapdog@lapdog": true,
-    "claude-md-management@claude-plugins-official": true,
-    "model-gateway@eigenwise-toolshed": true,
-    "compact-plus@compact-plus-local": true
+    "typescript-lsp@claude-plugins-official": true,
+    "ast-grep@ast-grep-marketplace": true
   },
   "extraKnownMarketplaces": {
     "goland-claude-marketplace": {
@@ -227,6 +236,36 @@
         "source": "github",
         "repo": "DataDog/dd-apm-test-agent"
       }
+    },
+    "apple-container": {
+      "source": {
+        "source": "github",
+        "repo": "apple/container"
+      }
+    },
+    "mcp-gemini-google-search": {
+      "source": {
+        "source": "github",
+        "repo": "zchee/mcp-gemini-google-search"
+      }
+    },
+    "fast-jev-compaction": {
+      "source": {
+        "source": "github",
+        "repo": "tamaratran/fast-jev-compaction"
+      }
+    },
+    "context7-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "upstash/context7"
+      }
+    },
+    "ast-grep-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "ast-grep/agent-skill"
+      }
     }
   },
   "outputStyle": "Proactive",
@@ -238,24 +277,35 @@
   "effortLevel": "high",
   "modelSettings": {
     "claude-fable-5": {
-      "effortLevel": "xhigh"
+      "effortLevel": "high"
     },
     "claude-fable-5-1": {
+      "effortLevel": "high"
+    },
+    "claude-opus-4-8": {
       "effortLevel": "xhigh"
     },
     "claude-opus-5": {
       "effortLevel": "high"
     },
     "claude-opus-5-5": {
-      "effortLevel": "xhigh"
+      "effortLevel": "high"
     },
     "claude-sonnet-5": {
       "effortLevel": "xhigh"
     },
+    "claude-sonnet-5-5": {
+      "effortLevel": "xhigh"
+    },
     "claude-gpt-6-astra-fast": {
-      "effortLevel": "high"
+      "effortLevel": "max"
+    },
+    "claude-kimi-k3": {
+      "effortLevel": "xhigh"
     }
   },
+  "autoCompactWindow": 900000,
+  "advisorModel": "fable",
   "fastModePerSessionOptIn": false,
   "awaySummaryEnabled": false,
   "askUserQuestionTimeout": "never",
@@ -264,6 +314,13 @@
     "agents-md@builtin": {
       "options": {
         "instructionFiles": "claude-md-and-agents-md"
+      }
+    },
+    "fast-jev-compaction@fast-jev-compaction": {
+      "options": {
+        "compactAtPercent": 70,
+        "maxStateTokens": 20000,
+        "model": "jev-latest"
       }
     }
   },
@@ -320,9 +377,9 @@
     ]
   },
   "voiceEnabled": true,
-  "$comment": "https://code.claude.com/docs/en/settings-reference",
   "autoCompactThreshold": 0.9,
   "autoCompactTiming": "before-prompt",
+  "$comment": "https://code.claude.com/docs/en/settings-reference",
   "omc": {
     "deepInterview": {
       "ambiguityThreshold": 0.2
