@@ -85,7 +85,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "imectl set -q com.apple.keylayout.ABC"
+            "command": "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/imectl-prompt-submit.sh"
           }
         ]
       }
