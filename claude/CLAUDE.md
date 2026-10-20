@@ -1,5 +1,5 @@
 <!-- OMC:START -->
-<!-- OMC:VERSION:5.5.0 -->
+<!-- OMC:VERSION:5.7.5 -->
 
 # oh-my-claudecode - Intelligent Multi-Agent Orchestration
 
@@ -174,18 +174,24 @@ After proposing a solution, score confidence (0.0-1.0) for:
 - If the user references a file, read that file before answering.
 - Investigate relevant files before making claims about code behavior.
 - Keep responses grounded and hallucination-free.
-- **Never write plan markers into code, including comments and docstrings.** Plan markers are the identifiers a plan, ledger, handoff or
-  acceptance list uses to name its parts: wave/lane/stage labels (`W2`, `L2b`, `S0`, `T0.3`), decision and requirement IDs (`D1`,
-  `L-7a`, `R10`, `K14`, `PC1`, `AC-29`), ledger/deviation numbers (`ledger 210`, `deviation 199`), critic/review item IDs (`n3`,
-  `C14`, `U10`), and runbook step/line references (`step 12`, `L562`). They belong in the plan, the ledger, the handoff, the commit
-  message and the review report, never in source files, test files, manifests, shell scripts, SQL, or the comments inside them.
+- **Never write plan markers into code, including comments and docstrings, or into commit messages.** Plan markers are the
+  identifiers a plan, ledger, handoff or acceptance list uses to name its parts: wave/lane/stage labels (`W2`, `L2b`, `S0`, `T0.3`),
+  decision and requirement IDs (`D1`, `L-7a`, `R10`, `K14`, `PC1`, `AC-29`), ledger/deviation numbers (`ledger 210`,
+  `deviation 199`), critic/review item IDs (`n3`, `C14`, `U10`), and runbook step/line references (`step 12`, `L562`). They belong
+  in the plan, the ledger, the handoff and the review report, never in source files, test files, manifests, shell scripts, SQL, the
+  comments inside them, or a commit message (subject, body and trailers alike).
   - **Why:** the marker means nothing to a reader who does not have that plan open, it goes stale the moment the plan is renumbered
     or archived, and it leaks the process into the product. A comment must state the reason in plain words (what constraint the code
-    satisfies and why), not point at a document that explains it.
-  - **How to apply:** before committing, grep the diff for the project's marker shapes (`\b[A-Z]{1,2}-?[0-9]+[a-z]?\b`, `ledger`,
-    `deviation`, `wave`, `lane`, `step [0-9]`) and rewrite each hit as the underlying reason. Code that implements a runbook step
-    says what it does and which observable condition it checks, not which step number it is. Put the plan reference in the commit
-    message body instead when the link matters for history. (Added 2026-10-03 on the user's instruction.)
+    satisfies and why), not point at a document that explains it. The same holds for `git log`: the history outlives the plan, so a
+    commit message must say why the change was made in words that stand on their own.
+  - **How to apply:** before committing, grep the diff AND the commit message for the project's marker shapes
+    (`\b[A-Z]{1,2}-?[0-9]+[a-z]?\b`, `ledger`, `deviation`, `wave`, `lane`, `step [0-9]`) and rewrite each hit as the underlying
+    reason. Code that implements a runbook step says what it does and which observable condition it checks, not which step number
+    it is. A commit message names the behaviour or the constraint ("contract tests for the token issuer"), not the task or decision
+    ID (`T1.11`, `D38`); when the link to the plan matters, record the commit hash in the ledger or the handoff, not the plan ID in
+    the commit. Standard public identifiers (RFC numbers, CVE/GHSA IDs, algorithm names such as ES256, issue and PR numbers) are not
+    plan markers. (Added 2026-10-03 on the user's instruction; extended to commit messages the same day, which withdraws the earlier
+    advice to put the plan reference in the commit message body.)
 
 ---
 
@@ -233,6 +239,38 @@ directive.
 Workers run via Claude Code's native `tmux` teammateMode through the
 `/oh-my-claudecode:team` method — the Agent tool with a distinct
 `name` — the only prescribed method, for every lead type.
+
+### Cross-vendor worker models (GPT, grok) through the model gateway
+
+The local model gateway (`model-gateway` skill) exposes non-Anthropic models
+to the Agent tool under Claude-style ids. They are reachable **only while
+`/gateway on` is active in the session** (`model-gateway-rc: requests now go
+through http://127.0.0.1:18764 …`); with the gateway off, a pin to one of
+these ids is ignored and the worker silently inherits the lead's model. So:
+run `/gateway on` (or ask the user to) before spawning any lane below, and
+have every such lane state its model on line 1 of its report, then check it.
+
+Available ids and the lane they are for (user instruction 2026-10-09,
+extended 2026-10-10 with sol-ultrafast; the lead may use them whenever it
+judges them useful, without asking each time):
+
+| id | lane |
+|---|---|
+| `claude-gpt-6.1-sol-fast` | code review and verification (`omc-configured-code-reviewer-*`, `omc-configured-verifier-*` agent types); runbook and evidence verification |
+| `claude-gpt-6.1-sol-ultrafast` | the same lane types when the scope is one residual or a re-check and speed matters more than depth |
+| `claude-gpt-6-astra-fast` | second opinion when sol and the lead disagree |
+| `claude-grok-4.7-fast[1m]` | security reviews (`~/.claude/agents/grok-security-reviewer.md`; the `[1m]` suffix is required or the pin is ignored); routing is intermittent, so run a two-line model probe first and judge the real lane by its report's model line |
+
+Fixed by the same instructions: implementing lanes stay Claude (opus
+unless the task says otherwise); a lane that holds live keys, kubeconfigs
+or tokens gets **no** model override (the credential rule wins); the
+Agent tool's `model` enum cannot name GPT or grok ids, so the pin lives in
+the agent definition file or the omc per-agent override
+(`agents.<name>.model` in `~/.config/claude-omc/config.jsonc`). Code written
+by a GPT lane carries `Co-Authored-By: Codex <noreply@openai.com>` beside the
+Claude trailer; review-only lanes add no trailer. (Added 2026-10-10 on the
+user's instruction; details in the ai-gateway memory `gpt-worker-models`
+and `security-review-model-grok`.)
 
 ### Security-gated work: keep the lead(orchestrator) off the credential path
 
@@ -298,15 +336,16 @@ Keep the credential out of the lead context by one of two routes:
 When delegation shifts ownership away from what a frozen execution contract
 assigns, record it as a numbered deviation in that contract's ledger.
 
-### Security reviews: always delegate to an opus-5 team worker
+### Security reviews: always delegate to a team worker (grok, else opus)
 
 Security-review work — anything framed as a 'security review', 'security
 findings', vulnerability hunting, or triaging/remediating such findings —
 must NOT run in the Fable 5.1 lead context: those workloads can trip
 the dual-use security check whose fallback lands on Opus 4.8 (expensive,
-unwanted). Instead, ALWAYS stand up an **opus-5 worker via the team
-runtime** (e.g. the `/oh-my-claudecode:team` flow, or an Agent-tool spawn
-with `model: "opus"` when the team runtime is unavailable) and delegate the
+unwanted). Instead, ALWAYS stand up a **worker via the team runtime, on grok
+(`claude-grok-4.7[1m]`, see the cross-vendor section above; opus-5 when the
+gateway or the routing is unavailable)** through the `/oh-my-claudecode:team` flow, or an
+Agent-tool spawn when the team runtime is unavailable, and delegate the
 security-review execution there. The lead receives the findings
 report and rules on it; it never performs the review itself. This is a
 global rule for all projects.
@@ -640,6 +679,17 @@ from rich.pretty import pprint
      body clip in the measured copy so real overflow is visible.
   (Added 2026-09-27 after the user reported sideways scrolling on iPhone; the page had been checked only at
   2560px.)
+
+### Claude Code source of truth: `claude-code-reverse-new`
+
+- **The newest unpacked Claude Code CLI (`cli.unpack.js`) lives at
+  `/Users/zchee/src/github.com/zchee/claude-code-reverse-new`.** Read that tree whenever a task needs Claude
+  Code's real behaviour (storage shapes such as the credential blob and its `mcpOAuth` siblings, config keys,
+  env vars, keychain service names, lock paths, wire formats). The older trees (`claude-code-reverse`,
+  `claude-code-reverse-tmp`, `claude-code-reverse-hack`, `agent-reverse-engineering/claude/...`) are stale
+  snapshots; do not cite them as current. Check `package.json` `version` and `git log -1` in the tree and
+  compare with `claude --version` before relying on a line number. (Added 2026-10-18 on the user's
+  instruction; applies to every project.)
 
 ### Remote hosts
 
