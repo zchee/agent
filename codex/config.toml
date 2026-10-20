@@ -2,11 +2,10 @@
 
 model = "gpt-6-astra"
 review_model = "gpt-6-astra"
-model_reasoning_effort = "max"
-model_context_window = 1000000
-model_auto_compact_token_limit = 900000
-model_auto_compact_token_limit_scope = "body_after_prefix"
-model_catalog_json = "model_catalog.json"
+model_reasoning_effort = "xhigh"
+model_context_window = 920000
+model_auto_compact_token_limit = 828000
+model_auto_compact_token_limit_scope = "total"
 approval_policy = "never"
 tool_output_token_limit = 40000
 project_doc_max_bytes = 46080
@@ -24,17 +23,16 @@ mcp_oauth_credentials_store = "file"
 web_search = "live"
 project_root_markers = [".git"]
 suppress_unstable_features_warning = true
-approvals_reviewer = "guardian_subagent"
+approvals_reviewer = "auto_review"
 include_collaboration_mode_instructions = true
 include_permissions_instructions = true
 include_apps_instructions = true
 include_environment_context = true
-personality = "pragmatic"
-service_tier = "priority"
-disable_paste_burst = true
-notify = ["/Users/zchee/src/github.com/zchee/agent/codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
-developer_instructions = '<omx version="1">You have oh-my-codex installed through Codex plugin mode. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing and $name workflow invocation. When the native surface exposes `agent_type` role routing, set `agent_type` to an installed role and never omit it for OMX work. When it reports `role_routing_unavailable` and adapted Ralplan authority is requested, do not fabricate `agent_type`; run `omx ralplan preflight --json` and stop on `unsupported_documented_leader_proof`. Ordinary work remains under its own workflow gates. Never fake the role via a prompt label or infer authority from session/thread/pointer/transcript/cwd state. Registered Codex plugin marketplace surfaces supply OMX workflows and plugin-scoped companion resources when the plugin is installed; native agent roles are installed as setup-owned Codex agent TOML files in plugin mode so agent_type routing works. User-installed skills may still live under ~/.codex/skills. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail.</omx>'
+service_tier = "ultrafast"
+# developer_instructions = '<omx version="1">You have oh-my-codex installed through Codex plugin mode. AGENTS.md is the orchestration brain and main control surface. Follow AGENTS.md for skill/keyword routing and $name workflow invocation. When the native surface exposes `agent_type` role routing, set `agent_type` to an installed role and never omit it for OMX work. When it reports `role_routing_unavailable` and adapted Ralplan authority is requested, do not fabricate `agent_type`; run `omx ralplan preflight --json` and stop on `unsupported_documented_leader_proof`. Ordinary work remains under its own workflow gates. Never fake the role via a prompt label or infer authority from session/thread/pointer/transcript/cwd state. Registered Codex plugin marketplace surfaces supply OMX workflows and plugin-scoped companion resources when the plugin is installed; native agent roles are installed as setup-owned Codex agent TOML files in plugin mode so agent_type routing works. User-installed skills may still live under ~/.codex/skills. Use outcome-first, concise progress updates: state the target result, constraints, validation evidence, and stop condition before adding process detail.</omx>'
 mcp_optional_startup_grace_ms = 3000
+allow_symlinked_codex_home = true
+notify = ["/Users/zchee/src/github.com/zchee/agent/codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 
 [model_providers.oai]
 name = "openai"
@@ -53,6 +51,13 @@ wire_api = "responses"
 name = "xai"
 base_url = "https://api.x.ai/v1"
 env_key = "XAI_API_KEY"
+wire_api = "responses"
+supports_websockets = true
+
+[model_providers.ccp]
+name = "claude-code-proxy"
+base_url = "https://api.openai.com/v1"
+env_key = "OPENAI_API_KEY"
 wire_api = "responses"
 supports_websockets = true
 
@@ -84,6 +89,8 @@ persistence = "save-all"
 max_bytes = 104_857_600
 
 [tui]
+disable_paste_burst = true
+fullscreen_transcript = true
 notifications = true
 notification_method = "osc9"
 notification_condition = "always"
@@ -101,10 +108,13 @@ status_line = [
   "weekly-limit",
 ]
 session_picker_view = "comfortable"
+screen_reader_detection_done = true
 
 [tui.model_availability_nux]
 "gpt-5.5" = 4
 "gpt-5.6-sol" = 4
+gpt-6-astra = 4
+"gpt-6.1-sol" = 4
 
 [agents]
 max_depth = 4
@@ -121,20 +131,23 @@ extract_model = "gpt-5.6-terra"
 consolidation_model = "gpt-5.6-sol"
 
 [features]
-transcript_v2 = true
-shell_zsh_fork = false
-unified_exec_zsh_fork = false
+analytics_plan_history = true
+daemon_auto_start = true
 shell_snapshot_v2 = true
+login_shell_package_path = true
 deferred_executor = true
 cwd_relative_turn_diffs = true
 content_item_kinds = true
 executed_tool_call_metadata = true
 code_mode = true
-code_mode_buffered_exec = true
+code_mode_tool_search = true
 code_mode_host = true
+code_mode_host_grpc = true
 code_mode_prewarm = true
 code_mode_interrupt = true
-code_mode_only = false
+code_mode_tool_description_first = true
+code_mode_only = true
+code_mode_only_strict_3p_tools = true
 standalone_web_search = true
 runtime_metrics = true
 memories = true
@@ -143,13 +156,18 @@ local_thread_store_compression = true
 background_paginated_rollout_migration = true
 chronicle = true
 apply_patch_streaming_events = true
-apply_patch_preserve_line_endings = true
 exec_permission_approvals = true
 write_stdin_approval = true
 request_permissions_tool = true
 api_key_model_discovery = true
+cli_daybreak = true
 network_proxy = true
+credential_masking = true
 respect_system_proxy = true
+agent_message_board = false
+model_catalog_in_context = true
+multi_agent_v2_dynamic_tools = true
+subagent_default_context_limits = true
 worktrees = true
 apps = false
 psp = true
@@ -159,41 +177,58 @@ mcp_oauth_refresh_coordination = true
 use_xaa = true
 enable_mcp_apps = true
 deferred_tool_world_state = true
+incremental_tools = true
 non_prefixed_mcp_tool_names = true
 recommended_plugins = true
 executor_capability_discovery = true
 skip_host_skill_discovery = true
 in_app_browser = true
 in_app_local_automation = true
-in_app_updates = false
-image_generation = false
-item_ids = true
+in_app_updates = true
+image_generation = true
 omit_app_server_notification_media = true
 image_resize_notice = true
 unified_image_budget = true
 concurrent_reasoning_summaries = true
+output_token_replay = true
 default_mode_request_user_input = true
-send_async_message = true
 send_message_to_user_async = true
 terminal_visualization_instructions = true
-terminal_resize_reflow = false
 guardian_reuse_parent_compaction = true
 guardian_enhanced_node_repl_transcripts = true
 guardian_node_repl_transcript_images = true
-guardian_ext = true
+guardian_trust_orchestrator_connectors = true
+guardianv2_decisions_comparison = true
 token_budget = true
 context_management = true
 rollout_budget = false
 reasoning_effort_override = true
 current_time_reminder = true
+nonfatal_clock_read_errors = true
 auth_elicitation = true
 step_model_switching = true
+ultrafast_mode = true
 realtime_conversation = true
 prevent_idle_sleep = true
 compaction_image_budget = true
+async_compaction = true
 retain_client_developer_messages = true
+retain_client_tool_outputs = true
 use_agent_identity = false
-js_repl = false
+app_server_websocket_compression = true
+multi_env_copy_file = true
+secret_auth_storage = true
+powershell_shell_version = true
+windows_sandbox_service = true
+prefer_mxc = true
+subagent_thread_environments = true
+defer_mailbox_preemption = true
+wake_on_agent_messages = true
+mcp_tool_list_changed = true
+executor_capability_discovery_v2 = true
+guardian_root_handoff_context = true
+guardian_conversation_history_tools = true
+bedrock_setup_wizard = false
 
 [features.multi_agent_v2]
 enabled = true
@@ -201,9 +236,8 @@ max_concurrent_threads_per_session = 7
 
 [features.guardianv2]
 enabled = true
-thread_context = true
 
-[orchestrator.skills]
+[cloud.skills]
 enabled = true
 
 [orchestrator.mcp]
@@ -218,7 +252,7 @@ enabled = false
 [notice]
 hide_full_access_warning = true
 hide_gpt5_1_migration_prompt = true
-hide_rate_limit_model_nudge = false
+hide_rate_limit_model_nudge = true
 hide_world_writable_warning = true
 fast_default_opt_out = true
 
@@ -284,9 +318,6 @@ enabled = false
 [plugins."computer-use@openai-bundled"]
 enabled = true
 
-[plugins."sites@openai-bundled"]
-enabled = false
-
 [plugins."visualize@openai-bundled"]
 enabled = true
 
@@ -330,10 +361,7 @@ enabled = false
 enabled = false
 
 [plugins."oh-my-codex@oh-my-codex-local"]
-enabled = true
-
-[plugins."mattpocock-skills@mattpocock-skills-local"]
-enabled = true
+enabled = false
 
 [plugins."app-6938a94a61d881918ef32cb999ff937c@openai-curated-remote"]
 enabled = false
@@ -347,13 +375,19 @@ enabled = true
 [plugins."browser@openai-bundled"]
 enabled = true
 
-[plugins."computer-history@openai-bundled"]
-enabled = true
-
 [plugins."codex-app-tools@openai-bundled"]
 enabled = true
 
 [plugins."mattpocock-skills@claude-plugins-official"]
+enabled = true
+
+[plugins."unified-computer-use@openai-bundled"]
+enabled = true
+
+[plugins."code-review@openai-bundled"]
+enabled = true
+
+[plugins."computer-history@openai-bundled"]
 enabled = true
 
 [skills.bundled]
@@ -375,11 +409,12 @@ enabled = false
 path = "/Users/zchee/src/github.com/zchee/agent/codex/skills/exa-research-paper/SKILL.md"
 enabled = false
 
+[[skills.config]]
+path = "/Users/zchee/src/github.com/zchee/agent/codex/skills/hatch-pet/SKILL.md"
+enabled = false
+
 [mcp_servers.alphaxiv]
-command = "npx"
-args = ["-y", "mcp-remote", "https://api.alphaxiv.org/mcp/v1"]
-enabled = true
-startup_timeout_sec = 15.0
+url = "https://api.alphaxiv.org/mcp/v1"
 
 [mcp_servers.apple-docs]
 command = "uv"
@@ -405,24 +440,17 @@ enabled = false
 command = "datadog-code-security-mcp"
 args = ["start"]
 enabled = false
+
 [mcp_servers.datadog-code-security.env]
 DD_AUTH_DOMAIN = "us5.datadoghq.com"
 
 [mcp_servers.mcp-lsp]
 command = "mcp-lsp"
-enabled = true
-startup_timeout_sec = 15.0
 
 [mcp_servers.ghidra]
 command = "ghidra-headless-mcp"
-args = [
-  "--transport",
-  "stdio",
-  "--ghidra-install-dir",
-  "/opt/local/ghidra",
-]
-enabled = true
-startup_timeout_sec = 15.0
+args = ["--transport", "stdio", "--ghidra-install-dir", "/opt/local/ghidra"]
+
 [mcp_servers.ghidra.env]
 JAVA_HOME = "/Library/Java/JavaVirtualMachines/temurin-26.jdk/Contents/Home"
 
@@ -447,22 +475,17 @@ enabled = false
 [mcp_servers.semble]
 command = "uvx"
 args = ["--from", "semble[mcp]", "semble"]
-enabled = true
+enabled = false
 startup_timeout_sec = 15.0
 
 [mcp_servers.hashline]
 command = "hashline-mcp"
-enabled = true
+enabled = false
 startup_timeout_sec = 15.0
 
 [mcp_servers.xcode]
 command = "xcrun"
 args = ["mcpbridge"]
-enabled = false
-
-[mcp_servers.pencil]
-command = "/Users/zchee/.pencil/mcp/cursor/out/mcp-server-darwin-arm64"
-args = ["--app", "cursor", "--agent", "codexCLI"]
 enabled = false
 
 [mcp_servers.computer-use]
@@ -482,24 +505,20 @@ NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_n
 NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/zchee/.config/codex:/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
 CODEX_HOME = "/Users/zchee/.config/codex"
-BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
-BROWSER_USE_TINYSKY_ENABLED = "0"
-NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
-NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
-NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = "Control desktop apps on macOS through Computer Use."
+BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab,mcpapps"
+BROWSER_USE_TINYSKY_ENABLED = "1"
+NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = ""
+NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = ""
+NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = ""
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.831.20005"
-NODE_REPL_TRUSTED_SERVICES = '{"browser":"/Users/zchee/.config/codex/plugins/cache/openai-bundled/browser/26.831.20005/scripts/browser-service.mjs","sky":"@oai/sky/service"}'
+BROWSER_USE_CODEX_APP_VERSION = "26.1013.31256"
+NODE_REPL_TRUSTED_SERVICES = '{"browser":"/Users/zchee/.config/codex/plugins/cache/openai-bundled/browser/26.1013.31256/scripts/browser-service.mjs","sky":"@oai/sky/service"}'
 SKY_CUA_SERVICE_PATH = "/Users/zchee/.config/codex/computer-use/Codex Computer Use.app"
-CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
-
-[mcp_servers.cua_repl]
-command = "/Applications/ChatGPT.app/Contents/MacOS/ChatGPT"
-enabled = false
+CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex"
 
 [desktop]
-sansFontSize = 16
-codeFontSize = 18
+sansFontSize = 15
+codeFontSize = 15
 usePointerCursors = true
 dictationDictionary = []
 composerEnterBehavior = "cmdIfMultiline"
@@ -520,6 +539,13 @@ followUpQueueMode = "queue"
 appearanceDiffMarkerStyle = "color"
 enabled-reasoning-efforts = ["low", "medium", "high", "xhigh", "ultra", "max"]
 show-ultra-in-model-picker-slider = false
+avatar-overlay-mascot-width-px = 224
+conversationDetailMode = "STEPS_COMMANDS"
+selected-avatar-id = "pet_6ac1d12ca7188191b9a484df4e34058b"
+toys-audio-visualizer-enabled = true
+toys-confetti-enabled = true
+avatar-overlay-pet-visible = false
+confirm-before-close = "never"
 
 [desktop.appearanceLightChromeTheme]
 accent = "#339cff"
@@ -558,76 +584,10 @@ diffRemoved = "#fa423e"
 skill = "#ad7bf9"
 
 [desktop.open-in-target-preferences]
-global = "cursor"
-
-# [[hooks.PreToolUse]]
-# matcher = "*"
-# [[hooks.PreToolUse.hooks]]
-# type = "command"
-# command = "agu api hooks"
-# timeout = 60
-
-# [[hooks.PermissionRequest]]
-# matcher = "*"
-# [[hooks.PermissionRequest.hooks]]
-# type = "command"
-# command = "agu api hooks"
-# timeout = 60
-
-# [[hooks.PostToolUse]]
-# matcher = "*"
-# [[hooks.PostToolUse.hooks]]
-# type = "command"
-# command = "agu api hooks"
-# timeout = 60
-
-# [[hooks.PreCompact]]
-# matcher = "*"
-# [[hooks.PreCompact.hooks]]
-# type = "command"
-# command = "agu api hooks"
-# timeout = 60
-
-# [[hooks.PostCompact]]
-# matcher = "*"
-# [[hooks.PostCompact.hooks]]
-# type = "command"
-# command = "agu api hooks"
-# timeout = 60
-
-# [[hooks.SessionStart]]
-# matcher = "*"
-# [[hooks.SessionStart.hooks]]
-# type = "command"
-# command = "agu api hooks"
-# timeout = 60
+global = "kitty"
 
 [[hooks.UserPromptSubmit]]
 [[hooks.UserPromptSubmit.hooks]]
 type = "command"
-command = "imectl set -q 'com.apple.keylayout.ABC'"
+command = "imectl set -q com.apple.keylayout.ABC"
 timeout = 60
-# [[hooks.UserPromptSubmit.hooks]]
-# type = "command"
-# command = "agu api hooks"
-# timeout = 60
-
-# [[hooks.SubagentStart]]
-# matcher = "*"
-# [[hooks.SubagentStart.hooks]]
-# type = "command"
-# command = "agu api hooks"
-# timeout = 60
-
-# [[hooks.SubagentStop]]
-# matcher = "*"
-# [[hooks.SubagentStop.hooks]]
-# type = "command"
-# command = "agu api hooks"
-# timeout = 60
-
-# [[hooks.Stop]]
-# [[hooks.Stop.hooks]]
-# type = "command"
-# command = "agu api hooks"
-# timeout = 60
