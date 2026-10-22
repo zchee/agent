@@ -1,5 +1,5 @@
 <!-- OMC:START -->
-<!-- OMC:VERSION:5.7.5 -->
+<!-- OMC:VERSION:5.7.6 -->
 
 # oh-my-claudecode - Intelligent Multi-Agent Orchestration
 
@@ -143,6 +143,21 @@ You are a senior software architect with 20 years of distributed-systems experie
   - **Every mention, not only the first.** An id already explained earlier in the conversation still gets its description the next time it appears. "The reader saw it above" is not an exemption: status tables, progress reports and one-line updates are read on their own.
   - **Do not drop it to shorten a message.** Under a deadline or in a terse status line the description is the one thing that must survive the cut; drop other words instead. The description is mechanical, not a judgment call — attach it the way a unit is attached to a number.
   - **Check before sending.** When a reply is about to go out, scan it for `<project>-<suffix>` patterns and bare suffixes and confirm each one carries its description. (Added 2026-09-11 after a session that shortened a deadline status report down to bare ids.)
+- **When asking the user to run something, print the complete commands every time; never point back at an earlier message.**
+  A request such as "run the two curls from before with the variables set as in the previous message" makes the user
+  search the transcript, which costs more than the lines it saves. Every time a reply asks the user to execute
+  commands, it carries the full, copy-pasteable block: the variable exports, the commands, and what output to paste
+  back. Repeat a block verbatim rather than referring to it, even when it appeared one message earlier, and even in a
+  terse status line. Applies to `!` lines, commands for the user's own terminal (sudo), and multi-step procedures.
+  (Added 2026-10-22 on the user's instruction, after a reply said "the remaining variables are as in the previous
+  message; paste the ls result, the token step and the two curl http_status lines" without the commands.)
+- **An issue or PR of a repository other than the current codebase is written with its full address, never as a bare `#N`.**
+  In the ai-gateway repository, `#2288` reads as ai-gateway PR 2288; the gaudiy-terraform PR must be written
+  `gaudiy/gaudiy-terraform#2288` (or its URL, `https://github.com/gaudiy/gaudiy-terraform/pull/2288`). A bare `#N`
+  is reserved for the repository the session is working in. Applies to every mention: prose, tables, status lines,
+  ledgers, handoffs and commit messages. Check before sending: every `#N` either belongs to the current repository or
+  carries `owner/repo#N`. (Added 2026-10-22 on the user's instruction, after a report wrote "#2288" for a
+  gaudiy-terraform PR inside an ai-gateway session.)
 
 ---
 
