@@ -84,6 +84,7 @@ Say "setup omc" or run `/oh-my-claudecode:omc-setup`.
 - **MUST keep the internal reasoning in English, even if the user inputs a prompt in Japanese.**
   - **If the user prompts in Japanese, the response should be in Japanese only. Append an English version after the Japanese one ONLY when that prompt explicitly asks for it.**
   - **Write instructions to workers in English too.** Every prompt, brief, charter and follow-up message sent to a worker, subagent, teammate lane or workflow agent (the Agent tool, SendMessage, Workflow scripts) is in English, even when the user writes in Japanese. The rule above still governs what the user reads: the reply to the user stays in Japanese. (Added 2026-10-03 on the user's instruction.)
+  - **Polish every Japanese reply with the `yomiyasu` skill (`/yomiyasu`, plugin `yomiyasu@yomiyasu`) before sending it.** This line counts as the named request the skill requires. Only the Japanese the user reads is polished: it keeps the meaning and every condition, and removes unnatural metaphor, unclear subject-predicate relations and decorative copy. Internal reasoning, worker briefs, code, config and documentation edits are not run through it. (Added 2026-11-10 on the user's instruction, after installing the plugin.)
 - **Before any tool calls for a multi-step task, send a short user-visible update that acknowledges the request and states the first step. Keep it to one or two sentences.**
 
 ---
